@@ -2,7 +2,6 @@
 
 #include "shader.h"
 #include "string.hpp"
-#include "shadercode.h"
 
 // =================================================================================================
 
@@ -61,13 +60,39 @@ public:
 
 // =================================================================================================
 
-class ShaderCode : public Shader {
-protected:
-    //Dictionary<String, Shader*>  m_shaders;
-    ManagedArray<Shader*>  m_shaders;
+#define GRADIENT R"(
+        float Gradient() { 
+            if (maxDist == 0.0)
+                return 1.0;
+            float s = clamp(pow (length(fragPos) / abs(maxDist), 0.5), 0.2, 1.0);
+            return (maxDist > 0) ? 1.0 - s : 2.0 - 2 * s; // continually darker from start or gradient flipping in the middle
+            }
+        )"
 
-    ShaderCode()
-        { }
+
+#define IS_BORDER R"(
+        bool IsBorder() {
+            if (borderWidth == 0.0)
+                return false;
+            vec2 borders = borderWidth * vec2(aspectRatio, 1.0);
+            return (min (fragTexCoord.x, maxTexCoord.x - fragTexCoord.x) < borders.x) || (min (fragTexCoord.y, maxTexCoord.y - fragTexCoord.y) < borders.y);
+            }
+        )"
+
+extern String standardVS;
+
+// =================================================================================================
+
+class BasicShaderCode 
+    : public Shader 
+{
+protected:
+    ManagedArray<ShaderSource*> m_shaderSource;
+    ManagedArray<Shader*>       m_shaders;
+
+    BasicShaderCode();
+
+    void AddShaders(ManagedArray<ShaderSource*> shaderSource);
 
     void CreateShaders(void);
 };

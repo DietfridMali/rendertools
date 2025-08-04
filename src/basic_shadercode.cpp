@@ -1,0 +1,50 @@
+
+#include "array.hpp"
+#include "string.hpp"
+#include "basic_shadercode.h"
+
+// =================================================================================================
+
+extern ShaderSource colorShader;
+extern ShaderSource simpleTextureShader;
+extern ShaderSource gradientTextureShader;
+extern ShaderSource enhancedTextureShader;
+extern ShaderSource cubemapShader;
+extern ShaderSource outlineShader;
+extern ShaderSource boxBlurShader;
+extern ShaderSource fxaaShader;
+extern ShaderSource gaussBlurShader;
+extern ShaderSource decalShader;
+
+// -------------------------------------------------------------------------------------------------
+
+BasicShaderCode::BasicShaderCode() {
+    m_shaderSource = {
+        &outlineShader,
+        &boxBlurShader,
+        &fxaaShader,
+        &gaussBlurShader
+    };
+}
+
+
+void BasicShaderCode::AddShaders(ManagedArray<ShaderSource*> shaderSource) {
+    m_shaderSource.Append(shaderSource, false);
+}
+
+
+void BasicShaderCode::CreateShaders(void) {
+    std::sort(m_shaderSource.begin(), m_shaderSource.end(), [](const ShaderSource* a, const ShaderSource* b) { return a->m_name < b->m_name; }); // ascending
+    m_shaders.Reserve(m_shaderSource.Length());
+    for (int i = 0; i < m_shaderSource.Length(); i++) {
+        ShaderSource* ss = m_shaderSource[i];
+        Shader* s = new Shader(ss->m_name);
+        if (s->Create(ss->m_vs, ss->m_fs))
+            m_shaders.Push(s);
+        else
+            m_shaders.Push(nullptr);
+        //m_shaders.Insert(ss.m_name, s);
+    }
+}
+
+// =================================================================================================

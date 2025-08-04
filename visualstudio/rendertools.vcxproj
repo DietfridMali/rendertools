@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\basic_shadercode.h" />
     <ClInclude Include="..\include\cube.h" />
     <ClInclude Include="..\include\cubemap.h" />
     <ClInclude Include="..\include\basic_displayhandler.h" />
@@ -171,12 +172,15 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\basic_shadercode.cpp" />
+    <ClCompile Include="..\src\blur_shader.cpp" />
     <ClCompile Include="..\src\cube.cpp" />
     <ClCompile Include="..\src\cubemap.cpp" />
     <ClCompile Include="..\src\basic_displayhandler.cpp" />
     <ClCompile Include="..\src\fbo.cpp" />
     <ClCompile Include="..\src\icosphere.cpp" />
     <ClCompile Include="..\src\mesh.cpp" />
+    <ClCompile Include="..\src\outline_shader.cpp" />
     <ClCompile Include="..\src\plane.cpp" />
     <ClCompile Include="..\src\prerenderedtexture.cpp" />
     <ClCompile Include="..\src\projection.cpp" />
@@ -185,6 +189,7 @@
     <ClCompile Include="..\src\rendermatrices.cpp" />
     <ClCompile Include="..\src\shader.cpp" />
     <ClCompile Include="..\src\shaderhandler.cpp" />
+    <ClCompile Include="..\src\shader_macros.cpp" />
     <ClCompile Include="..\src\SSBO.cpp" />
     <ClCompile Include="..\src\textrenderer.cpp" />
     <ClCompile Include="..\src\texture.cpp" />
