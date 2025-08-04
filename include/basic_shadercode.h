@@ -60,7 +60,7 @@ public:
 
 // =================================================================================================
 
-extern String standardVS;
+extern const String& StandardVS();
 
 // =================================================================================================
 
@@ -74,7 +74,7 @@ public:
     BasicShaderCode();
     ~BasicShaderCode() = default;
 
-    void AddShaders(ManagedArray<ShaderSource*>& shaderSource);
+    void AddShaders(ManagedArray<const ShaderSource*>& shaderSource);
 
     inline Shader* GetShader(String shaderId) {
         Shader** shader = m_shaders.Find(shaderId);

@@ -5,10 +5,11 @@
 
 // =================================================================================================
 
-ShaderSource plainColorShader(
-    "plainColor",
-    standardVS,
-    R"(
+static const ShaderSource& PlainColorShader() {
+    static const ShaderSource plainColorShader(
+        "plainColor",
+        StandardVS(),
+        R"(
         //#version 140
         //#extension GL_ARB_explicit_attrib_location : enable
         #version 330
@@ -17,18 +18,22 @@ ShaderSource plainColorShader(
         in vec3 fragPos;
         out vec4 fragColor;
     )"
-    R"(
+        R"(
     void main() {
         fragColor = surfaceColor;
     }
     )"
     );
+    return plainColorShader;
+}
 
-        // render a b/w mask with color applied.
-ShaderSource plainTextureShader(
-    "plainTexture",
-    standardVS,
-    R"(
+
+    // render a b/w mask with color applied.
+static const ShaderSource& PlainTextureShader() {
+    static const ShaderSource plainTextureShader(
+        "plainTexture",
+        StandardVS(),
+        R"(
         //#version 140
         //#extension GL_ARB_explicit_attrib_location : enable
         #version 330
@@ -45,6 +50,8 @@ ShaderSource plainTextureShader(
             fragColor = vec4 (texColor.rgb * surfaceColor.rgb, texColor.a * surfaceColor.a);
             }
     )"
-);
+    );
+    return plainTextureShader;
+}
 
 // =================================================================================================

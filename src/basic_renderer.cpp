@@ -132,17 +132,20 @@ void BasicRenderer::DrawScreen (bool bRotate) {
     if (m_screenIsValid) {
         m_screenIsValid = false;
         Stop2DScene();
+        glDepthFunc(GL_ALWAYS);
+        glDisable(GL_CULL_FACE); // required for vertical flipping because that inverts the buffer's winding
+        glClear(GL_COLOR_BUFFER_BIT);
         Translate(0.5, 0.5, 0);
+#if 0
         if (bRotate)
             Rotate(90, 0, 0, 1);
         else
             Scale(1, -1, 1);
-        glDepthFunc(GL_ALWAYS);
-        glDisable(GL_CULL_FACE); // required for vertical flipping because that inverts the buffer's winding
-        glClear(GL_COLOR_BUFFER_BIT);
         m_renderTexture.m_handle = m_screenBuffer.BufferHandle(0);
-        //m_viewportArea.Render(&m_renderTexture);
+        m_viewportArea.Render(&m_renderTexture);
+#else
         m_viewportArea.Fill(ColorData::Orange);
+#endif
     }
 }
 

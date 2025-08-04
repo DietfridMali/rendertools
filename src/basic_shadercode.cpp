@@ -5,31 +5,31 @@
 
 // =================================================================================================
 
-extern ShaderSource plainColorShader;
-extern ShaderSource plainTextureShader;
-extern ShaderSource outlineShader;
-extern ShaderSource boxBlurShader;
-extern ShaderSource fxaaShader;
-extern ShaderSource gaussBlurShader;
+extern const ShaderSource& PlainColorShader();
+extern const ShaderSource& PlainTextureShader();
+extern const ShaderSource& OutlineShader();
+extern const ShaderSource& BoxBlurShader();
+extern const ShaderSource& FxaaShader();
+extern const ShaderSource& GaussBlurShader();
 
 // -------------------------------------------------------------------------------------------------
 
 BasicShaderCode::BasicShaderCode() {
-    ManagedArray<ShaderSource*> shaderSource = {
-        &plainColorShader,
-        &plainTextureShader,
-        &outlineShader,
-        &boxBlurShader,
-        &fxaaShader,
-        &gaussBlurShader
+    ManagedArray<const ShaderSource*> shaderSource = {
+        &PlainColorShader(),
+        &PlainTextureShader(),
+        &OutlineShader(),
+        &BoxBlurShader(),
+        &FxaaShader(),
+        &GaussBlurShader()
     };
     AddShaders(shaderSource);
 }
 
 
-void BasicShaderCode::AddShaders(ManagedArray<ShaderSource*>& shaderSource) {
-    for (ShaderSource* source : shaderSource) {
-        fprintf(stderr, "creating shader '%s'", (char*) source->m_name);
+void BasicShaderCode::AddShaders(ManagedArray<const ShaderSource*>& shaderSource) {
+    for (const ShaderSource* source : shaderSource) {
+        fprintf(stderr, "creating shader '%s'", (const char*) source->m_name);
         Shader* shader = new Shader(source->m_name);
         if (shader->Create(source->m_vs, source->m_fs))
             m_shaders[source->m_name] = shader;
