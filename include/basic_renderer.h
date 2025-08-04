@@ -148,9 +148,9 @@ class BasicRenderer
 
         void ResetDrawBuffers(FBO* activeBuffer, bool clearBuffer = true);
 
-        void Fill(const RGBColor& color, float alpha, float scale);
+        void Fill(const RGBColor& color, float alpha, float scale = 1.0f);
 
-        inline void Fill(RGBColor&& color, float alpha, float scale) {
+        inline void Fill(RGBColor&& color, float alpha, float scale = 1.0f) {
             Fill(static_cast<const RGBColor&>(color), alpha, scale);
         }
 
