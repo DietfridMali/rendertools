@@ -35,7 +35,7 @@ BasicRenderer::BasicRenderer(int width, int height, float fov) // , Viewer* view
 void BasicRenderer::Create(void) {
     m_viewport = ::Viewport(0, 0, m_windowWidth, m_windowHeight);
     SetupOpenGL();
-    m_sceneBuffer.Create(m_sceneWidth, m_sceneHeight, 1, { .name = "scene", .colorBufferCount = 1, .depthBufferCount = 1, .vertexBufferCount = 2, .hasMRTs = false}); // FBO for 3D scene: 2 color (1 for normals plus transparency info in alpha channel), 1 depth, 1 vertex buffer (world pos)
+    m_sceneBuffer.Create(m_sceneWidth, m_sceneHeight, 1, { .name = "scene", .colorBufferCount = 1, .depthBufferCount = 1, .vertexBufferCount = 2, .hasMRTs = false }); // FBO for 3D scene: 2 color (1 for normals plus transparency info in alpha channel), 1 depth, 1 vertex buffer (world pos)
     m_screenBuffer.Create(m_windowWidth, m_windowHeight, 1, { .name = "screen", .colorBufferCount = 1 }); // FBO for entire screen incl. 2D elements (e.g. UI)
     m_drawBufferStack.Clear();
     m_renderTexture.HasBuffer() = true;
@@ -62,14 +62,15 @@ void BasicRenderer::SetupOpenGL (void) {
 }
 
 
-void BasicRenderer::SetActiveBuffer(FBO* buffer, bool clearBuffer) {
+bool BasicRenderer::SetActiveBuffer(FBO* buffer, bool clearBuffer) {
     if (m_activeBuffer != buffer) {
         if (m_activeBuffer)
             m_activeBuffer->Disable();
         m_activeBuffer = buffer;
     }
-    if (m_activeBuffer and not m_activeBuffer->IsEnabled())
-        m_activeBuffer->Enable(0, clearBuffer);
+    if (not m_activeBuffer)
+        return false;
+    return m_activeBuffer->IsEnabled() or m_activeBuffer->Enable(0, clearBuffer);
 }
 
 
@@ -80,7 +81,8 @@ void BasicRenderer::ResetDrawBuffers(FBO* activeBuffer, bool clearBuffer) {
             info.m_fbo->Disable();
     }
     m_drawBufferInfo = DrawBufferInfo(nullptr, &m_drawBuffers); // &m_drawBuffer, m_drawBuffer.m_colorBufferInfo[0].m_attachment);
-    SetActiveBuffer(activeBuffer, clearBuffer);
+    if (not SetActiveBuffer(activeBuffer, clearBuffer))
+        glDrawBuffers(m_drawBufferInfo.m_drawBuffers->Length(), m_drawBufferInfo.m_drawBuffers->Data());
 }
 
 
@@ -130,7 +132,6 @@ void BasicRenderer::DrawScreen (bool bRotate) {
     if (m_screenIsValid) {
         m_screenIsValid = false;
         Stop2DScene();
-        m_renderTexture.m_handle = m_screenBuffer.BufferHandle(0);
         Translate(0.5, 0.5, 0);
         if (bRotate)
             Rotate(90, 0, 0, 1);
@@ -139,7 +140,9 @@ void BasicRenderer::DrawScreen (bool bRotate) {
         glDepthFunc(GL_ALWAYS);
         glDisable(GL_CULL_FACE); // required for vertical flipping because that inverts the buffer's winding
         glClear(GL_COLOR_BUFFER_BIT);
-        m_viewportArea.Render(&m_renderTexture);
+        m_renderTexture.m_handle = m_screenBuffer.BufferHandle(0);
+        //m_viewportArea.Render(&m_renderTexture);
+        m_viewportArea.Fill(ColorData::Orange);
     }
 }
 

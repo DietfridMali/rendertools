@@ -25,7 +25,6 @@ public:
         m_grayNoise.CreateFromFile(filenames, appData->flipImagesVertically);
 #endif
         ComputeGaussKernels();
-        CreateShaders();
     }
 
     ~ShaderHandler() 

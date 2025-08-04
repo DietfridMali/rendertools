@@ -71,6 +71,7 @@ protected:
     ManagedArray<ShaderSource*> m_shaderSource;
     ManagedArray<Shader*>       m_shaders;
 
+public:
     BasicShaderCode();
 
     void AddShaders(ManagedArray<ShaderSource*> shaderSource);

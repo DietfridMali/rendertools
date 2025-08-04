@@ -60,7 +60,6 @@ class BasicRenderer
         int                     m_sceneHeight;
         int                     m_sceneLeft;
         float                   m_aspectRatio;
-        float                   m_maxDistance;
         bool                    m_screenIsValid;
 
     public:
@@ -94,7 +93,7 @@ class BasicRenderer
             return m_screenBuffer;
         }
 
-        void SetActiveBuffer(FBO* buffer, bool clearBuffer = false);
+        bool SetActiveBuffer(FBO* buffer, bool clearBuffer = false);
 
         inline int WindowWidth(void) {
             return m_windowWidth;
