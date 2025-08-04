@@ -1,13 +1,13 @@
 #pragma once
 
 #include "shader.h"
-#include "shadercode.h"
+#include "basic_shadercode.h"
 #include "matrix.hpp"
 //#include "gamedata.h"
 
 // =================================================================================================
 
-class ShaderHandler : public ShaderCode {
+class ShaderHandler : public BasicShaderCode {
 public:
     typedef Shader* (__cdecl* tShaderLoader) (void);
 

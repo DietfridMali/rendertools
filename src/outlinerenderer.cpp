@@ -1,4 +1,4 @@
-#include "renderer.h"
+#include "basic_renderer.h"
 #include "outlinerenderer.h"
 #include "shaderhandler.h"
 
@@ -23,7 +23,7 @@ void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
         params.shader = shaderHandler->SetupShader(aaMethod.method);
         if (params.shader == nullptr)
             return;
-        renderer->ClearGLError();
+        BasicRenderer::ClearGLError();
         params.shader->SetFloat("offset", 0.5f);
         if (aaMethod.method != "gaussblur")
             fbo->AutoRender(params);
@@ -45,7 +45,7 @@ void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
                     params.source = params.destination;
                     params.destination = fbo->NextBuffer(params.source);
                     fbo->Render(params);
-                    renderer->CheckGLError();
+                    BasicRenderer::CheckGLError();
                 }
             }
         }

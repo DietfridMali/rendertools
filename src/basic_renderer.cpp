@@ -7,7 +7,7 @@
 #include "conversions.hpp"
 #include "glew.h"
 //#include "quad.h"
-#include "basicrenderer.h"
+#include "basic_renderer.h"
 
 // =================================================================================================
 // basic renderer class. Initializes display && OpenGL && sets up projections && view transformation
@@ -103,15 +103,15 @@ void BasicRenderer::Stop2DScene(void) {
 void BasicRenderer::Draw3DScene(void) {
     Stop3DScene();
     Start2DScene();
-    renderer->PushMatrix();
-    renderer->Translate(0.5, 0.5, 0);
-    renderer->Scale(1, -1, 1);
+    basicRenderer->PushMatrix();
+    basicRenderer->Translate(0.5, 0.5, 0);
+    basicRenderer->Scale(1, -1, 1);
     glDepthFunc(GL_ALWAYS);
     glDisable(GL_CULL_FACE);
     SetViewport(::Viewport(m_sceneLeft, 0, m_sceneWidth, m_sceneHeight), false);
     m_renderTexture.m_handle = m_sceneBuffer.BufferHandle(0);
     m_viewportArea.Render(&m_renderTexture);
-    renderer->PopMatrix();
+    basicRenderer->PopMatrix();
 }
 
 
@@ -192,11 +192,11 @@ void BasicRenderer::RestoreDrawBuffer(void) {
 
 
 void BasicRenderer::Fill(const RGBColor& color, float alpha, float scale) {
-    renderer->PushMatrix();
-    renderer->Translate(0.5, 0.5, 0.0);
-    renderer->Scale(scale, scale, 1);
+    basicRenderer->PushMatrix();
+    basicRenderer->Translate(0.5, 0.5, 0.0);
+    basicRenderer->Scale(scale, scale, 1);
     m_viewportArea.Fill(color, alpha);
-    renderer->PopMatrix();
+    basicRenderer->PopMatrix();
 }
 
 
@@ -215,6 +215,6 @@ bool BasicRenderer::CheckGLError (const char* operation) {
     return true;
 }
 
-BasicRenderer* renderer = nullptr;
+BasicRenderer* basicRenderer = nullptr;
 
 // =================================================================================================

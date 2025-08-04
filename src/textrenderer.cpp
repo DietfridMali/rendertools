@@ -2,9 +2,7 @@
 
 #include <algorithm>
 #include "glew.h"
-#include "gamedata.h"
-#include "appdata.h"
-#include "renderer.h"
+#include "basic_renderer.h"
 #include "textrenderer.h"
 #include "shaderhandler.h"
 
@@ -26,8 +24,8 @@ int TextRenderer::CompareTextures(void* context, const char& key1, const char& k
 }
 
 
-TextRenderer::TextRenderer() {
-    m_isAvailable = InitFont();
+TextRenderer::TextRenderer(String fontFolder, String fontName) {
+    m_isAvailable = InitFont(fontFolder, fontName);
     m_color = Vector4f{1, 1, 1, 1};
     m_outlineColor = Vector4f{1, 1, 1, 1};
     m_aaMethod = { "", 0 };
@@ -47,12 +45,12 @@ TextRenderer::TextRenderer() {
 }
 
 
-bool TextRenderer::InitFont(void) {
+bool TextRenderer::InitFont(String fontFolder, String fontName) {
     if (0 > TTF_Init()) {
         fprintf(stderr, "Cannot initialize font system\n");
         return false;
     }
-    String fontFile = appData->m_fontFolder + "consola.ttf";
+    String fontFile = fontFolder + fontName;
     if (not (m_font = TTF_OpenFont(fontFile.Data(), 120))) {
         fprintf(stderr, "Cannot load font 'consola.ttf'\n");
         return false;
@@ -61,8 +59,8 @@ bool TextRenderer::InitFont(void) {
 }
 
 
-bool TextRenderer::Create(void) {
-    return m_isAvailable = InitFont();
+bool TextRenderer::Create(String fontFolder, String fontName) {
+    return m_isAvailable = InitFont(fontFolder, fontName);
 }
 
 
@@ -126,11 +124,11 @@ TextRenderer::tTextDimensions TextRenderer::TextSize(String text) {
 
 
 FBO* TextRenderer::GetFBO(float scale) {
-    FBO** fboRef = m_fbos.Find(FBOID(renderer->m_viewport.m_width, renderer->m_viewport.m_height));
+    FBO** fboRef = m_fbos.Find(FBOID(basicRenderer->m_viewport.m_width, basicRenderer->m_viewport.m_height));
     if (fboRef != nullptr)
         return *fboRef;
     FBO* fbo = new FBO();
-    fbo->Create(renderer->m_viewport.m_width, renderer->m_viewport.m_height, 2, { .colorBufferCount = 2 });
+    fbo->Create(basicRenderer->m_viewport.m_width, basicRenderer->m_viewport.m_height, 2, { .colorBufferCount = 2 });
     m_fbos.Insert(FBOID(fbo), fbo);
     return fbo;
 }
@@ -146,9 +144,9 @@ Shader* TextRenderer::LoadShader(void) {
 
 
 void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float yOffset) {
-    renderer->PushMatrix();
+    basicRenderer->PushMatrix();
 #if USE_TEXT_FBOS
-    renderer->Translate(0.5f, 0.5f, 0.0f);
+    basicRenderer->Translate(0.5f, 0.5f, 0.0f);
     glDepthFunc(GL_ALWAYS);
 #endif
     float letterScale = 2 * xOffset / float(textWidth);
@@ -170,7 +168,7 @@ void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float 
         }
     }
     shaderHandler->StopShader();
-    renderer->PopMatrix();
+    basicRenderer->PopMatrix();
 #if USE_TEXT_FBOS
     glDepthFunc(GL_LESS);
 #endif
@@ -247,7 +245,7 @@ void TextRenderer::Render(String text, bool m_centerText, int renderAreaWidth, i
     if (m_isAvailable) {
         FBO* fbo = GetFBO(2);
         if (fbo != nullptr) {
-            RenderToFBO(text, fbo, renderer->m_viewport, renderAreaWidth, renderAreaHeight, outlineWidth);
+            RenderToFBO(text, fbo, basicRenderer->m_viewport, renderAreaWidth, renderAreaHeight, outlineWidth);
             fbo->m_name = text;
             RenderToScreen(fbo);
         }

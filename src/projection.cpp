@@ -8,8 +8,8 @@
 
 Matrix4f Projection::Create(float aspectRatio, float fov, bool rowMajor)
 {
-    m_fov = fov;
     m_aspectRatio = aspectRatio;
+    m_fov = fov;
     return ComputeProjection(rowMajor);
 }
 

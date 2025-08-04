@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include "texture.h"
 #include "SDL_image.h"
-#include "appdata.h"
 
 // =================================================================================================
 
@@ -307,10 +306,10 @@ bool Texture::CreateFromFile(List<String>& fileNames, bool flipVertically) {
 }
 
 
-bool Texture::CreateFromSurface(SDL_Surface* surface) {
+bool Texture::CreateFromSurface(SDL_Surface* surface, bool flipVertically) {
     if (not Create())
         return false;
-    m_buffers.Append(new TextureBuffer(surface, appData->flipImagesVertically));
+    m_buffers.Append(new TextureBuffer(surface, flipVertically));
     return true;
 }
 

@@ -35,9 +35,9 @@ public:
 
     static int CompareTextures(void* context, const char& key1, const char& key2);
 
-    TextRenderer();
+    TextRenderer(String fontFolder, String fontName);
 
-    bool Create(void);
+    bool Create(String fontFolder, String fontName);
 
     void Fill(Vector4f color);
 
@@ -75,7 +75,7 @@ public:
     tTextDimensions TextSize(String text);
 
 private:
-    bool InitFont(void);
+    bool InitFont(String fontFolder, String fontName);
 
     void CreateTexture(const char* szChar, char key);
 

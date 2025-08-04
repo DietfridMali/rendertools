@@ -239,7 +239,7 @@ class AbstractTexture {
 
         bool CreateFromFile(List<String>& fileNames, bool flipVertically = false);
 
-        bool CreateFromSurface(SDL_Surface* surface);
+        bool CreateFromSurface(SDL_Surface* surface, bool flipVertically = false);
 
         inline size_t TextureCount(void) {
             return m_buffers.Length();

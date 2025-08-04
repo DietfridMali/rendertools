@@ -1,7 +1,7 @@
 
 #include <utility>
 #include "shader.h"
-#include "renderer.h"
+#include "basic_renderer.h"
 
 // =================================================================================================
 // Some basic shader handling: Compiling, enabling, setting shader variables
@@ -88,13 +88,13 @@ void Shader::UpdateMatrices(void) {
     }
     else {
         // both matrices must be column major
-        SetMatrix4f("mModelView", renderer->ModelView().AsArray(), false);
-        SetMatrix4f("mProjection", renderer->Projection().AsArray(), false);
+        SetMatrix4f("mModelView", basicRenderer->ModelView().AsArray(), false);
+        SetMatrix4f("mProjection", basicRenderer->Projection().AsArray(), false);
     }
-    renderer->CheckModelView();
-    renderer->CheckProjection();
+    basicRenderer->CheckModelView();
+    basicRenderer->CheckProjection();
     float glmData[16];
-    memcpy(glmData, renderer->Projection().AsArray(), sizeof(glmData));
+    memcpy(glmData, basicRenderer->Projection().AsArray(), sizeof(glmData));
 }
 
 // =================================================================================================

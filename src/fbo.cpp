@@ -1,6 +1,6 @@
 #include "glew.h"
 #include "fbo.h"
-#include "renderer.h"
+#include "basic_renderer.h"
 #include "shaderhandler.h"
 
 // =================================================================================================
@@ -70,22 +70,22 @@ int FBO::CreateSpecialBuffers(BufferInfo::eBufferType bufferType, int& attachmen
 
 bool FBO::DetachBuffer(int bufferIndex) {
     glFramebufferTexture2D(GL_FRAMEBUFFER, m_bufferInfo[bufferIndex].m_attachment, GL_TEXTURE_2D, 0, 0);
-    return renderer->CheckGLError();
+    return BasicRenderer::CheckGLError();
 }
 
 
 bool FBO::AttachBuffer(int bufferIndex) {
     glFramebufferTexture2D(GL_FRAMEBUFFER, m_bufferInfo[bufferIndex].m_attachment, GL_TEXTURE_2D, m_bufferInfo[bufferIndex].m_handle, 0);
-    return renderer->CheckGLError();
+    return BasicRenderer::CheckGLError();
 }
 
 
 bool FBO::AttachBuffers(bool hasMRTs) {
     if (not m_handle.Claim())
         return false;
-    renderer->ClearGLError();
+    BasicRenderer::ClearGLError();
     glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
-    renderer->CheckGLError();
+    BasicRenderer::CheckGLError();
     bool bindColorBuffers = true;
     for (int i = 0; i < m_bufferCount; i++) {
 #if 1
@@ -117,7 +117,7 @@ bool FBO::Create(int width, int height, int scale, const FBOBufferParams& params
     m_scale = scale;
     m_bufferCount = 0;
     m_bufferInfo.Resize(params.colorBufferCount + params.vertexBufferCount + params.depthBufferCount);
-    renderer->ClearGLError();
+    BasicRenderer::ClearGLError();
     int attachmentIndex = 0;
     for (int i = 0; i < params.colorBufferCount; i++) {
         CreateBuffer(i, attachmentIndex, BufferInfo::btColor, params.hasMRTs or (i == 0));
@@ -161,7 +161,7 @@ void FBO::SelectDrawBuffer(int bufferIndex, bool reenable) {
     if (reenable)
         glDrawBuffers(m_drawBuffers.Length(), m_drawBuffers.Data());
     else
-        renderer->SetDrawBuffers(this, &m_drawBuffers);
+        basicRenderer->SetDrawBuffers(this, &m_drawBuffers);
 }
 
 
@@ -181,27 +181,27 @@ bool FBO::Enable(int bufferIndex, bool clearBuffer, bool reenable) {
         return false;
     if (not reenable and (bufferIndex == m_lastBufferIndex))
         return true;
-    renderer->ClearGLError();
+    BasicRenderer::ClearGLError();
     if (bufferIndex < 0)
         Disable();
     else {
         m_lastBufferIndex = bufferIndex;
         BufferInfo& bi = m_bufferInfo[bufferIndex];
         glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
-        renderer->CheckGLError();
+        BasicRenderer::CheckGLError();
         if (!AttachBuffer(bufferIndex))
             return false;
-        renderer->CheckGLError();
+        BasicRenderer::CheckGLError();
         SelectDrawBuffer(bufferIndex, reenable);
-        renderer->CheckGLError();
+        BasicRenderer::CheckGLError();
         if (m_depthBufferIndex >= 0)
             glEnable(GL_DEPTH_TEST);
         else
             glDisable(GL_DEPTH_TEST);
     }
     Clear(m_bufferInfo[bufferIndex].m_attachment, clearBuffer);
-    renderer->CheckGLError();
-    //renderer->SetupOpenGL();
+    BasicRenderer::CheckGLError();
+    //basicRenderer->SetupOpenGL();
     return m_isEnabled = true;
 }
 
@@ -211,7 +211,7 @@ void FBO::Disable(void) {
         m_lastBufferIndex = INVALID_BUFFER_INDEX;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         ReleaseBuffers();
-        renderer->RestoreDrawBuffer();
+        basicRenderer->RestoreDrawBuffer();
         m_isEnabled = false;
     }
 }
@@ -220,13 +220,13 @@ void FBO::Disable(void) {
 bool FBO::BindBuffer(int bufferIndex, int tmuIndex) {
     if (bufferIndex < 0)
         return false;
-    renderer->ClearGLError();
+    BasicRenderer::ClearGLError();
     glEnable(GL_TEXTURE_2D);
     if (tmuIndex < 0)
         tmuIndex = bufferIndex;
     glActiveTexture(GL_TEXTURE0 + tmuIndex);
     glBindTexture(GL_TEXTURE_2D, m_bufferInfo[bufferIndex].m_handle);
-    renderer->CheckGLError("FBO::BindBuffer");
+    basicRenderer->CheckGLError("FBO::BindBuffer");
     m_bufferInfo[bufferIndex].m_tmuIndex = tmuIndex;
     glActiveTexture(GL_TEXTURE0); // always reset!
     return true;
@@ -244,15 +244,15 @@ void FBO::ReleaseBuffers(void) {
 
 
 Viewport FBO::SetViewport(void) {
-    m_viewportSave = new Viewport(renderer->m_viewport);
-    renderer->SetViewport(m_viewport, true);
+    m_viewportSave = new Viewport(basicRenderer->m_viewport);
+    basicRenderer->SetViewport(m_viewport, true);
     return *m_viewportSave;
 }
 
 
 void FBO::RestoreViewport(void) {
     if (m_viewportSave != nullptr) {
-        renderer->SetViewport(*m_viewportSave, true);
+        basicRenderer->SetViewport(*m_viewportSave, true);
         delete m_viewportSave;
         m_viewportSave = nullptr;
     }
@@ -271,12 +271,12 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
-    renderer->PushMatrix();
-    renderer->Translate(0.5, 0.5, 0);
+    basicRenderer->PushMatrix();
+    basicRenderer->Translate(0.5, 0.5, 0);
     if (params.flipVertically or (params.source & 1))
-        renderer->Scale(params.scale, -params.scale, 1);
+        basicRenderer->Scale(params.scale, -params.scale, 1);
     else if (params.scale != 1.0f)
-        renderer->Scale(params.scale, params.scale, 1);
+        basicRenderer->Scale(params.scale, params.scale, 1);
     glDepthFunc(GL_ALWAYS);
     glDisable(GL_CULL_FACE);
     if (params.shader)
@@ -286,7 +286,7 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     glDisable(GL_CULL_FACE);
     shaderHandler->StopShader();
     glDepthFunc(GL_LESS);
-    renderer->PopMatrix();
+    basicRenderer->PopMatrix();
     if (params.destination > -1)
         Disable();
     return true;
@@ -294,9 +294,9 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
 
 
 void FBO::Fill(RGBAColor color) {
-    renderer->Translate(0.5, 0.5, 0);
+    basicRenderer->Translate(0.5, 0.5, 0);
     m_viewportArea.Fill(static_cast<RGBColor>(color), color.A());
-    renderer->Translate(-0.5, -0.5, 0);
+    basicRenderer->Translate(-0.5, -0.5, 0);
 }
 
 

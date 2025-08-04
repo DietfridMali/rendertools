@@ -154,9 +154,11 @@ class BasicRenderer
             Fill(static_cast<const RGBColor&>(color), alpha, scale);
         }
 
-        void ClearGLError(void);
+        static void ClearGLError(void);
 
-        bool CheckGLError (const char* operation = "");
+        static bool CheckGLError (const char* operation = "");
 };
+
+extern BasicRenderer* basicRenderer;
 
 // =================================================================================================
