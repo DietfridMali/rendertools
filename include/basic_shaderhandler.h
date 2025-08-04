@@ -37,14 +37,9 @@ protected:
     virtual void CreateShaderCode(void) {  m_shaderCode = new BasicShaderCode(); }
 
 public:
-    int CreateShaders(void) {
-        if (m_shaderCode != nullptr)
-            return 0;
-        CreateShaderCode();
+    void CreateShaders(void) {
         if (m_shaderCode == nullptr)
-            return -1;
-        m_shaderCode->CreateShaders();
-        return 1;
+            CreateShaderCode();
     }
 
     Shader* SelectShader(Texture* texture);
