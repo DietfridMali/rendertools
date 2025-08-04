@@ -35,7 +35,7 @@ public:
 
     static int CompareTextures(void* context, const char& key1, const char& key2);
 
-    TextRenderer(String fontFolder, String fontName);
+    TextRenderer();
 
     bool Create(String fontFolder, String fontName);
 

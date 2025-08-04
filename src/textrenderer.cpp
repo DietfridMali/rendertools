@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "glew.h"
 #include "basic_renderer.h"
+#include "colordata.h"
 #include "textrenderer.h"
 #include "shaderhandler.h"
 
@@ -24,12 +25,9 @@ int TextRenderer::CompareTextures(void* context, const char& key1, const char& k
 }
 
 
-TextRenderer::TextRenderer(String fontFolder, String fontName) {
-    m_isAvailable = InitFont(fontFolder, fontName);
-    m_color = Vector4f{1, 1, 1, 1};
-    m_outlineColor = Vector4f{1, 1, 1, 1};
-    m_aaMethod = { "", 0 };
-    m_scale = 1.0;
+TextRenderer::TextRenderer() 
+    : m_isAvailable(false), m_color (ColorData::White), m_outlineColor (ColorData::White), m_aaMethod ({ "", 0 }), m_scale (1.0)
+{
 #ifdef _WIN32
     m_euroChar = "\xE2\x82\xAC"; // "\u20AC";
 #else
