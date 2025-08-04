@@ -86,7 +86,7 @@ void TextRenderer::CreateTextures(void) {
 }
 
 
-Quad& TextRenderer::CreateQuad(Quad& q, float x, float y, float d, Texture* t) {
+BasicQuad& TextRenderer::CreateQuad(BasicQuad& q, float x, float y, float d, Texture* t) {
 #if USE_TEXT_FBOS
     q.Setup({ Vector3f{x, y, 0.0}, Vector3f{x + d, y, 0.0}, Vector3f{x + d, -y, 0.0}, Vector3f{x, -y, 0.0} },
             { TexCoord{0, 0}, TexCoord{1, 0}, TexCoord{1, 1}, TexCoord{0, 1} },
@@ -150,7 +150,7 @@ void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float 
     float letterScale = 2 * xOffset / float(textWidth);
     float x = m_centerText ? -xOffset : -0.5f;
     Shader* shader = LoadShader();
-    Quad q;
+    BasicQuad q;
     for (char* p = text.Data(); *p; p++) {
         Texture* t = FindTexture(String(*p));
         if (not t) 

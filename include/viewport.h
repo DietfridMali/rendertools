@@ -2,7 +2,7 @@
 
 #include "rectangle.h"
 #include "vector.hpp"
-#include "quad.h"
+#include "basic_quad.h"
 #include "colordata.h"
 
 // =================================================================================================

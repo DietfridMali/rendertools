@@ -5,16 +5,12 @@
 
 // =================================================================================================
 
-extern ShaderSource colorShader;
-extern ShaderSource simpleTextureShader;
-extern ShaderSource gradientTextureShader;
-extern ShaderSource enhancedTextureShader;
-extern ShaderSource cubemapShader;
+extern ShaderSource plainColorShader;
+extern ShaderSource plainTextureShader;
 extern ShaderSource outlineShader;
 extern ShaderSource boxBlurShader;
 extern ShaderSource fxaaShader;
 extern ShaderSource gaussBlurShader;
-extern ShaderSource decalShader;
 
 // -------------------------------------------------------------------------------------------------
 

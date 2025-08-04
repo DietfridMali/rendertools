@@ -117,6 +117,87 @@ float BasicQuad::ComputeAspectRatio(void) {
 }
 
 
+Shader* BasicQuad::LoadShader(bool useTexture, const RGBAColor& color) {
+    Shader* shader = shaderHandler->SetupShader(useTexture ? "plainTexture" : "plainColor");
+    if (shader)
+        shader->SetVector4f("effectColor", color);
+    return shader;
+}
+
+
+void BasicQuad::Render(RGBAColor color) {
+    if (UpdateVAO()) {
+        Render(LoadShader(m_texture != nullptr, color), m_texture, false);
+        shaderHandler->StopShader();
+    }
+    else {
+        glEnable(GL_TEXTURE_2D);
+        m_texture->Enable();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBegin(GL_QUADS);
+        for (auto& v : m_vertexBuffer.m_appData) {
+            glColor4f(color.R(), color.G(), color.B(), color.A());
+            glVertex3f(v.X(), v.Y(), v.Z());
+        }
+        glEnd();
+        m_texture->Disable();
+    }
+}
+
+
+void BasicQuad::Render(Shader* shader, Texture* texture, bool updateVAO) {
+    if (not updateVAO or UpdateVAO()) {
+        m_vao->Render(shader, texture);
+    }
+    else {
+        glEnable(GL_TEXTURE_2D);
+        texture->Enable();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBegin(GL_QUADS);
+        for (auto& v : m_vertexBuffer.m_appData) {
+            glColor4f(1, 1, 1, 1);
+            glVertex3f(v.X(), v.Y(), v.Z());
+        }
+        glEnd();
+        texture->Disable();
+    }
+}
+
+
+void BasicQuad::Render(Texture* texture) {
+    if (UpdateVAO()) {
+        m_vao->Render(LoadShader(texture != nullptr), texture);
+    }
+}
+
+
+// fill 2D area defined by x and y components of vertices with color color
+void BasicQuad::Fill(RGBAColor color) {
+    if (UpdateVAO()) {
+        Render(LoadShader(false, color), nullptr);
+        shaderHandler->StopShader();
+    }
+    else {
+        glDisable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+        //for (auto& v : m_vertexBuffer.m_appData) 
+        {
+            glColor4f(color.R(), color.G(), color.B(), color.A());
+            //glVertex2f(v.X(), v.Y());
+
+            glVertex2f(0, 0);
+            glVertex2f(0, 1);
+            glVertex2f(1, 1);
+            glVertex2f(1, 0);
+
+        }
+        glEnd();
+    }
+}
+
+
 void BasicQuad::Destroy(void) {
     if constexpr (not is_static_member_v<&BasicQuad::m_vao>) {
         m_vao->Destroy(); // don't destroy static members as they may be reused by other resources any time during program execution. Will be automatically destroyed at program termination

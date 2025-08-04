@@ -50,7 +50,7 @@ class BasicRenderer
         List<DrawBufferInfo>    m_drawBufferStack;
 #endif
         Viewport                m_viewport;
-        Quad                    m_viewportArea;
+        BasicQuad               m_viewportArea;
         Texture                 m_renderTexture;
 
     protected:

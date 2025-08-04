@@ -51,7 +51,7 @@ public:
     bool                        m_isEnabled;
     int                         m_lastBufferIndex;
     int                         m_lastDestination;
-    Quad                        m_viewportArea;
+    BasicQuad                   m_viewportArea;
 
     struct FBOBufferParams {
         int colorBufferCount = 1;

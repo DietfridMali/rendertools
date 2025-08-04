@@ -74,6 +74,22 @@ class BasicQuad
         m_color = color;
     }
 
+    Shader* LoadShader(bool useTexture, const RGBAColor& color = ColorData::White);
+
+    void Render(RGBAColor color = ColorData::White);
+
+    void Render(Shader* shader, Texture* texture, bool updateVAO = true);
+
+    void Render(Texture* texture);
+
+    // fill 2D area defined by x and y components of vertices with color color
+    void Fill(RGBAColor color);
+
+    inline void Fill(RGBColor color, float alpha = 1.0f) {
+        return Fill(RGBAColor (color.R(), color.G(), color.B(), alpha));
+    }
+
+
     ~BasicQuad() {
         Destroy();
     }

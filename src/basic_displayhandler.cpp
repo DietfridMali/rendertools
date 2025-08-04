@@ -14,7 +14,7 @@ BasicDisplayHandler::BasicDisplayHandler(String windowTitle, int width, int heig
     SDL_GetDisplayBounds(0, &rect);
     m_maxWidth = rect.w;
     m_maxHeight = rect.h;
-    ComputeDimensions();
+    ComputeDimensions(width, height, fullscreen);
     m_isLandscape = m_width > m_height;
     m_vSync = vSync;
     SetupDisplay(windowTitle);

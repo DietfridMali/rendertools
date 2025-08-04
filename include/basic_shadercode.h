@@ -60,25 +60,6 @@ public:
 
 // =================================================================================================
 
-#define GRADIENT R"(
-        float Gradient() { 
-            if (maxDist == 0.0)
-                return 1.0;
-            float s = clamp(pow (length(fragPos) / abs(maxDist), 0.5), 0.2, 1.0);
-            return (maxDist > 0) ? 1.0 - s : 2.0 - 2 * s; // continually darker from start or gradient flipping in the middle
-            }
-        )"
-
-
-#define IS_BORDER R"(
-        bool IsBorder() {
-            if (borderWidth == 0.0)
-                return false;
-            vec2 borders = borderWidth * vec2(aspectRatio, 1.0);
-            return (min (fragTexCoord.x, maxTexCoord.x - fragTexCoord.x) < borders.x) || (min (fragTexCoord.y, maxTexCoord.y - fragTexCoord.y) < borders.y);
-            }
-        )"
-
 extern String standardVS;
 
 // =================================================================================================

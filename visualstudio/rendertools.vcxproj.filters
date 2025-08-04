@@ -63,9 +63,6 @@
     <ClInclude Include="..\include\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\shadercode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\shaderhandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -183,6 +180,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\linesegment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\texture_shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
