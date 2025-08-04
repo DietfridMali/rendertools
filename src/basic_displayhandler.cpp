@@ -14,6 +14,14 @@ BasicDisplayHandler::BasicDisplayHandler(String windowTitle, int width, int heig
     SDL_GetDisplayBounds(0, &rect);
     m_maxWidth = rect.w;
     m_maxHeight = rect.h;
+    ComputeDimensions();
+    m_isLandscape = m_width > m_height;
+    m_vSync = vSync;
+    SetupDisplay(windowTitle);
+}
+
+
+void BasicDisplayHandler::ComputeDimensions(int width, int height, bool fullscreen) {
     if (m_width * m_height == 0) {
         m_width = m_maxWidth;
         m_height = m_maxHeight;
@@ -24,9 +32,6 @@ BasicDisplayHandler::BasicDisplayHandler(String windowTitle, int width, int heig
         m_height = std::min(height, m_maxHeight);
         m_fullscreen = fullscreen;
     }
-    m_vSync = vSync;
-    m_isLandscape = m_width > m_height;
-    SetupDisplay(windowTitle);
 }
 
 

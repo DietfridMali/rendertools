@@ -25,6 +25,8 @@ public:
 
     BasicDisplayHandler(String windowTitle = "", int width = 1920, int height = 1080, bool fullscreen = true, bool vSync = true);
 
+    virtual void ComputeDimensions(int width, int height, bool fullscreen);
+
     ~BasicDisplayHandler();
 
     void SetupDisplay(String windowTitle);
