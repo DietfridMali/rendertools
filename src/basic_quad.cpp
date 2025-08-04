@@ -2,7 +2,9 @@
 #define NOMINMAX
 #include <algorithm>
 
-#include "quad.h"
+#include "vbo.h"
+#include "vao.h"
+#include "basic_quad.h"
 #include "shaderhandler.h"
 #include "type_helper.hpp"
 
@@ -20,9 +22,8 @@ BasicQuad& BasicQuad::Copy(const BasicQuad& other) {
         m_texCoordBuffer = other.m_texCoordBuffer;
         m_texture = other.m_texture;
         m_color = other.m_color;
-        m_borderWidth = other.m_borderWidth;
         m_aspectRatio = other.m_aspectRatio;
-        m_vao = other.m_vao;
+        m_isAvailable = other.m_isAvailable;
     }
     return *this;
 }
@@ -34,9 +35,8 @@ BasicQuad& BasicQuad::Move(BasicQuad& other) {
         m_texCoordBuffer = std::move(other.m_texCoordBuffer);
         m_texture = std::move(other.m_texture);
         m_color = other.m_color;
-        m_borderWidth = other.m_borderWidth;
         m_aspectRatio = other.m_aspectRatio;
-        m_vao = std::move(other.m_vao);
+        m_isAvailable = other.m_isAvailable;
     }
     return *this;
 }
@@ -66,28 +66,18 @@ void BasicQuad::CreateTexCoords(void) {
 }
 
 
-void BasicQuad::CreateNormals(void) {
-    //Vector3f normal({ 0, 0, -1 });
-    for (int i = 0; i < 4; i++)
-        m_normalBuffer.Append(m_normal);
-}
-
-
 bool BasicQuad::Setup(std::initializer_list<Vector3f> vertices, std::initializer_list<TexCoord> texCoords, Texture* texture, RGBAColor color/*, float borderWidth*/) {
     Plane::Init(vertices);
     m_vertexBuffer.m_appData = vertices;
     m_texCoordBuffer.m_appData = texCoords;
     CreateTexCoords();
-    CreateNormals();
     m_vertexBuffer.Setup();
     m_texCoordBuffer.Setup();
-    m_normalBuffer.Setup();
     if (not CreateVAO ())
         return false;
     m_vao->Init(GL_QUADS);
     m_texture = texture;
     m_color = color;
-    m_borderWidth = 0; // borderWidth;
     m_aspectRatio = ComputeAspectRatio();
     return true;
 }
@@ -124,102 +114,6 @@ float BasicQuad::ComputeAspectRatio(void) {
         vMax.Maximize(v);
     }
     return (vMax.Y() - vMin.Y()) / (vMax.X() - vMin.X());
-}
-
-
-Shader* BasicQuad::LoadShader(bool useTexture, const RGBAColor& color, float maxDistance, float offset) {
-    Shader* shader = shaderHandler->SetupShader(useTexture ? (maxDistance == 0) ? "simpleTexture" : "gradientTexture" : "color");
-    if (shader) {
-        shader->SetVector4f("surfaceColor", color);
-        if (maxDistance != 0) // negative values are possible, causing fragments closer than half of maxDistance to be brighter, the others to be darker
-            shader->SetFloat("maxDist", maxDistance);
-        shader->SetFloat("offset", offset);
-#if 0 // there are no quads with black border right now
-        if (useTexture) {
-            shader->SetFloat("borderWidth", m_borderWidth);
-            shader->SetFloat("aspectRatio", m_aspectRatio);
-        }
-#endif
-    }
-    return shader;
-}
-
-
-void BasicQuad::UpdateShader(Shader* shader) {
-    shader->SetVector2f("maxTexCoord", m_maxTexCoord.U(), m_maxTexCoord.V());
-}
-
-
-void BasicQuad::Render(RGBAColor color, float maxDistance, float offset) {
-    if (UpdateVAO()) {
-        Render(LoadShader(m_texture != nullptr, color, maxDistance, offset), m_texture, false);
-        shaderHandler->StopShader();
-    }
-    else {
-        glEnable(GL_TEXTURE_2D);
-        m_texture->Enable();
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBegin(GL_QUADS);
-        for (auto& v : m_vertexBuffer.m_appData) {
-            glColor4f(color.R(), color.G(), color.B(), color.A());
-            glVertex3f(v.X(), v.Y(), v.Z());
-        }
-        glEnd();
-        m_texture->Disable();
-    }
-}
-
-
-void BasicQuad::Render(Shader* shader, Texture* texture, bool updateVAO) {
-    if (not updateVAO or UpdateVAO()) {
-        m_vao->Render(shader, texture);
-    }
-    else {
-        glEnable(GL_TEXTURE_2D);
-        texture->Enable();
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBegin(GL_QUADS);
-        for (auto& v : m_vertexBuffer.m_appData) {
-            glColor4f(1,1,1,1);
-            glVertex3f(v.X(), v.Y(), v.Z());
-        }
-        glEnd();
-        texture->Disable();
-    }
-}
-
-
-void BasicQuad::Render(Texture* texture) {
-    if (UpdateVAO()) {
-        m_vao->Render(LoadShader(texture != nullptr), texture);
-    }
-}
-
-
-// fill 2D area defined by x and y components of vertices with color color
-void BasicQuad::Fill(RGBColor color, float alpha, float offset) {
-    if (UpdateVAO()) {
-        Render(LoadShader(false, RGBAColor(color, alpha), 0, offset), nullptr);
-        shaderHandler->StopShader();
-    }
-    else {
-        glDisable(GL_TEXTURE_2D);
-        glBegin(GL_QUADS);
-        //for (auto& v : m_vertexBuffer.m_appData) 
-        {
-            glColor4f(color.R(), color.G(), color.B(), alpha);
-            //glVertex2f(v.X(), v.Y());
-            
-            glVertex2f(0, 0);
-            glVertex2f(0, 1);
-            glVertex2f(1, 1);
-            glVertex2f(1, 0);
-            
-        }
-        glEnd();
-    }
 }
 
 
