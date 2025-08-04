@@ -62,8 +62,7 @@ void BasicDisplayHandler::SetupDisplay(String windowTitle) {
 }
 
 
-void BasicDisplayHandler::Update(const std::function<void()>& drawScreen) {
-    drawScreen();
+void BasicDisplayHandler::Update(void) {
     SDL_GL_SwapWindow(m_window);
 }
 

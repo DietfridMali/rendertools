@@ -23,13 +23,13 @@ public:
     SDL_Window*     m_window;
     SDL_GLContext   m_context;
 
-    BasicDisplayHandler(String windowTitle, int width = 1920, int height = 1080, bool fullscreen = true, bool vSync = true);
+    BasicDisplayHandler(String windowTitle = "", int width = 1920, int height = 1080, bool fullscreen = true, bool vSync = true);
 
     ~BasicDisplayHandler();
 
     void SetupDisplay(String windowTitle);
 
-    void Update(const std::function<void()>& drawScreen);
+    void Update(void);
 
     inline int GetWidth(void) {
         return m_width;
@@ -43,8 +43,6 @@ public:
         return m_aspectRatio;
     }
 };
-
-extern BasicDisplayHandler* displayHandler;
 
 // =================================================================================================
 
