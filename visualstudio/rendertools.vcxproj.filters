@@ -48,7 +48,7 @@
     <ClInclude Include="..\include\projection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\quad.h">
+    <ClInclude Include="..\include\basic_quad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\rectangle.h">
@@ -128,7 +128,7 @@
     <ClCompile Include="..\src\projection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\quad.cpp">
+    <ClCompile Include="..\src\basic_quad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\basic_renderer.cpp">
