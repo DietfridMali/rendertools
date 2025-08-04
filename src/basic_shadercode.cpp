@@ -16,6 +16,8 @@ extern ShaderSource gaussBlurShader;
 
 BasicShaderCode::BasicShaderCode() {
     m_shaderSource = {
+        &plainColorShader,
+        &plainTextureShader,
         &outlineShader,
         &boxBlurShader,
         &fxaaShader,
@@ -34,11 +36,15 @@ void BasicShaderCode::CreateShaders(void) {
     m_shaders.Reserve(m_shaderSource.Length());
     for (int i = 0; i < m_shaderSource.Length(); i++) {
         ShaderSource* ss = m_shaderSource[i];
+        fprintf(stderr, "creating shader '%s'", (char*) ss->m_name);
         Shader* s = new Shader(ss->m_name);
         if (s->Create(ss->m_vs, ss->m_fs))
             m_shaders.Push(s);
-        else
+        else {
             m_shaders.Push(nullptr);
+            fprintf(stderr, " - failed");
+        }
+        fprintf(stderr, "\n");
         //m_shaders.Insert(ss.m_name, s);
     }
 }

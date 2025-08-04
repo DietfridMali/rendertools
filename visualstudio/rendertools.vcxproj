@@ -160,7 +160,7 @@
     <ClInclude Include="..\include\basic_renderer.h" />
     <ClInclude Include="..\include\rendermatrices.h" />
     <ClInclude Include="..\include\shader.h" />
-    <ClInclude Include="..\include\shaderhandler.h" />
+    <ClInclude Include="..\include\basic_shaderhandler.h" />
     <ClInclude Include="..\include\SSBO.hpp" />
     <ClInclude Include="..\include\texcoord.h" />
     <ClInclude Include="..\include\textrenderer.h" />
@@ -192,7 +192,7 @@
     <ClCompile Include="..\src\basic_renderer.cpp" />
     <ClCompile Include="..\src\rendermatrices.cpp" />
     <ClCompile Include="..\src\shader.cpp" />
-    <ClCompile Include="..\src\shaderhandler.cpp" />
+    <ClCompile Include="..\src\basic_shaderhandler.cpp" />
     <ClCompile Include="..\src\shader_macros.cpp" />
     <ClCompile Include="..\src\SSBO.cpp" />
     <ClCompile Include="..\src\textrenderer.cpp" />

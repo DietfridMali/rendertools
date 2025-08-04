@@ -7,17 +7,18 @@
 
 // =================================================================================================
 
-class ShaderHandler : public BasicShaderCode {
+class BasicShaderHandler {
 public:
     typedef Shader* (__cdecl* tShaderLoader) (void);
 
-    ManagedArray<FloatArray*>  m_kernels;
-    Shader*             m_activeShader;
-    Texture             m_grayNoise;
+    ManagedArray<FloatArray*>   m_kernels;
+    Shader*                     m_activeShader;
+    Texture                     m_grayNoise;
+    BasicShaderCode*            m_shaderCode;
 
 
-    ShaderHandler() 
-        : m_kernels(16)
+    BasicShaderHandler() 
+        : m_kernels(16), m_shaderCode(nullptr)
     {
         m_activeShader = nullptr;
 #if 0
@@ -27,8 +28,10 @@ public:
         ComputeGaussKernels();
     }
 
-    ~ShaderHandler() 
+    ~BasicShaderHandler() 
     { }
+
+    virtual void CreateShaderCode(void) { m_shaderCode = new BasicShaderCode(); }
 
     Shader* SelectShader(Texture* texture);
 
@@ -40,14 +43,8 @@ public:
         return m_activeShader != shader;
     }
 
-    static int Compare(Shader* const& data, String const& key) {
-        return String::Compare(nullptr, data->m_name, key);
-    }
-
     inline Shader* GetShader(String shaderId) {
-        //return m_shaders[shaderId];
-        int32_t i = m_shaders.FindBinary(shaderId, ShaderHandler::Compare);
-        return (i < 0) ? nullptr : m_shaders[i];
+        return m_shaderCode->GetShader (shaderId);
     }
 
     inline FloatArray* GetKernel(int radius) {
@@ -60,7 +57,7 @@ private:
     void ComputeGaussKernels(void);
 };
 
-extern ShaderHandler* shaderHandler;
+extern BasicShaderHandler* shaderHandler;
 
 // =================================================================================================
 

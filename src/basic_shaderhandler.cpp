@@ -1,13 +1,13 @@
 
 #include "matrix.hpp"
-#include "shaderhandler.h"
+#include "basic_shaderhandler.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 
 // =================================================================================================
 
-FloatArray* ShaderHandler::ComputeGaussKernel1D(int radius) {
+FloatArray* BasicShaderHandler::ComputeGaussKernel1D(int radius) {
     FloatArray* kernel = new FloatArray(2 * radius + 1);
 
     const float sigma = float(radius) / 1.6f; // 2.0f; // Standardabweichung
@@ -38,13 +38,13 @@ FloatArray* ShaderHandler::ComputeGaussKernel1D(int radius) {
 }
 
 
-void ShaderHandler::ComputeGaussKernels(void) {
+void BasicShaderHandler::ComputeGaussKernels(void) {
     for (int radius = 1; radius <= 16; radius++)
         m_kernels[radius - 1] = ComputeGaussKernel1D(radius);
 }
 
 
-Shader* ShaderHandler::SelectShader(Texture* texture) {
+Shader* BasicShaderHandler::SelectShader(Texture* texture) {
     String shaderId = "";
     if (not texture)
         shaderId = "color";
@@ -59,7 +59,7 @@ Shader* ShaderHandler::SelectShader(Texture* texture) {
 }
 
 
-Shader* ShaderHandler::SetupShader(String shaderId) {
+Shader* BasicShaderHandler::SetupShader(String shaderId) {
     Shader* shader = GetShader(shaderId);
     //Shader** shaderPtr = m_shaders.Find(shaderId); // m_shaders[shaderId];
     if (shader == nullptr) {
@@ -79,13 +79,13 @@ Shader* ShaderHandler::SetupShader(String shaderId) {
 }
 
 
-void ShaderHandler::StopShader(void) {
+void BasicShaderHandler::StopShader(void) {
     if (ShaderIsActive()) {
         m_activeShader->Disable();
         m_activeShader = nullptr;
     }
 }
 
-ShaderHandler* shaderHandler = nullptr;
+BasicShaderHandler* shaderHandler = nullptr;
 
 // =================================================================================================

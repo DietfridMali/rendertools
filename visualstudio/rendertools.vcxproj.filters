@@ -63,7 +63,7 @@
     <ClInclude Include="..\include\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\shaderhandler.h">
+    <ClInclude Include="..\include\basic_shaderhandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\SSBO.hpp">
@@ -137,7 +137,7 @@
     <ClCompile Include="..\src\shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\shaderhandler.cpp">
+    <ClCompile Include="..\src\basic_shaderhandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\SSBO.cpp">

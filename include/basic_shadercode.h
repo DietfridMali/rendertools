@@ -77,6 +77,16 @@ public:
     void AddShaders(ManagedArray<ShaderSource*> shaderSource);
 
     void CreateShaders(void);
+
+    static int Compare(Shader* const& data, String const& key) {
+        return String::Compare(nullptr, data->m_name, key);
+    }
+
+    inline Shader* GetShader(String shaderId) {
+        //return m_shaders[shaderId];
+        int32_t i = m_shaders.FindBinary(shaderId, BasicShaderCode::Compare);
+        return (i < 0) ? nullptr : m_shaders[i];
+    }
 };
 
 // =================================================================================================
