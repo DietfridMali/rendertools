@@ -126,7 +126,7 @@ static const ShaderSource& GaussBlurShader() {
         }
         )"
     );
-    return gaussBlurShader();
+    return gaussBlurShader;
 }
 
 // =================================================================================================

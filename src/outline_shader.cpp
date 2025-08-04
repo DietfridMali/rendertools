@@ -42,7 +42,7 @@ const ShaderSource& OutlineShader() {
                 }
             )"
     );
-    return outLineShader;
+    return outlineShader;
 }
 
 // =================================================================================================
