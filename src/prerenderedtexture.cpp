@@ -1,7 +1,7 @@
 
 #include "glew.h"
 #include "vector.hpp"
-#include "quad.h"
+#include "basic_quad.h"
 #include "texture.h"
 #include "viewport.h"
 #include "fbo.h"

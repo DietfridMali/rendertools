@@ -5,7 +5,7 @@
 #include "vector.hpp"
 #include "colordata.h"
 #include "rectangle.h"
-#include "quad.h"
+#include "basic_quad.h"
 #include "texture.h"
 #include "viewport.h"
 #include "fbo.h"
@@ -90,7 +90,7 @@ public:
     Texture     m_image;
     RGBAColor   m_backgroundColor;
     float       m_scale;
-    Quad        m_viewportArea;
+    BasicQuad   m_viewportArea;
 
     PrerenderedImage(Texture& image, Viewport viewport, RGBAColor backgroundColor = ColorData::White, float scale = 1.0f)
         : PrerenderedItem(viewport), m_image(image), m_backgroundColor(backgroundColor), m_scale(scale)
