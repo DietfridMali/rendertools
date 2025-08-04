@@ -39,7 +39,6 @@ TextRenderer::TextRenderer()
     m_fbos.SetComparator(TextRenderer::CompareFBOs);
     m_textures.SetComparator(String::Compare); //TextRenderer::CompareTextures);
 #endif
-    CreateTextures();
 }
 
 
@@ -58,7 +57,9 @@ bool TextRenderer::InitFont(String fontFolder, String fontName) {
 
 
 bool TextRenderer::Create(String fontFolder, String fontName) {
-    return m_isAvailable = InitFont(fontFolder, fontName);
+    if (m_isAvailable = InitFont(fontFolder, fontName))
+        CreateTextures();
+    return m_isAvailable;
 }
 
 
@@ -126,7 +127,7 @@ FBO* TextRenderer::GetFBO(float scale) {
     if (fboRef != nullptr)
         return *fboRef;
     FBO* fbo = new FBO();
-    fbo->Create(basicRenderer->m_viewport.m_width, basicRenderer->m_viewport.m_height, 2, { .colorBufferCount = 2 });
+    fbo->Create(basicRenderer->m_viewport.m_width, basicRenderer->m_viewport.m_height, 2, { .name = "text", .colorBufferCount = 2});
     m_fbos.Insert(FBOID(fbo), fbo);
     return fbo;
 }
@@ -187,6 +188,7 @@ void TextRenderer::Fill(Vector4f color) {
 
 void TextRenderer::RenderToFBO(String text, FBO* fbo, Viewport& viewport, int renderAreaWidth, int renderAreaHeight, float outlineWidth, Vector4f outlineColor) {
     if (m_isAvailable) {
+        fbo->m_name = String::Concat ("[", text, "]");
         auto [textWidth, textHeight, aspectRatio] = TextSize(text);
         outlineWidth *= 2;
         textWidth += int (2 * outlineWidth + 0.5f);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "std_defines.h"
 #include <stdlib.h>
 #include <math.h>
 #include <functional>

@@ -94,15 +94,7 @@ class BasicRenderer
             return m_screenBuffer;
         }
 
-        inline void SetActiveBuffer(FBO* buffer, bool clearBuffer = false) {
-            if (m_activeBuffer != buffer) {
-                if (m_activeBuffer)
-                    m_activeBuffer->Disable();
-                m_activeBuffer = buffer;
-            }
-            if (!m_activeBuffer->IsEnabled())
-                m_activeBuffer->Enable(0, clearBuffer);
-        }
+        void SetActiveBuffer(FBO* buffer, bool clearBuffer = false);
 
         inline int WindowWidth(void) {
             return m_windowWidth;

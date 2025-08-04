@@ -133,6 +133,7 @@ bool FBO::Create(int width, int height, int scale, const FBOBufferParams& params
         m_drawBuffers[i] = m_bufferInfo[i].m_attachment;
     for (int i = 0; i < params.vertexBufferCount; i++)
         m_drawBuffers[vertexBufferOffset + i] = m_bufferInfo[m_vertexBufferIndex + i].m_attachment;
+    m_name = params.name;
     return true;
 }
 

@@ -35,8 +35,8 @@ BasicRenderer::BasicRenderer(int width, int height, float fov) // , Viewer* view
 void BasicRenderer::Create(void) {
     m_viewport = ::Viewport(0, 0, m_windowWidth, m_windowHeight);
     SetupOpenGL();
-    m_sceneBuffer.Create(m_sceneWidth, m_sceneHeight, 1, { .colorBufferCount = 1, .depthBufferCount = 1, .vertexBufferCount = 2, .hasMRTs = false } ); // FBO for 3D scene: 2 color (1 for normals plus transparency info in alpha channel), 1 depth, 1 vertex buffer (world pos)
-    m_screenBuffer.Create(m_windowWidth, m_windowHeight, 1, { .colorBufferCount = 1 }); // FBO for entire screen incl. 2D elements (e.g. UI)
+    m_sceneBuffer.Create(m_sceneWidth, m_sceneHeight, 1, { .name = "scene", .colorBufferCount = 1, .depthBufferCount = 1, .vertexBufferCount = 2, .hasMRTs = false}); // FBO for 3D scene: 2 color (1 for normals plus transparency info in alpha channel), 1 depth, 1 vertex buffer (world pos)
+    m_screenBuffer.Create(m_windowWidth, m_windowHeight, 1, { .name = "screen", .colorBufferCount = 1 }); // FBO for entire screen incl. 2D elements (e.g. UI)
     m_drawBufferStack.Clear();
     m_renderTexture.HasBuffer() = true;
     m_viewportArea.Setup({ Vector3f{ -0.5f, -0.5f, 0.0f }, Vector3f{ -0.5f, 0.5f, 0.0f }, Vector3f{ 0.5f, 0.5f, 0.0f }, Vector3f{ 0.5f, -0.5f, 0.0f } });
@@ -59,6 +59,17 @@ void BasicRenderer::SetupOpenGL (void) {
     glDisable (GL_POLYGON_OFFSET_FILL);
     glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     SetViewport ();
+}
+
+
+void BasicRenderer::SetActiveBuffer(FBO* buffer, bool clearBuffer) {
+    if (m_activeBuffer != buffer) {
+        if (m_activeBuffer)
+            m_activeBuffer->Disable();
+        m_activeBuffer = buffer;
+    }
+    if (m_activeBuffer and not m_activeBuffer->IsEnabled())
+        m_activeBuffer->Enable(0, clearBuffer);
 }
 
 

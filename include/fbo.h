@@ -54,6 +54,7 @@ public:
     BasicQuad                   m_viewportArea;
 
     struct FBOBufferParams {
+        String name = "";
         int colorBufferCount = 1;
         int depthBufferCount = 0;
         int vertexBufferCount = 0;

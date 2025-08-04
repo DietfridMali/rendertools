@@ -22,7 +22,7 @@ BasicDisplayHandler::BasicDisplayHandler(String windowTitle, int width, int heig
 
 
 void BasicDisplayHandler::ComputeDimensions(int width, int height, bool fullscreen) {
-    if (m_width * m_height == 0) {
+    if (width * height == 0) {
         m_width = m_maxWidth;
         m_height = m_maxHeight;
         m_fullscreen = true;
