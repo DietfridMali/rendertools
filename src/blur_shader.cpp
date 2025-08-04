@@ -5,7 +5,7 @@
 
 // =================================================================================================
 
-static const ShaderSource& BoxBlurShader() {
+const ShaderSource& BoxBlurShader() {
     static const ShaderSource boxBlurShader(
         "boxblur",
         StandardVS(),
@@ -52,7 +52,7 @@ static const ShaderSource& BoxBlurShader() {
     return boxBlurShader;
 }
 
-static const ShaderSource& FxaaShader() {
+const ShaderSource& FxaaShader() {
     static const ShaderSource fxaaShader(
         "fxaa",
         StandardVS(),
@@ -99,7 +99,7 @@ static const ShaderSource& FxaaShader() {
     return fxaaShader;
 }
 
-static const ShaderSource& GaussBlurShader() {
+const ShaderSource& GaussBlurShader() {
     static const ShaderSource gaussBlurShader(
         "gaussblur",
         StandardVS(),

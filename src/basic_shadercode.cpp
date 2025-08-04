@@ -5,12 +5,12 @@
 
 // =================================================================================================
 
-extern const ShaderSource& PlainColorShader();
-extern const ShaderSource& PlainTextureShader();
-extern const ShaderSource& OutlineShader();
-extern const ShaderSource& BoxBlurShader();
-extern const ShaderSource& FxaaShader();
-extern const ShaderSource& GaussBlurShader();
+const ShaderSource& PlainColorShader();
+const ShaderSource& PlainTextureShader();
+const ShaderSource& OutlineShader();
+const ShaderSource& BoxBlurShader();
+const ShaderSource& FxaaShader();
+const ShaderSource& GaussBlurShader();
 
 // -------------------------------------------------------------------------------------------------
 

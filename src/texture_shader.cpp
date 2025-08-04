@@ -5,7 +5,7 @@
 
 // =================================================================================================
 
-static const ShaderSource& PlainColorShader() {
+const ShaderSource& PlainColorShader() {
     static const ShaderSource plainColorShader(
         "plainColor",
         StandardVS(),
@@ -29,7 +29,7 @@ static const ShaderSource& PlainColorShader() {
 
 
     // render a b/w mask with color applied.
-static const ShaderSource& PlainTextureShader() {
+const ShaderSource& PlainTextureShader() {
     static const ShaderSource plainTextureShader(
         "plainTexture",
         StandardVS(),
