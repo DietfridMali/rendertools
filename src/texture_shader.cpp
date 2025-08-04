@@ -19,8 +19,8 @@ const ShaderSource& PlainColorShader() {
         out vec4 fragColor;
     )"
         R"(
-    void main() {
-        fragColor = surfaceColor;
+        void main() {
+            fragColor = vec4(1,0.5,0,1); //surfaceColor;
     }
     )"
     );

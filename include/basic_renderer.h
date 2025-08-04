@@ -83,7 +83,7 @@ class BasicRenderer
 
         virtual void EnableCamera(void) { }
 
-        void DisableCamera(void) { }
+        virtual void DisableCamera(void) { }
 
         inline FBO& SceneBuffer(void) {
             return m_sceneBuffer;

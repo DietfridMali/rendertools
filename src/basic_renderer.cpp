@@ -88,9 +88,9 @@ void BasicRenderer::ResetDrawBuffers(FBO* activeBuffer, bool clearBuffer) {
 
 void BasicRenderer::Start3DScene(void) {
     ResetDrawBuffers(&m_sceneBuffer);
-    SetViewport(::Viewport(m_sceneLeft, 0, m_sceneWidth, m_sceneHeight), false);
-    SetupOpenGL();
     SetupTransformation();
+    SetupOpenGL();
+    SetViewport(::Viewport(m_sceneLeft, 0, m_sceneWidth, m_sceneHeight), false);
     EnableCamera();
 }
 
@@ -122,8 +122,12 @@ void BasicRenderer::Draw3DScene(void) {
     glDepthFunc(GL_ALWAYS);
     glDisable(GL_CULL_FACE);
     SetViewport(::Viewport(m_sceneLeft, 0, m_sceneWidth, m_sceneHeight), false);
+#if 1
     m_renderTexture.m_handle = m_sceneBuffer.BufferHandle(0);
     m_viewportArea.Render(&m_renderTexture);
+#else
+    m_viewportArea.Fill(ColorData::Orange);
+#endif
     basicRenderer->PopMatrix();
 }
 
@@ -134,9 +138,10 @@ void BasicRenderer::DrawScreen (bool bRotate) {
         Stop2DScene();
         glDepthFunc(GL_ALWAYS);
         glDisable(GL_CULL_FACE); // required for vertical flipping because that inverts the buffer's winding
+        SetViewport(::Viewport(0, 0, m_windowWidth, m_windowHeight), false);
         glClear(GL_COLOR_BUFFER_BIT);
         Translate(0.5, 0.5, 0);
-#if 0
+#if 1
         if (bRotate)
             Rotate(90, 0, 0, 1);
         else

@@ -17,7 +17,7 @@ Matrix4f Projection::Create(float aspectRatio, float fov, bool rowMajor)
 Matrix4f Projection::ComputeProjection(bool rowMajor)
 {
     //m_projection.Create (16);
-    float yMax = m_zNear * tanf(Conversions::DegToRad (m_fov / 2));
+    float yMax = m_zNear * tanf(Conversions::DegToRad(m_fov / 2));
     //ymin = -ymax;
     //xmin = -ymax * aspectRatio;
     float xMax = yMax * m_aspectRatio;
