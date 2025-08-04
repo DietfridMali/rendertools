@@ -64,7 +64,7 @@ class BasicRenderer
         bool                    m_screenIsValid;
 
     public:
-        BasicRenderer(int width = 1920, int height = 1080); // , Viewer* viewer = nullptr);
+        BasicRenderer(int width = 1920, int height = 1080, float fov = 45);
 
         void Create(void);
             

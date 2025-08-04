@@ -3,14 +3,13 @@
 #include "glew.h"
 #include "conversions.hpp"
 #include "projection.h"
-#include "arghandler.h"
 
 // =================================================================================================
 
-Matrix4f Projection::Create(float aspectRatio, bool rowMajor)
+Matrix4f Projection::Create(float aspectRatio, float fov, bool rowMajor)
 {
+    m_fov = fov;
     m_aspectRatio = aspectRatio;
-    m_fov = std::clamp(argHandler->FloatVal("fov", 0, 90), 90.0f, 120.0f) / 2;
     return ComputeProjection(rowMajor);
 }
 

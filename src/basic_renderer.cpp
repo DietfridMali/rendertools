@@ -15,7 +15,7 @@
 // rendered sideways. That's why BasicRenderer class has m_windowWidth, m_windowHeight and m_aspectRatio
 // separate from DisplayHandler.
 
-BasicRenderer::BasicRenderer(int width, int height) // , Viewer* viewer)
+BasicRenderer::BasicRenderer(int width, int height, float fov) // , Viewer* viewer)
     : m_activeBuffer(nullptr), m_screenIsValid(false)
 {
     //m_viewer = viewer;
@@ -28,7 +28,7 @@ BasicRenderer::BasicRenderer(int width, int height) // , Viewer* viewer)
     m_aspectRatio = float(m_windowWidth) / float(m_windowHeight); // just for code clarity
     m_drawBuffers.Resize(1);
     m_drawBuffers[0] = GL_BACK;
-    CreateMatrices(m_windowWidth, m_windowHeight, float(m_sceneWidth) / float(m_sceneHeight));
+    CreateMatrices(m_windowWidth, m_windowHeight, float(m_sceneWidth) / float(m_sceneHeight), fov);
 }
 
 
@@ -214,5 +214,7 @@ bool BasicRenderer::CheckGLError (const char* operation) {
     }
     return true;
 }
+
+BasicRenderer* renderer = nullptr;
 
 // =================================================================================================

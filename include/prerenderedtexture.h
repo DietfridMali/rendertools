@@ -10,7 +10,6 @@
 #include "viewport.h"
 #include "fbo.h"
 #include "textrenderer.h"
-#include "renderer.h"
 
 // =================================================================================================
 

@@ -1,15 +1,15 @@
+
 #include "std_defines.h"
 #include "glew.h"
 #include "SDL.h"
-#include "renderer.h"
+#include "basic_displayhandler.h"
 #include <stdlib.h>
 #include <math.h>
 #include <algorithm>
 
-
 // =================================================================================================
 
-DisplayHandler::DisplayHandler(int width, int height, bool fullscreen, int vSync) {
+BasicDisplayHandler::BasicDisplayHandler(String windowTitle, int width, int height, bool fullscreen, bool vSync) {
     SDL_Rect rect;
     SDL_GetDisplayBounds(0, &rect);
     m_maxWidth = rect.w;
@@ -26,18 +26,18 @@ DisplayHandler::DisplayHandler(int width, int height, bool fullscreen, int vSync
     }
     m_vSync = vSync;
     m_isLandscape = m_width > m_height;
-    SetupDisplay();
+    SetupDisplay(windowTitle);
 }
 
 
-DisplayHandler::~DisplayHandler() {
+BasicDisplayHandler::~BasicDisplayHandler() {
     SDL_GL_DeleteContext(m_context);
 }
 
 
-void DisplayHandler::SetupDisplay(void) {
+void BasicDisplayHandler::SetupDisplay(String windowTitle) {
     int screenType = SDL_WINDOW_OPENGL;
-    if (m_fullscreen or (argHandler->IntVal("fullscreen", 0, 0) == 1)) {
+    if (m_fullscreen) {
         if ((m_width != m_maxWidth) or (m_height != m_maxHeight))
             screenType |= SDL_WINDOW_BORDERLESS;
         else
@@ -46,7 +46,7 @@ void DisplayHandler::SetupDisplay(void) {
     }
     m_aspectRatio = float(m_width) / float(m_height);
 #if 1
-    m_window = SDL_CreateWindow("SmileyBattle(c) 1.1.0 by Dietfrid Mali", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_width, m_height, screenType);
+    m_window = SDL_CreateWindow(windowTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_width, m_height, screenType);
     if (not m_window) {
         fprintf(stderr, "Couldn't set screen mode (%d x %d)\n", m_width, m_height);
         exit(1);
@@ -62,11 +62,9 @@ void DisplayHandler::SetupDisplay(void) {
 }
 
 
-void DisplayHandler::Update(void) {
-    renderer->Update();
+void BasicDisplayHandler::Update(const std::function<void()>& drawScreen) {
+    drawScreen();
     SDL_GL_SwapWindow(m_window);
 }
-
-DisplayHandler* displayHandler = nullptr;
 
 // =================================================================================================

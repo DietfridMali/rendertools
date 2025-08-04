@@ -31,7 +31,7 @@ public:
     RenderMatrices() { }
 
 
-    void CreateMatrices(int windowWidth, int windowHeight, float aspectRatio);
+    void CreateMatrices(int windowWidth, int windowHeight, float aspectRatio, float fov);
 
 
     inline float ZNear(void) {

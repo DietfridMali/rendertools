@@ -12,11 +12,11 @@ List<Matrix4f> RenderMatrices::matrixStack;
 
 // =================================================================================================
 
-void RenderMatrices::CreateMatrices(int windowWidth, int windowHeight, float aspectRatio) {
+void RenderMatrices::CreateMatrices(int windowWidth, int windowHeight, float aspectRatio, float fov) {
     m_renderMatrices[mtModelView] = Matrix4f::IDENTITY;
     m_renderMatrices[mtProjection2D] = m_projection.ComputeOrthoProjection(0.0f, float(windowWidth), 0.0f, float(windowHeight), -1.0f, 1.0f);
     m_renderMatrices[mtProjection2D].AsArray();
-    m_renderMatrices[mtProjection3D] = m_projection.Create(aspectRatio, true);
+    m_renderMatrices[mtProjection3D] = m_projection.Create(aspectRatio, fov, true);
     m_renderMatrices[mtProjection3D].AsArray();
 }
 

@@ -2,12 +2,13 @@
 
 #include <stdlib.h>
 #include <math.h>
-
+#include <functional>
+#include "string.hpp"
 
 // =================================================================================================
 // basic renderer class. Initializes display and OpenGL and sets up projections and view matrix
 
-class DisplayHandler 
+class BasicDisplayHandler 
 {
 
 public:
@@ -22,13 +23,13 @@ public:
     SDL_Window*     m_window;
     SDL_GLContext   m_context;
 
-    DisplayHandler(int width = 1920, int height = 1080, bool fullscreen = true, bool vSync = true);
+    BasicDisplayHandler(String windowTitle, int width = 1920, int height = 1080, bool fullscreen = true, bool vSync = true);
 
-    ~DisplayHandler();
+    ~BasicDisplayHandler();
 
-    void SetupDisplay(void);
+    void SetupDisplay(String windowTitle);
 
-    void Update(void);
+    void Update(const std::function<void()>& drawScreen);
 
     inline int GetWidth(void) {
         return m_width;
@@ -43,6 +44,7 @@ public:
     }
 };
 
-extern DisplayHandler* displayHandler;
+extern BasicDisplayHandler* displayHandler;
 
 // =================================================================================================
+

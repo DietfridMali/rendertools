@@ -109,11 +109,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>USE_STD=1;USE_GLM=1;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_STD=1;USE_GLM=1;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\SDL2-2.30.10\include;..\..\SDL2_image-2.0.5\include;..\..\cpptools\include;..\..\glm;..\glew-2.2.0\include\GL;..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\SDL2_ttf-2.0.15\include;..\..\SDL2-2.30.10\include;..\..\SDL2_image-2.0.5\include;..\..\cpptools\include;..\..\glm;..\glew-2.2.0\include\GL;..\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -128,12 +128,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>USE_STD=1;USE_GLM=1;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_STD=1;USE_GLM=1;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>..\..\cpptools\include;..\..\glm;..\glew-2.2.0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\SDL2_ttf-2.0.15\include;..\..\SDL2-2.30.10\include;..\..\SDL2_image-2.0.5\include;..\..\cpptools\include;..\..\glm;..\glew-2.2.0\include\GL;..\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -144,7 +144,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\cube.h" />
     <ClInclude Include="..\include\cubemap.h" />
-    <ClInclude Include="..\include\displayhandler.h" />
+    <ClInclude Include="..\include\basic_displayhandler.h" />
     <ClInclude Include="..\include\fbo.h" />
     <ClInclude Include="..\include\icosphere.h" />
     <ClInclude Include="..\include\mesh.h" />
@@ -153,7 +153,7 @@
     <ClInclude Include="..\include\projection.h" />
     <ClInclude Include="..\include\quad.h" />
     <ClInclude Include="..\include\rectangle.h" />
-    <ClInclude Include="..\include\basicrenderer.h" />
+    <ClInclude Include="..\include\basic_renderer.h" />
     <ClInclude Include="..\include\rendermatrices.h" />
     <ClInclude Include="..\include\shader.h" />
     <ClInclude Include="..\include\shadercode.h" />
@@ -173,7 +173,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\cube.cpp" />
     <ClCompile Include="..\src\cubemap.cpp" />
-    <ClCompile Include="..\src\displayhandler.cpp" />
+    <ClCompile Include="..\src\basic_displayhandler.cpp" />
     <ClCompile Include="..\src\fbo.cpp" />
     <ClCompile Include="..\src\icosphere.cpp" />
     <ClCompile Include="..\src\mesh.cpp" />
@@ -181,7 +181,7 @@
     <ClCompile Include="..\src\prerenderedtexture.cpp" />
     <ClCompile Include="..\src\projection.cpp" />
     <ClCompile Include="..\src\quad.cpp" />
-    <ClCompile Include="..\src\basicrenderer.cpp" />
+    <ClCompile Include="..\src\basic_renderer.cpp" />
     <ClCompile Include="..\src\rendermatrices.cpp" />
     <ClCompile Include="..\src\shader.cpp" />
     <ClCompile Include="..\src\shaderhandler.cpp" />
