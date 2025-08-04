@@ -159,6 +159,4 @@ class BasicRenderer
         bool CheckGLError (const char* operation = "");
 };
 
-extern BasicRenderer* renderer;
-
 // =================================================================================================

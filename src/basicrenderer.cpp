@@ -215,6 +215,4 @@ bool BasicRenderer::CheckGLError (const char* operation) {
     return true;
 }
 
-BasicRenderer* renderer = nullptr;
-
 // =================================================================================================
