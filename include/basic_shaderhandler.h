@@ -28,10 +28,24 @@ public:
         ComputeGaussKernels();
     }
 
-    ~BasicShaderHandler() 
-    { }
+    virtual ~BasicShaderHandler() {
+        if (m_shaderCode)
+            delete m_shaderCode; // Speicherbereinigung nicht vergessen!
+    }
 
-    virtual void CreateShaderCode(void) { m_shaderCode = new BasicShaderCode(); }
+protected:
+    virtual void CreateShaderCode(void) {  m_shaderCode = new BasicShaderCode(); }
+
+public:
+    int CreateShaders(void) {
+        if (m_shaderCode != nullptr)
+            return 0;
+        CreateShaderCode();
+        if (m_shaderCode == nullptr)
+            return -1;
+        m_shaderCode->CreateShaders();
+        return 1;
+    }
 
     Shader* SelectShader(Texture* texture);
 
@@ -57,7 +71,7 @@ private:
     void ComputeGaussKernels(void);
 };
 
-extern BasicShaderHandler* shaderHandler;
+extern BasicShaderHandler* basicShaderHandler;
 
 // =================================================================================================
 

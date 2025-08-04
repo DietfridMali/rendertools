@@ -1,5 +1,5 @@
 #include "vao.h"
-#include "shaderhandler.h"
+#include "basic_shaderhandler.h"
 
 // =================================================================================================
 // "Premium version of" OpenGL vertex array objects. CVAO instances offer methods to convert python
@@ -116,7 +116,7 @@ void VAO::UpdateIndexBuffer(void * data, size_t dataSize, size_t componentType) 
 
 void VAO::Render(Shader* shader, Texture* texture) {
 #if 1
-    if (shaderHandler->ShaderIsActive()) {
+    if (basicShaderHandler->ShaderIsActive()) {
         EnableTexture(texture);
     }
 #endif
@@ -128,7 +128,7 @@ void VAO::Render(Shader* shader, Texture* texture) {
     Disable();
 #if 0
     if (shader != nullptr)
-        shaderHandler->StopShader();
+        basicShaderHandler->StopShader();
 #endif
     DisableTexture(texture);
 }

@@ -1,6 +1,6 @@
 #include "basic_renderer.h"
+#include "basic_shaderhandler.h"
 #include "outlinerenderer.h"
-#include "shaderhandler.h"
 
 // =================================================================================================
 // the(text) outline renderer works as follows :
@@ -20,7 +20,7 @@
 void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
     if (aaMethod.method != "") {
         FBO::FBORenderParams params = { .clearBuffer = true, .scale = 1.0f };
-        params.shader = shaderHandler->SetupShader(aaMethod.method);
+        params.shader = basicShaderHandler->SetupShader(aaMethod.method);
         if (params.shader == nullptr)
             return;
         BasicRenderer::ClearGLError();
@@ -28,7 +28,7 @@ void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
         if (aaMethod.method != "gaussblur")
             fbo->AutoRender(params);
         else {
-            FloatArray* kernel = shaderHandler->GetKernel(aaMethod.strength);
+            FloatArray* kernel = basicShaderHandler->GetKernel(aaMethod.strength);
             if (kernel != nullptr) {
                 params.shader->SetFloatData("coeffs", *kernel);
                 params.shader->SetInt("radius", aaMethod.strength);
@@ -49,19 +49,19 @@ void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
                 }
             }
         }
-        shaderHandler->StopShader();
+        basicShaderHandler->StopShader();
     }
 }
 
 
 void OutlineRenderer::RenderOutline(FBO* fbo, float outlineWidth, RGBAColor color, tAAMethod aaMethod) {
     if (outlineWidth > 0) {
-        Shader* shader = shaderHandler->SetupShader("outline");
+        Shader* shader = basicShaderHandler->SetupShader("outline");
         shader->SetFloat("outlineWidth", outlineWidth);
         shader->SetVector4f("outlineColor", color);
         shader->SetFloat("offset", 0.5f);
         fbo->AutoRender({ .clearBuffer = true, .shader = shader });
-        shaderHandler->StopShader();
+        basicShaderHandler->StopShader();
         AntiAlias(fbo, aaMethod);
     }
 }

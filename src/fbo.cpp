@@ -1,7 +1,7 @@
 #include "glew.h"
 #include "fbo.h"
 #include "basic_renderer.h"
-#include "shaderhandler.h"
+#include "basic_shaderhandler.h"
 
 // =================================================================================================
 
@@ -285,7 +285,7 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     else 
         m_viewportArea.Render(source);
     glDisable(GL_CULL_FACE);
-    shaderHandler->StopShader();
+    basicShaderHandler->StopShader();
     glDepthFunc(GL_LESS);
     basicRenderer->PopMatrix();
     if (params.destination > -1)

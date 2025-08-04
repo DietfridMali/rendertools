@@ -3,9 +3,9 @@
 #include <algorithm>
 #include "glew.h"
 #include "basic_renderer.h"
+#include "basic_shaderhandler.h"
 #include "colordata.h"
 #include "textrenderer.h"
-#include "shaderhandler.h"
 
 #ifndef _WIN32
 #   include <locale>
@@ -134,7 +134,7 @@ FBO* TextRenderer::GetFBO(float scale) {
 
 
 Shader* TextRenderer::LoadShader(void) {
-    Shader* shader = shaderHandler->SetupShader("simpleTexture");
+    Shader* shader = basicShaderHandler->SetupShader("simpleTexture");
     if (shader) {
         shader->SetVector4f("surfaceColor", ColorData::White);
     }
@@ -166,7 +166,7 @@ void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float 
             x += w;
         }
     }
-    shaderHandler->StopShader();
+    basicShaderHandler->StopShader();
     basicRenderer->PopMatrix();
 #if USE_TEXT_FBOS
     glDepthFunc(GL_LESS);

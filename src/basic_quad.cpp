@@ -5,7 +5,7 @@
 #include "vbo.h"
 #include "vao.h"
 #include "basic_quad.h"
-#include "shaderhandler.h"
+#include "basic_shaderhandler.h"
 #include "type_helper.hpp"
 
 #define USE_VAO true
@@ -118,7 +118,7 @@ float BasicQuad::ComputeAspectRatio(void) {
 
 
 Shader* BasicQuad::LoadShader(bool useTexture, const RGBAColor& color) {
-    Shader* shader = shaderHandler->SetupShader(useTexture ? "plainTexture" : "plainColor");
+    Shader* shader = basicShaderHandler->SetupShader(useTexture ? "plainTexture" : "plainColor");
     if (shader)
         shader->SetVector4f("effectColor", color);
     return shader;
@@ -128,7 +128,7 @@ Shader* BasicQuad::LoadShader(bool useTexture, const RGBAColor& color) {
 void BasicQuad::Render(RGBAColor color) {
     if (UpdateVAO()) {
         Render(LoadShader(m_texture != nullptr, color), m_texture, false);
-        shaderHandler->StopShader();
+        basicShaderHandler->StopShader();
     }
     else {
         glEnable(GL_TEXTURE_2D);
@@ -177,7 +177,7 @@ void BasicQuad::Render(Texture* texture) {
 void BasicQuad::Fill(RGBAColor color) {
     if (UpdateVAO()) {
         Render(LoadShader(false, color), nullptr);
-        shaderHandler->StopShader();
+        basicShaderHandler->StopShader();
     }
     else {
         glDisable(GL_TEXTURE_2D);
