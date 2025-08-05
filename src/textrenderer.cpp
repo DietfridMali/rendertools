@@ -6,6 +6,7 @@
 #include "base_shaderhandler.h"
 #include "colordata.h"
 #include "textrenderer.h"
+#include "base_renderer.h"
 
 #ifndef _WIN32
 #   include <locale>
@@ -49,7 +50,7 @@ bool TextRenderer::InitFont(String fontFolder, String fontName) {
     }
     String fontFile = fontFolder + fontName;
     if (not (m_font = TTF_OpenFont(fontFile.Data(), 120))) {
-        fprintf(stderr, "Cannot load font 'consola.ttf'\n");
+        fprintf(stderr, "Cannot load font '%s'\n", (char*) fontName);
         return false;
     }
     return true;
@@ -145,6 +146,7 @@ Shader* TextRenderer::LoadShader(void) {
 void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float yOffset, bool centered) {
     baseRenderer.PushMatrix();
 #if USE_TEXT_FBOS
+    baseRenderer.ResetTransformation();
     baseRenderer.Translate(0.5f, 0.5f, 0.0f);
     glDepthFunc(GL_ALWAYS);
 #endif
@@ -218,7 +220,7 @@ void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& v
         RenderText(text, textWidth, offset.x, offset.y, centered);
 #endif
         if (fbo->IsAvailable()) {
-            if (outlineWidth == 0) 
+            if (outlineWidth == 0)
                 AntiAlias(fbo, m_aaMethod);
             else {
                 if (outlineColor.A() == 0)

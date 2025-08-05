@@ -60,7 +60,7 @@ class BaseRenderer
             _instance = this;
         }
 
-        static BaseRenderer& Instance(void) { return static_cast<BaseRenderer&>(PolymorphSingleton::Instance()); }
+         static BaseRenderer& Instance(void) { return static_cast<BaseRenderer&>(PolymorphSingleton::Instance()); }
 
         void Init(int width, int height, float fov);
 
@@ -124,7 +124,7 @@ class BaseRenderer
 
         void SetViewport(bool isFBO = false);
 
-        void SetViewport(::Viewport viewport, bool flipVertically = false);
+        void SetViewport(::Viewport viewport, bool flipVertically = false, bool isFBO = false);
 
         inline ManagedArray<GLuint>* DrawBuffer(void) {
             return m_drawBufferInfo.m_drawBuffers;
@@ -138,10 +138,15 @@ class BaseRenderer
 
         void ResetDrawBuffers(FBO* activeBuffer, bool clearBuffer = true);
 
-        void Fill(const RGBColor& color, float alpha, float scale = 1.0f);
+        void Fill(const RGBAColor& color, float scale = 1.0f);
 
-        inline void Fill(RGBColor&& color, float alpha, float scale = 1.0f) {
-            Fill(static_cast<const RGBColor&>(color), alpha, scale);
+        void Fill(RGBAColor&& color, float scale = 1.0f) {
+            Fill(static_cast<const RGBAColor&>(color), scale);
+        }
+
+        template <typename T>
+        inline void Fill(T&& color, float alpha, float scale = 1.0f) {
+            Fill(RGBAColor(std::forward<T>(color), alpha), scale);
         }
 
         static void ClearGLError(void);

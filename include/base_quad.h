@@ -86,7 +86,7 @@ class BaseQuad
     void Fill(RGBAColor color);
 
     inline void Fill(RGBColor color, float alpha = 1.0f) {
-        return Fill(RGBAColor (color.R(), color.G(), color.B(), alpha));
+        return Fill(RGBAColor (color, alpha));
     }
 
 

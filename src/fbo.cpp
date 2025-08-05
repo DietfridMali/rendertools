@@ -246,7 +246,7 @@ void FBO::ReleaseBuffers(void) {
 
 Viewport FBO::SetViewport(void) {
     m_viewportSave = new Viewport(baseRenderer.m_viewport);
-    baseRenderer.SetViewport(m_viewport, true);
+    baseRenderer.SetViewport(m_viewport, true, true);
     return *m_viewportSave;
 }
 

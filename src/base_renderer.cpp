@@ -27,6 +27,7 @@ void BaseRenderer::Init(int width, int height, float fov) {
     m_drawBuffers[0] = GL_BACK;
     ResetDrawBuffers(nullptr); // required to initialize m_drawBufferInfo. If not done here, subsequent renders to FBOs ahead of main rendering loop will crash the app
     CreateMatrices(m_windowWidth, m_windowHeight, float(m_sceneWidth) / float(m_sceneHeight), fov);
+    ResetTransformation();
 }
 
 
@@ -150,10 +151,13 @@ void BaseRenderer::SetViewport(bool isFBO) {
 }
 
 
-void BaseRenderer::SetViewport(::Viewport viewport, bool flipVertically) {
+void BaseRenderer::SetViewport(::Viewport viewport, bool flipVertically, bool isFBO) {
     m_viewport = viewport;
     if (flipVertically)
-        glViewport(viewport.m_left, m_windowHeight - viewport.m_top - viewport.m_height, viewport.m_width, viewport.m_height);
+        if (isFBO)
+            glViewport(viewport.m_left, viewport.m_top, viewport.m_width, viewport.m_height);
+        else
+            glViewport(viewport.m_left, m_windowHeight - viewport.m_top - viewport.m_height, viewport.m_width, viewport.m_height);
     else
         glViewport(viewport.m_left, viewport.m_top, viewport.m_width, viewport.m_height);
 }
@@ -213,11 +217,11 @@ void BaseRenderer::RestoreDrawBuffer(void) {
 }
 
 
-void BaseRenderer::Fill(const RGBColor& color, float alpha, float scale) {
+void BaseRenderer::Fill(const RGBAColor& color, float scale) {
     baseRenderer.PushMatrix();
     baseRenderer.Translate(0.5, 0.5, 0.0);
     baseRenderer.Scale(scale, scale, 1);
-    m_viewportArea.Fill(color, alpha);
+    m_viewportArea.Fill(color);
     baseRenderer.PopMatrix();
 }
 
@@ -238,7 +242,5 @@ bool BaseRenderer::CheckGLError (const char* operation) {
 }
 
 BaseRenderer* baseRendererInstance = nullptr;
-
-#define baseRenderer BaseRenderer::Instance()
 
 // =================================================================================================
