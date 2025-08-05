@@ -16,7 +16,7 @@ public:
     ManagedArray<FloatArray*>   m_kernels;
     Shader*                     m_activeShader;
     Texture                     m_grayNoise;
-    BaseShaderCode*            m_shaderCode;
+    BaseShaderCode*             m_shaderCode;
 
 
     BaseShaderHandler() 

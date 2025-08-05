@@ -235,4 +235,8 @@ bool BaseRenderer::CheckGLError (const char* operation) {
     return true;
 }
 
+BaseRenderer* baseRendererInstance = nullptr;
+
+#define baseRenderer BaseRenderer::Instance()
+
 // =================================================================================================

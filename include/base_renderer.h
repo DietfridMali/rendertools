@@ -30,7 +30,7 @@ public:
 
 class BaseRenderer 
     : public RenderMatrices
-    , public PolymorphSingleton
+    , public PolymorphSingleton<BaseRenderer>
 
 {
     public:

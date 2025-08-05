@@ -11,7 +11,7 @@
 // basic renderer class. Initializes display and OpenGL and sets up projections and view matrix
 
 class BaseDisplayHandler 
-    : public PolymorphSingleton
+    : public PolymorphSingleton<BaseDisplayHandler>
 {
 public:
     int             m_width;
@@ -53,6 +53,10 @@ public:
         return m_aspectRatio;
     }
 };
+
+extern BaseDisplayHandler* baseDisplayHandlerInstance;
+
+#define baseDisplayHandler BaseDisplayHandler::Instance()
 
 // =================================================================================================
 

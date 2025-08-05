@@ -73,4 +73,6 @@ void BaseDisplayHandler::Update(void) {
     SDL_GL_SwapWindow(m_window);
 }
 
+BaseDisplayHandler* baseDisplayHandlerInstance = nullptr;
+
 // =================================================================================================
