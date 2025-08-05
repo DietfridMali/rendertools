@@ -80,6 +80,4 @@ TextureList TextureHandler::CreateByType(String textureFolder, List<String>& tex
     return Create (textureFolder, textureNames, textureType);
 }
 
-TextureHandler* textureHandler = nullptr;
-
 // =================================================================================================

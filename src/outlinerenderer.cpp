@@ -20,7 +20,7 @@
 void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
     if (aaMethod.method != "") {
         FBO::FBORenderParams params = { .clearBuffer = true, .scale = 1.0f };
-        params.shader = baseShaderHandler->SetupShader(aaMethod.method);
+        params.shader = baseShaderHandler.SetupShader(aaMethod.method);
         if (params.shader == nullptr)
             return;
         BaseRenderer::ClearGLError();
@@ -28,7 +28,7 @@ void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
         if (aaMethod.method != "gaussblur")
             fbo->AutoRender(params);
         else {
-            FloatArray* kernel = baseShaderHandler->GetKernel(aaMethod.strength);
+            FloatArray* kernel = baseShaderHandler.GetKernel(aaMethod.strength);
             if (kernel != nullptr) {
                 params.shader->SetFloatData("coeffs", *kernel);
                 params.shader->SetInt("radius", aaMethod.strength);
@@ -49,19 +49,19 @@ void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
                 }
             }
         }
-        baseShaderHandler->StopShader();
+        baseShaderHandler.StopShader();
     }
 }
 
 
 void OutlineRenderer::RenderOutline(FBO* fbo, float outlineWidth, RGBAColor color, tAAMethod aaMethod) {
     if (outlineWidth > 0) {
-        Shader* shader = baseShaderHandler->SetupShader("outline");
+        Shader* shader = baseShaderHandler.SetupShader("outline");
         shader->SetFloat("outlineWidth", outlineWidth);
         shader->SetVector4f("outlineColor", color);
         shader->SetFloat("offset", 0.5f);
         fbo->AutoRender({ .clearBuffer = true, .shader = shader });
-        baseShaderHandler->StopShader();
+        baseShaderHandler.StopShader();
         AntiAlias(fbo, aaMethod);
     }
 }

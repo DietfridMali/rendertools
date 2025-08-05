@@ -134,7 +134,7 @@ FBO* TextRenderer::GetFBO(float scale) {
 
 
 Shader* TextRenderer::LoadShader(void) {
-    Shader* shader = baseShaderHandler->SetupShader("simpleTexture");
+    Shader* shader = baseShaderHandler.SetupShader("simpleTexture");
     if (shader) {
         shader->SetVector4f("surfaceColor", ColorData::White);
     }
@@ -166,7 +166,7 @@ void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float 
             x += w;
         }
     }
-    baseShaderHandler->StopShader();
+    baseShaderHandler.StopShader();
     baseRenderer.PopMatrix();
 #if USE_TEXT_FBOS
     glDepthFunc(GL_LESS);
@@ -251,7 +251,5 @@ void TextRenderer::Render(String text, bool m_centerText, int renderAreaWidth, i
         }
     }
 }
-
-TextRenderer* textRenderer = nullptr;
 
 // =================================================================================================

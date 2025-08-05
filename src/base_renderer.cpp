@@ -235,6 +235,4 @@ bool BaseRenderer::CheckGLError (const char* operation) {
     return true;
 }
 
-BaseRenderer* baseRenderer = nullptr;
-
 // =================================================================================================

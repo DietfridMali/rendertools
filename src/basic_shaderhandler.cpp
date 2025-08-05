@@ -86,6 +86,4 @@ void BaseShaderHandler::StopShader(void) {
     }
 }
 
-BaseShaderHandler* baseShaderHandler = nullptr;
-
 // =================================================================================================
