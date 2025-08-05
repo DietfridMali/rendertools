@@ -29,6 +29,7 @@ void BaseRenderer::Init(int width, int height, float fov) {
     CreateMatrices(m_windowWidth, m_windowHeight, float(m_sceneWidth) / float(m_sceneHeight), fov);
 }
 
+
 void BaseRenderer::Create(int width, int height, float fov) {
     Init(width, height, fov);
     m_viewport = ::Viewport(0, 0, m_windowWidth, m_windowHeight);
@@ -234,6 +235,6 @@ bool BaseRenderer::CheckGLError (const char* operation) {
     return true;
 }
 
-BaseRenderer* basicRenderer = nullptr;
+BaseRenderer* baseRenderer = nullptr;
 
 // =================================================================================================

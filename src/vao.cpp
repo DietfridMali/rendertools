@@ -116,7 +116,7 @@ void VAO::UpdateIndexBuffer(void * data, size_t dataSize, size_t componentType) 
 
 void VAO::Render(Shader* shader, Texture* texture) {
 #if 1
-    if (basicShaderHandler->ShaderIsActive()) {
+    if (baseShaderHandler->ShaderIsActive()) {
         EnableTexture(texture);
     }
 #endif
@@ -128,7 +128,7 @@ void VAO::Render(Shader* shader, Texture* texture) {
     Disable();
 #if 0
     if (shader != nullptr)
-        basicShaderHandler->StopShader();
+        baseShaderHandler->StopShader();
 #endif
     DisableTexture(texture);
 }

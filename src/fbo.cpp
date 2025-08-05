@@ -285,7 +285,7 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     else 
         m_viewportArea.Render(source);
     glDisable(GL_CULL_FACE);
-    basicShaderHandler->StopShader();
+    baseShaderHandler->StopShader();
     glDepthFunc(GL_LESS);
     baseRenderer.PopMatrix();
     if (params.destination > -1)

@@ -68,7 +68,7 @@ private:
     void ComputeGaussKernels(void);
 };
 
-#define basicShaderHandler BaseShaderHandler::Instance()
+#define baseShaderHandler BaseShaderHandler::Instance()
 
 // =================================================================================================
 
