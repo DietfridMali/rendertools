@@ -283,7 +283,11 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     if (params.shader)
         m_viewportArea.Render(params.shader, source);
     else 
+#if 1
         m_viewportArea.Render(source);
+#else
+        m_viewportArea.Fill(ColorData::Orange);
+#endif
     glDisable(GL_CULL_FACE);
     baseShaderHandler.StopShader();
     glDepthFunc(GL_LESS);

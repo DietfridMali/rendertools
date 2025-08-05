@@ -17,9 +17,9 @@
 
 void BaseRenderer::Init(int width, int height, float fov) {
     m_sceneWidth =
-        m_windowWidth = (width > height) ? width : height;
+        m_windowWidth = width; // (width > height) ? width : height;
     m_sceneHeight =
-        m_windowHeight = (height > width) ? width : height;
+        m_windowHeight = height; // (height > width) ? width : height;
     m_sceneLeft = 0;
 
     m_aspectRatio = float(m_windowWidth) / float(m_windowHeight); // just for code clarity
@@ -122,18 +122,20 @@ void BaseRenderer::Draw3DScene(void) {
 
 void BaseRenderer::DrawScreen (bool bRotate) {
     if (m_screenIsAvailable) {
-        m_screenIsAvailable = false;
         Stop2DScene();
+        m_screenIsAvailable = false;
         glDepthFunc(GL_ALWAYS);
         glDisable(GL_CULL_FACE); // required for vertical flipping because that inverts the buffer's winding
         SetViewport(::Viewport(0, 0, m_windowWidth, m_windowHeight), false);
         glClear(GL_COLOR_BUFFER_BIT);
         Translate(0.5, 0.5, 0);
-#if 0
+#if 1
         if (bRotate)
             Rotate(90, 0, 0, 1);
+#if 0
         else
             Scale(1, -1, 1);
+#endif
         m_renderTexture.m_handle = m_screenBuffer.BufferHandle(0);
         m_viewportArea.Render(&m_renderTexture);
 #else

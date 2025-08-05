@@ -120,7 +120,7 @@ float BaseQuad::ComputeAspectRatio(void) {
 Shader* BaseQuad::LoadShader(bool useTexture, const RGBAColor& color) {
     Shader* shader = baseShaderHandler.SetupShader(useTexture ? "plainTexture" : "plainColor");
     if (shader)
-        shader->SetVector4f("effectColor", color);
+        shader->SetVector4f("surfaceColor", color);
     return shader;
 }
 

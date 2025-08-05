@@ -60,7 +60,7 @@ public:
         PrerenderedItem::Destroy();
     }
 
-    bool Create(String text, int bufferCount = 0, OutlineRenderer::tAAMethod aaMethod = { "", 0 });
+    bool Create(String text, bool centered, int bufferCount = 0, OutlineRenderer::tAAMethod aaMethod = { "", 0 });
 
     inline void SetColor(RGBAColor color) {
         m_color = color;

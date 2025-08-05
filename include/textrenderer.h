@@ -45,7 +45,7 @@ public:
 
     void Fill(Vector4f color);
 
-    void RenderToFBO(String text, FBO* fbo, Viewport& viewport, int renderAreaWidth = 0, int renderAreaHeight = 0, float outlineWidth = 0., Vector4f outlineColor = Vector4f{0, 0, 0, 0});
+    void RenderToFBO(String text, bool centered, FBO* fbo, Viewport& viewport, int renderAreaWidth = 0, int renderAreaHeight = 0, float outlineWidth = 0., Vector4f outlineColor = Vector4f{0, 0, 0, 0});
 
     void RenderToScreen(FBO* fbo);
 
@@ -91,7 +91,7 @@ private:
 
     Shader* LoadShader(void);
 
-    void RenderText(String& text, int textWidth, float xOffset, float yOffset);
+    void RenderText(String& text, int textWidth, float xOffset, float yOffset, bool centered);
 
     int SourceBuffer(bool hasOutline, bool antiAliased);
 

@@ -134,7 +134,7 @@ FBO* TextRenderer::GetFBO(float scale) {
 
 
 Shader* TextRenderer::LoadShader(void) {
-    Shader* shader = baseShaderHandler.SetupShader("simpleTexture");
+    Shader* shader = baseShaderHandler.SetupShader("plainTexture");
     if (shader) {
         shader->SetVector4f("surfaceColor", ColorData::White);
     }
@@ -142,14 +142,14 @@ Shader* TextRenderer::LoadShader(void) {
 }
 
 
-void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float yOffset) {
+void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float yOffset, bool centered) {
     baseRenderer.PushMatrix();
 #if USE_TEXT_FBOS
     baseRenderer.Translate(0.5f, 0.5f, 0.0f);
     glDepthFunc(GL_ALWAYS);
 #endif
     float letterScale = 2 * xOffset / float(textWidth);
-    float x = m_centerText ? -xOffset : -0.5f;
+    float x = centered ? -xOffset : -0.5f;
     Shader* shader = LoadShader();
     BaseQuad q;
     for (char* p = text.Data(); *p; p++) {
@@ -186,7 +186,7 @@ void TextRenderer::Fill(Vector4f color) {
 }
 
 
-void TextRenderer::RenderToFBO(String text, FBO* fbo, Viewport& viewport, int renderAreaWidth, int renderAreaHeight, float outlineWidth, Vector4f outlineColor) {
+void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& viewport, int renderAreaWidth, int renderAreaHeight, float outlineWidth, Vector4f outlineColor) {
     if (m_isAvailable) {
         fbo->m_name = String::Concat ("[", text, "]");
         auto [textWidth, textHeight, aspectRatio] = TextSize(text);
@@ -211,11 +211,11 @@ void TextRenderer::RenderToFBO(String text, FBO* fbo, Viewport& viewport, int re
                 offset.y -= outlineWidth / float(fbo->m_height);
             }
             fbo->m_lastDestination = 0;
-            RenderText(text, textWidth, offset.x, offset.y);
+            RenderText(text, textWidth, offset.x, offset.y, centered);
             fbo->Disable();
         }
 #else
-        RenderText(text, textWidth, offset.x, offset.y);
+        RenderText(text, textWidth, offset.x, offset.y, centered);
 #endif
         if (fbo->IsAvailable()) {
             if (outlineWidth == 0) 
@@ -241,11 +241,11 @@ void TextRenderer::RenderToScreen(FBO* fbo) {
 }
 
 
-void TextRenderer::Render(String text, bool m_centerText, int renderAreaWidth, int renderAreaHeight, float outlineWidth, Vector4f outlineColor) {
+void TextRenderer::Render(String text, bool centered, int renderAreaWidth, int renderAreaHeight, float outlineWidth, Vector4f outlineColor) {
     if (m_isAvailable) {
         FBO* fbo = GetFBO(2);
         if (fbo != nullptr) {
-            RenderToFBO(text, fbo, baseRenderer.m_viewport, renderAreaWidth, renderAreaHeight, outlineWidth);
+            RenderToFBO(text, centered, fbo, baseRenderer.m_viewport, renderAreaWidth, renderAreaHeight, outlineWidth);
             fbo->m_name = text;
             RenderToScreen(fbo);
         }

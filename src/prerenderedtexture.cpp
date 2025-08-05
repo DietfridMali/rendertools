@@ -22,7 +22,7 @@ bool PrerenderedItem::Create(int bufferCount) {
 
 // =================================================================================================
 
-bool PrerenderedText::Create(String text, int bufferCount, OutlineRenderer::tAAMethod aaMethod) {
+bool PrerenderedText::Create(String text, bool centered, int bufferCount, OutlineRenderer::tAAMethod aaMethod) {
     if (bufferCount == 0)
         bufferCount = 2;//  (m_outlineWidth == 0) ? 1 : 2;
     if (not PrerenderedItem::Create(bufferCount) && (m_text == text))
@@ -32,7 +32,7 @@ bool PrerenderedText::Create(String text, int bufferCount, OutlineRenderer::tAAM
     textRenderer.SetAlpha(1.0f);
     textRenderer.SetScale(1.0f);
     textRenderer.SetAAMethod(aaMethod);
-    textRenderer.RenderToFBO(m_text, &m_fbo, m_fbo.m_viewport, 0, 0, m_outlineWidth, m_outlineColor); // m_outlineWidth == 0);
+    textRenderer.RenderToFBO(m_text, centered, &m_fbo, m_fbo.m_viewport, 0, 0, m_outlineWidth, m_outlineColor); // m_outlineWidth == 0);
     textRenderer.SetColor();
     return true;
 }
