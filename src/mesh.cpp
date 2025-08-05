@@ -68,7 +68,7 @@ void Mesh::UpdateVAO(bool createVertexIndex) {
 
 void Mesh::SetupTexture(Texture* texture, String textureFolder, List<String> textureNames, GLenum textureType) {
     if (not textureNames.IsEmpty())
-        m_textures += textureHandler->CreateByType (textureFolder, textureNames, textureType);
+        m_textures += textureHandler.CreateByType (textureFolder, textureNames, textureType);
     else if (texture != nullptr)
         m_textures.Append(texture);
 }

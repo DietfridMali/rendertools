@@ -5,6 +5,7 @@
 #include "cubemap.h"
 #include "list.hpp"
 #include "sharedpointer.hpp"
+#include "singletonbase.hpp"
 
 // =================================================================================================
 // Very simply class for texture tracking
@@ -13,17 +14,16 @@
 // textures at a dozen places in the game
 
 class TextureHandler 
+    : public BaseSingleton<TextureHandler>
 {
     public:
         TextureList m_textures;
 
         typedef Texture* (*tGetter) (void);
 
-        TextureHandler() {}
+        TextureHandler() = default;
 
-        ~TextureHandler () {
-            Destroy ();
-        }
+        ~TextureHandler() { Destroy (); }
 
         void Destroy(void);
 
@@ -43,6 +43,6 @@ class TextureHandler
 
 };
 
-extern TextureHandler* textureHandler;
+#define textureHandler TextureHandler::Instance()
 
 // =================================================================================================

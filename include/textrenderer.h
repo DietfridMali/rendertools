@@ -7,10 +7,14 @@
 #include "fbo.h"
 #include "dictionary.hpp"
 #include "outlinerenderer.h"
+#include "singletonbase.hpp"
 
 // =================================================================================================
 
-class TextRenderer : public OutlineRenderer {
+class TextRenderer 
+    : public OutlineRenderer 
+    , public BaseSingleton<TextRenderer>
+{
 public:
     TTF_Font*       m_font;
     String          m_euroChar;
@@ -101,7 +105,7 @@ private:
 
 };
 
-extern TextRenderer* textRenderer;
+#define textRenderer TextRenderer::Instance()
 
 // =================================================================================================
 

@@ -28,12 +28,12 @@ bool PrerenderedText::Create(String text, int bufferCount, OutlineRenderer::tAAM
     if (not PrerenderedItem::Create(bufferCount) && (m_text == text))
         return false;
     m_text = text;
-    textRenderer->SetColor(m_color);
-    textRenderer->SetAlpha(1.0f);
-    textRenderer->SetScale(1.0f);
-    textRenderer->SetAAMethod(aaMethod);
-    textRenderer->RenderToFBO(m_text, &m_fbo, m_fbo.m_viewport, 0, 0, m_outlineWidth, m_outlineColor); // m_outlineWidth == 0);
-    textRenderer->SetColor();
+    textRenderer.SetColor(m_color);
+    textRenderer.SetAlpha(1.0f);
+    textRenderer.SetScale(1.0f);
+    textRenderer.SetAAMethod(aaMethod);
+    textRenderer.RenderToFBO(m_text, &m_fbo, m_fbo.m_viewport, 0, 0, m_outlineWidth, m_outlineColor); // m_outlineWidth == 0);
+    textRenderer.SetColor();
     return true;
 }
 
@@ -43,8 +43,8 @@ void PrerenderedText::RenderOutline(float outlineWidth, RGBAColor outlineColor, 
     if (outlineWidth > 0) {
         m_fbo.SetViewport();
         m_fbo.SetLastDestination(0);
-        textRenderer->SetAAMethod(aaMethod);
-        textRenderer->RenderOutline(&m_fbo, outlineWidth * 2, outlineColor);
+        textRenderer.SetAAMethod(aaMethod);
+        textRenderer.RenderOutline(&m_fbo, outlineWidth * 2, outlineColor);
         m_fbo.RestoreViewport();
     }
 }
@@ -52,20 +52,20 @@ void PrerenderedText::RenderOutline(float outlineWidth, RGBAColor outlineColor, 
 
 void PrerenderedText::Render(bool setViewport, RGBAColor color, float alpha, float scale) {
     if (color.A() >= 0)
-        textRenderer->SetColor(color);
+        textRenderer.SetColor(color);
     if (alpha >= 0)
-        textRenderer->SetAlpha(alpha); // must be called after SetColor() to affect rendered text's alpha
+        textRenderer.SetAlpha(alpha); // must be called after SetColor() to affect rendered text's alpha
     if (scale >= 0)
-        textRenderer->SetScale(scale);
+        textRenderer.SetScale(scale);
     if (setViewport)
         m_viewport.SetViewport();
-    textRenderer->RenderToScreen(&m_fbo); // m_outlineWidth == 0);
+    textRenderer.RenderToScreen(&m_fbo); // m_outlineWidth == 0);
     if (alpha >= 0)
-        textRenderer->SetAlpha();
+        textRenderer.SetAlpha();
     if (scale >= 0)
-        textRenderer->SetScale();
+        textRenderer.SetScale();
     if (color.A() >= 0)
-        textRenderer->SetColor();
+        textRenderer.SetColor();
 }
 
 // =================================================================================================

@@ -202,7 +202,7 @@ void BaseQuad::Destroy(void) {
     if constexpr (not is_static_member_v<&BaseQuad::m_vao>) {
         m_vao->Destroy(); // don't destroy static members as they may be reused by other resources any time during program execution. Will be automatically destroyed at program termination
     }
-    //textureHandler->Remove (m_texture); // BaseQuad textures are shared with quads and maybe reused after such a quad has been destroyed; so don't remove it globally
+    //textureHandler.Remove (m_texture); // BaseQuad textures are shared with quads and maybe reused after such a quad has been destroyed; so don't remove it globally
 }
 
 // =================================================================================================
