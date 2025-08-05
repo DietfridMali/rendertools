@@ -13,16 +13,12 @@
 //#include "player.h"
 #include "rendermatrices.h"
 
-#define USE_RTT 1
-
 // =================================================================================================
-
-#if USE_RTT
 
 class DrawBufferInfo {
 public:
-    FBO*            m_fbo;
-    ManagedArray<GLuint>*  m_drawBuffers;
+    FBO*                    m_fbo;
+    ManagedArray<GLuint>*   m_drawBuffers;
 
 public:
     DrawBufferInfo(FBO* fbo = nullptr, ManagedArray<GLuint>* drawBuffers = nullptr) {
@@ -31,24 +27,19 @@ public:
     }
 };
 
-#endif
-
 // =================================================================================================
 // basic renderer class. Initializes display and OpenGL and sets up projections and view matrix
 
 class BasicRenderer 
     : public RenderMatrices
 {
-
     public:
-#if USE_RTT
         FBO                     m_screenBuffer;
         FBO                     m_sceneBuffer;
         FBO*                    m_activeBuffer;
         ManagedArray<GLuint>    m_drawBuffers;
         DrawBufferInfo          m_drawBufferInfo;
         List<DrawBufferInfo>    m_drawBufferStack;
-#endif
         Viewport                m_viewport;
         BasicQuad               m_viewportArea;
         Texture                 m_renderTexture;
@@ -60,7 +51,7 @@ class BasicRenderer
         int                     m_sceneHeight;
         int                     m_sceneLeft;
         float                   m_aspectRatio;
-        bool                    m_screenIsValid;
+        bool                    m_screenIsAvailable;
 
     public:
         BasicRenderer(int width = 1920, int height = 1080, float fov = 45);
@@ -69,13 +60,13 @@ class BasicRenderer
             
         void SetupOpenGL (void);
 
-        virtual void Start3DScene(void);
+        virtual bool Start3DScene(void);
 
-        virtual void Stop3DScene(void);
+        virtual bool Stop3DScene(void);
 
-        virtual void Start2DScene(void);
+        virtual bool Start2DScene(void);
 
-        virtual void Stop2DScene(void);
+        virtual bool Stop2DScene(void);
 
         virtual void Draw3DScene(void);
             
