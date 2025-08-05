@@ -64,15 +64,15 @@ extern const String& StandardVS();
 
 // =================================================================================================
 
-class BasicShaderCode 
+class BaseShaderCode 
     : public Shader 
 {
 protected:
     Dictionary<String, Shader*> m_shaders;
 
 public:
-    BasicShaderCode();
-    ~BasicShaderCode() = default;
+    BaseShaderCode();
+    ~BaseShaderCode() = default;
 
     void AddShaders(ManagedArray<const ShaderSource*>& shaderSource);
 

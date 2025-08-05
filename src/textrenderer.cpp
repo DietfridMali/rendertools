@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include "glew.h"
-#include "basic_renderer.h"
-#include "basic_shaderhandler.h"
+#include "base_renderer.h"
+#include "base_shaderhandler.h"
 #include "colordata.h"
 #include "textrenderer.h"
 
@@ -87,7 +87,7 @@ void TextRenderer::CreateTextures(void) {
 }
 
 
-BasicQuad& TextRenderer::CreateQuad(BasicQuad& q, float x, float y, float d, Texture* t) {
+BaseQuad& TextRenderer::CreateQuad(BaseQuad& q, float x, float y, float d, Texture* t) {
 #if USE_TEXT_FBOS
     q.Setup({ Vector3f{x, y, 0.0}, Vector3f{x + d, y, 0.0}, Vector3f{x + d, -y, 0.0}, Vector3f{x, -y, 0.0} },
             { TexCoord{0, 0}, TexCoord{1, 0}, TexCoord{1, 1}, TexCoord{0, 1} },
@@ -123,11 +123,11 @@ TextRenderer::tTextDimensions TextRenderer::TextSize(String text) {
 
 
 FBO* TextRenderer::GetFBO(float scale) {
-    FBO** fboRef = m_fbos.Find(FBOID(basicRenderer->m_viewport.m_width, basicRenderer->m_viewport.m_height));
+    FBO** fboRef = m_fbos.Find(FBOID(baseRenderer.m_viewport.m_width, baseRenderer.m_viewport.m_height));
     if (fboRef != nullptr)
         return *fboRef;
     FBO* fbo = new FBO();
-    fbo->Create(basicRenderer->m_viewport.m_width, basicRenderer->m_viewport.m_height, 2, { .name = "text", .colorBufferCount = 2});
+    fbo->Create(baseRenderer.m_viewport.m_width, baseRenderer.m_viewport.m_height, 2, { .name = "text", .colorBufferCount = 2});
     m_fbos.Insert(FBOID(fbo), fbo);
     return fbo;
 }
@@ -143,15 +143,15 @@ Shader* TextRenderer::LoadShader(void) {
 
 
 void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float yOffset) {
-    basicRenderer->PushMatrix();
+    baseRenderer.PushMatrix();
 #if USE_TEXT_FBOS
-    basicRenderer->Translate(0.5f, 0.5f, 0.0f);
+    baseRenderer.Translate(0.5f, 0.5f, 0.0f);
     glDepthFunc(GL_ALWAYS);
 #endif
     float letterScale = 2 * xOffset / float(textWidth);
     float x = m_centerText ? -xOffset : -0.5f;
     Shader* shader = LoadShader();
-    BasicQuad q;
+    BaseQuad q;
     for (char* p = text.Data(); *p; p++) {
         Texture* t = FindTexture(String(*p));
         if (not t) 
@@ -167,7 +167,7 @@ void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float 
         }
     }
     basicShaderHandler->StopShader();
-    basicRenderer->PopMatrix();
+    baseRenderer.PopMatrix();
 #if USE_TEXT_FBOS
     glDepthFunc(GL_LESS);
 #endif
@@ -245,7 +245,7 @@ void TextRenderer::Render(String text, bool m_centerText, int renderAreaWidth, i
     if (m_isAvailable) {
         FBO* fbo = GetFBO(2);
         if (fbo != nullptr) {
-            RenderToFBO(text, fbo, basicRenderer->m_viewport, renderAreaWidth, renderAreaHeight, outlineWidth);
+            RenderToFBO(text, fbo, baseRenderer.m_viewport, renderAreaWidth, renderAreaHeight, outlineWidth);
             fbo->m_name = text;
             RenderToScreen(fbo);
         }

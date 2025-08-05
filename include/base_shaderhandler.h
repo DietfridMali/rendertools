@@ -1,23 +1,25 @@
 #pragma once
 
 #include "shader.h"
-#include "basic_shadercode.h"
+#include "base_shadercode.h"
 #include "matrix.hpp"
-//#include "gamedata.h"
+#include "singletonbase.hpp"
 
 // =================================================================================================
 
-class BasicShaderHandler {
+class BaseShaderHandler 
+    : public BaseSingleton<BaseShaderHandler>
+{
 public:
     typedef Shader* (__cdecl* tShaderLoader) (void);
 
     ManagedArray<FloatArray*>   m_kernels;
     Shader*                     m_activeShader;
     Texture                     m_grayNoise;
-    BasicShaderCode*            m_shaderCode;
+    BaseShaderCode*            m_shaderCode;
 
 
-    BasicShaderHandler() 
+    BaseShaderHandler() 
         : m_kernels(16), m_shaderCode(nullptr)
     {
         m_activeShader = nullptr;
@@ -28,13 +30,13 @@ public:
         ComputeGaussKernels();
     }
 
-    virtual ~BasicShaderHandler() {
+    virtual ~BaseShaderHandler() {
         if (m_shaderCode)
             delete m_shaderCode; // Speicherbereinigung nicht vergessen!
     }
 
 protected:
-    virtual void CreateShaderCode(void) {  m_shaderCode = new BasicShaderCode(); }
+    virtual void CreateShaderCode(void) {  m_shaderCode = new BaseShaderCode(); }
 
 public:
     void CreateShaders(void) {
@@ -66,7 +68,7 @@ private:
     void ComputeGaussKernels(void);
 };
 
-extern BasicShaderHandler* basicShaderHandler;
+#define basicShaderHandler BaseShaderHandler::Instance()
 
 // =================================================================================================
 

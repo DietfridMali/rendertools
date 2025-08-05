@@ -7,32 +7,30 @@
 #include "conversions.hpp"
 #include "glew.h"
 //#include "quad.h"
-#include "basic_renderer.h"
+#include "base_renderer.h"
 
 // =================================================================================================
 // basic renderer class. Initializes display && OpenGL && sets up projections && view transformation
 // the renderer enforces window width >= window height, so for portrait screen mode, the window contents
-// rendered sideways. That's why BasicRenderer class has m_windowWidth, m_windowHeight and m_aspectRatio
+// rendered sideways. That's why BaseRenderer class has m_windowWidth, m_windowHeight and m_aspectRatio
 // separate from DisplayHandler.
 
-BasicRenderer::BasicRenderer(int width, int height, float fov) // , Viewer* viewer)
-    : m_activeBuffer(nullptr), m_screenIsAvailable(false)
-{
-    //m_viewer = viewer;
+void BaseRenderer::Init(int width, int height, float fov) {
     m_sceneWidth =
-    m_windowWidth = (width > height) ? width : height;
+        m_windowWidth = (width > height) ? width : height;
     m_sceneHeight =
-    m_windowHeight = (height > width) ? width : height;
+        m_windowHeight = (height > width) ? width : height;
     m_sceneLeft = 0;
 
     m_aspectRatio = float(m_windowWidth) / float(m_windowHeight); // just for code clarity
     m_drawBuffers.Resize(1);
     m_drawBuffers[0] = GL_BACK;
+    ResetDrawBuffers(nullptr); // required to initialize m_drawBufferInfo. If not done here, subsequent renders to FBOs ahead of main rendering loop will crash the app
     CreateMatrices(m_windowWidth, m_windowHeight, float(m_sceneWidth) / float(m_sceneHeight), fov);
 }
 
-
-void BasicRenderer::Create(void) {
+void BaseRenderer::Create(int width, int height, float fov) {
+    Init(width, height, fov);
     m_viewport = ::Viewport(0, 0, m_windowWidth, m_windowHeight);
     SetupOpenGL();
     m_screenBuffer.Create(m_windowWidth, m_windowHeight, 1, { .name = "screen", .colorBufferCount = 1 }); // FBO for entire screen incl. 2D elements (e.g. UI)
@@ -42,7 +40,7 @@ void BasicRenderer::Create(void) {
 }
 
 
-void BasicRenderer::SetupOpenGL (void) {
+void BaseRenderer::SetupOpenGL (void) {
     glClearColor(0, 0, 0, 0);
     glColorMask (1, 1, 1, 1);
     glDepthMask (1);
@@ -61,31 +59,7 @@ void BasicRenderer::SetupOpenGL (void) {
 }
 
 
-bool BasicRenderer::SetActiveBuffer(FBO* buffer, bool clearBuffer) {
-    if (m_activeBuffer != buffer) {
-        if (m_activeBuffer)
-            m_activeBuffer->Disable();
-        m_activeBuffer = buffer;
-    }
-    if (not m_activeBuffer)
-        return false;
-    return m_activeBuffer->IsEnabled() or m_activeBuffer->Enable(0, clearBuffer);
-}
-
-
-void BasicRenderer::ResetDrawBuffers(FBO* activeBuffer, bool clearBuffer) {
-    DrawBufferInfo info;
-    while (m_drawBufferStack.Pop(info)) {
-        if (info.m_fbo)
-            info.m_fbo->Disable();
-    }
-    m_drawBufferInfo = DrawBufferInfo(nullptr, &m_drawBuffers); // &m_drawBuffer, m_drawBuffer.m_colorBufferInfo[0].m_attachment);
-    if (not SetActiveBuffer(activeBuffer, clearBuffer))
-        glDrawBuffers(m_drawBufferInfo.m_drawBuffers->Length(), m_drawBufferInfo.m_drawBuffers->Data());
-}
-
-
-bool BasicRenderer::Start3DScene(void) {
+bool BaseRenderer::Start3DScene(void) {
     if (not m_sceneBuffer.IsAvailable())
         return false;
     ResetDrawBuffers(&m_sceneBuffer);
@@ -97,7 +71,7 @@ bool BasicRenderer::Start3DScene(void) {
 }
 
 
-bool BasicRenderer::Stop3DScene(void) {
+bool BaseRenderer::Stop3DScene(void) {
     if (not m_sceneBuffer.IsAvailable())
         return false;
     DisableCamera();
@@ -106,7 +80,7 @@ bool BasicRenderer::Stop3DScene(void) {
 }
 
 
-bool BasicRenderer::Start2DScene(void) {
+bool BaseRenderer::Start2DScene(void) {
     if (not m_screenBuffer.IsAvailable())
         return false;
     ResetDrawBuffers(&m_screenBuffer, not m_screenIsAvailable);
@@ -116,7 +90,7 @@ bool BasicRenderer::Start2DScene(void) {
 }
 
 
-bool BasicRenderer::Stop2DScene(void) {
+bool BaseRenderer::Stop2DScene(void) {
     if (not m_screenIsAvailable)
         return false;
     ResetDrawBuffers(nullptr);
@@ -124,13 +98,13 @@ bool BasicRenderer::Stop2DScene(void) {
 }
 
 
-void BasicRenderer::Draw3DScene(void) {
+void BaseRenderer::Draw3DScene(void) {
     if (m_sceneBuffer.IsAvailable()) {
         Stop3DScene();
         Start2DScene();
-        basicRenderer->PushMatrix();
-        basicRenderer->Translate(0.5, 0.5, 0);
-        basicRenderer->Scale(1, -1, 1);
+        baseRenderer.PushMatrix();
+        baseRenderer.Translate(0.5, 0.5, 0);
+        baseRenderer.Scale(1, -1, 1);
         glDepthFunc(GL_ALWAYS);
         glDisable(GL_CULL_FACE);
         SetViewport(::Viewport(m_sceneLeft, 0, m_sceneWidth, m_sceneHeight), false);
@@ -140,12 +114,12 @@ void BasicRenderer::Draw3DScene(void) {
 #else
         m_viewportArea.Fill(ColorData::Orange);
 #endif
-        basicRenderer->PopMatrix();
+        baseRenderer.PopMatrix();
     }
 }
 
 
-void BasicRenderer::DrawScreen (bool bRotate) {
+void BaseRenderer::DrawScreen (bool bRotate) {
     if (m_screenIsAvailable) {
         m_screenIsAvailable = false;
         Stop2DScene();
@@ -168,12 +142,12 @@ void BasicRenderer::DrawScreen (bool bRotate) {
 }
 
 
-void BasicRenderer::SetViewport(bool isFBO) {
+void BaseRenderer::SetViewport(bool isFBO) {
     SetViewport(m_viewport, isFBO);
 }
 
 
-void BasicRenderer::SetViewport(::Viewport viewport, bool flipVertically) {
+void BaseRenderer::SetViewport(::Viewport viewport, bool flipVertically) {
     m_viewport = viewport;
     if (flipVertically)
         glViewport(viewport.m_left, m_windowHeight - viewport.m_top - viewport.m_height, viewport.m_width, viewport.m_height);
@@ -182,12 +156,36 @@ void BasicRenderer::SetViewport(::Viewport viewport, bool flipVertically) {
 }
 
 
-void BasicRenderer::SaveDrawBuffer() {
+bool BaseRenderer::SetActiveBuffer(FBO* buffer, bool clearBuffer) {
+    if (m_activeBuffer != buffer) {
+        if (m_activeBuffer)
+            m_activeBuffer->Disable();
+        m_activeBuffer = buffer;
+    }
+    if (not m_activeBuffer)
+        return false;
+    return m_activeBuffer->IsEnabled() or m_activeBuffer->Enable(0, clearBuffer);
+}
+
+
+void BaseRenderer::ResetDrawBuffers(FBO* activeBuffer, bool clearBuffer) {
+    DrawBufferInfo info;
+    while (m_drawBufferStack.Pop(info)) {
+        if (info.m_fbo)
+            info.m_fbo->Disable();
+    }
+    m_drawBufferInfo = DrawBufferInfo(nullptr, &m_drawBuffers); // &m_drawBuffer, m_drawBuffer.m_colorBufferInfo[0].m_attachment);
+    if (not SetActiveBuffer(activeBuffer, clearBuffer))
+        glDrawBuffers(m_drawBufferInfo.m_drawBuffers->Length(), m_drawBufferInfo.m_drawBuffers->Data());
+}
+
+
+void BaseRenderer::SaveDrawBuffer() {
     m_drawBufferStack.Push(m_drawBufferInfo);
 }
 
 
-void BasicRenderer::SetDrawBuffers(FBO* fbo, ManagedArray<GLuint>* drawBuffers) {
+void BaseRenderer::SetDrawBuffers(FBO* fbo, ManagedArray<GLuint>* drawBuffers) {
     if ((fbo != nullptr) && (m_drawBufferInfo.m_fbo != nullptr) && (fbo->m_handle == m_drawBufferInfo.m_fbo->m_handle))
         m_drawBufferInfo.m_drawBuffers = drawBuffers;
     else {
@@ -200,7 +198,7 @@ void BasicRenderer::SetDrawBuffers(FBO* fbo, ManagedArray<GLuint>* drawBuffers) 
 }
 
 
-void BasicRenderer::RestoreDrawBuffer(void) {
+void BaseRenderer::RestoreDrawBuffer(void) {
     m_drawBufferStack.Pop(m_drawBufferInfo);
     glBindTexture(GL_TEXTURE_2D, 0);
     if (m_drawBufferInfo.m_fbo != nullptr)
@@ -212,22 +210,22 @@ void BasicRenderer::RestoreDrawBuffer(void) {
 }
 
 
-void BasicRenderer::Fill(const RGBColor& color, float alpha, float scale) {
-    basicRenderer->PushMatrix();
-    basicRenderer->Translate(0.5, 0.5, 0.0);
-    basicRenderer->Scale(scale, scale, 1);
+void BaseRenderer::Fill(const RGBColor& color, float alpha, float scale) {
+    baseRenderer.PushMatrix();
+    baseRenderer.Translate(0.5, 0.5, 0.0);
+    baseRenderer.Scale(scale, scale, 1);
     m_viewportArea.Fill(color, alpha);
-    basicRenderer->PopMatrix();
+    baseRenderer.PopMatrix();
 }
 
 
-void BasicRenderer::ClearGLError(void) {
+void BaseRenderer::ClearGLError(void) {
     while (glGetError() != GL_NO_ERROR)
         ;
 }
 
 
-bool BasicRenderer::CheckGLError (const char* operation) {
+bool BaseRenderer::CheckGLError (const char* operation) {
     GLenum glError = glGetError ();
     if (glError) {
         fprintf (stderr, "OpenGL Error %d (%s)\n", glError, operation);
@@ -236,6 +234,6 @@ bool BasicRenderer::CheckGLError (const char* operation) {
     return true;
 }
 
-BasicRenderer* basicRenderer = nullptr;
+BaseRenderer* basicRenderer = nullptr;
 
 // =================================================================================================

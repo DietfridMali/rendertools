@@ -11,7 +11,7 @@
 
 // =================================================================================================
 
-class BasicQuad 
+class BaseQuad 
     : public Plane
 {
     public:
@@ -26,19 +26,19 @@ class BasicQuad
         float           m_offset;
         bool            m_isAvailable;
 
-    BasicQuad() 
+    BaseQuad() 
         : m_texture (nullptr), m_color(ColorData::White), m_aspectRatio(1), m_offset(0), m_isAvailable(false)
     { }
 
 
-    BasicQuad(std::initializer_list<Vector3f> vertices, std::initializer_list<TexCoord> texCoords = {}, Texture* texture = nullptr, RGBAColor color = ColorData::White)
+    BaseQuad(std::initializer_list<Vector3f> vertices, std::initializer_list<TexCoord> texCoords = {}, Texture* texture = nullptr, RGBAColor color = ColorData::White)
         : Plane(vertices), m_texture(texture), m_color(color), /*m_borderWidth(borderWidth),*/ m_isAvailable(true), m_offset(0)
     {
         Setup(vertices, texCoords, texture, color/*, borderWidth*/);
     }
 
 
-    BasicQuad(const BasicQuad& other) {
+    BaseQuad(const BaseQuad& other) {
 		Copy(other);
     }
 
@@ -46,15 +46,15 @@ class BasicQuad
 
     bool CreateVAO(void);
 
-    BasicQuad& Copy(const BasicQuad& other);
+    BaseQuad& Copy(const BaseQuad& other);
 
-    BasicQuad& Move(BasicQuad& other);
+    BaseQuad& Move(BaseQuad& other);
 
-    BasicQuad& operator= (const BasicQuad& other) {
+    BaseQuad& operator= (const BaseQuad& other) {
 		return Copy(other);
     }
 
-    BasicQuad operator= (BasicQuad&& other) noexcept {
+    BaseQuad operator= (BaseQuad&& other) noexcept {
         return Move(other);
     }
 
@@ -90,7 +90,7 @@ class BasicQuad
     }
 
 
-    ~BasicQuad() {
+    ~BaseQuad() {
         Destroy();
     }
 };

@@ -1,18 +1,18 @@
 #include <utility>
 #include "glew.h"
 #include "viewport.h"
-#include "basic_renderer.h"
+#include "base_renderer.h"
 
 // =================================================================================================
 
 void Viewport::Fill(const RGBColor& color, float alpha, float scale) {
     SetViewport();
-    basicRenderer->Fill(color, alpha, scale);
+    baseRenderer.Fill(color, alpha, scale);
 }
 
 
 void Viewport::SetViewport(void) {
-    basicRenderer->SetViewport(*this);
+    baseRenderer.SetViewport(*this);
 }
 
 
@@ -22,7 +22,7 @@ Viewport Viewport::Resize(int deltaLeft, int deltaTop, int deltaWidth, int delta
 
 
 void Viewport::SetResized(int deltaLeft, int deltaTop, int deltaWidth, int deltaHeight) {
-    basicRenderer->SetViewport (Resize (deltaLeft, deltaTop, deltaWidth, deltaHeight));
+    baseRenderer.SetViewport (Resize (deltaLeft, deltaTop, deltaWidth, deltaHeight));
 }
 
 // =================================================================================================

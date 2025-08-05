@@ -1,7 +1,7 @@
 
 #include "array.hpp"
 #include "string.hpp"
-#include "basic_shadercode.h"
+#include "base_shadercode.h"
 
 // =================================================================================================
 
@@ -14,7 +14,7 @@ const ShaderSource& GaussBlurShader();
 
 // -------------------------------------------------------------------------------------------------
 
-BasicShaderCode::BasicShaderCode() {
+BaseShaderCode::BaseShaderCode() {
     ManagedArray<const ShaderSource*> shaderSource = {
         &PlainColorShader(),
         &PlainTextureShader(),
@@ -27,7 +27,7 @@ BasicShaderCode::BasicShaderCode() {
 }
 
 
-void BasicShaderCode::AddShaders(ManagedArray<const ShaderSource*>& shaderSource) {
+void BaseShaderCode::AddShaders(ManagedArray<const ShaderSource*>& shaderSource) {
     for (const ShaderSource* source : shaderSource) {
         fprintf(stderr, "creating shader '%s'", (const char*) source->m_name);
         Shader* shader = new Shader(source->m_name);

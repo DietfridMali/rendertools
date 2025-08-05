@@ -3,15 +3,13 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include "singletonbase.hpp"
 #include "array.hpp"
-#include "projection.h"
 #include "matrix.hpp"
-//#include "quad.h"
+#include "projection.h"
+#include "rendermatrices.h"
 #include "viewport.h"
 #include "fbo.h"
-//#include "texture.h"
-//#include "player.h"
-#include "rendermatrices.h"
 
 // =================================================================================================
 
@@ -30,8 +28,10 @@ public:
 // =================================================================================================
 // basic renderer class. Initializes display and OpenGL and sets up projections and view matrix
 
-class BasicRenderer 
+class BaseRenderer 
     : public RenderMatrices
+    , public PolymorphSingleton
+
 {
     public:
         FBO                     m_screenBuffer;
@@ -41,7 +41,7 @@ class BasicRenderer
         DrawBufferInfo          m_drawBufferInfo;
         List<DrawBufferInfo>    m_drawBufferStack;
         Viewport                m_viewport;
-        BasicQuad               m_viewportArea;
+        BaseQuad                m_viewportArea;
         Texture                 m_renderTexture;
 
     protected:
@@ -54,9 +54,15 @@ class BasicRenderer
         bool                    m_screenIsAvailable;
 
     public:
-        BasicRenderer(int width = 1920, int height = 1080, float fov = 45);
+        BaseRenderer()
+            : m_activeBuffer(nullptr), m_windowWidth(0), m_windowHeight(0), m_sceneWidth(0), m_sceneHeight(0), m_sceneLeft(0), m_aspectRation(1.0f), m_screenIsAvailable(false)
+        { }
 
-        void Create(void);
+        BaseRenderer& Instance(void) { return static_cast<BaseRenderer&>(SingletonInstance()); }
+
+        void Init(int width, int height, float fov);
+
+        void Create(int width = 1920, int height = 1080, float fov = 45);
             
         void SetupOpenGL (void);
 
@@ -141,6 +147,6 @@ class BasicRenderer
         static bool CheckGLError (const char* operation = "");
 };
 
-extern BasicRenderer* basicRenderer;
+#define baseRenderer BaseRenderer::Instance()
 
 // =================================================================================================

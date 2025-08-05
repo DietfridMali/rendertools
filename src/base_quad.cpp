@@ -4,19 +4,19 @@
 
 #include "vbo.h"
 #include "vao.h"
-#include "basic_quad.h"
-#include "basic_shaderhandler.h"
+#include "base_quad.h"
+#include "base_shaderhandler.h"
 #include "type_helper.hpp"
 
 #define USE_VAO true
 
 // caution: the VAO shared handle needs glGenVertexArrays and glDeleteVertexArrays, which usually are not yet available when this vao is initialized.
 // VAO::Init takes care of that by first assigning a handle-less shared gl handle 
-VAO* BasicQuad::m_vao = nullptr; 
+VAO* BaseQuad::m_vao = nullptr; 
 
 // =================================================================================================
 
-BasicQuad& BasicQuad::Copy(const BasicQuad& other) {
+BaseQuad& BaseQuad::Copy(const BaseQuad& other) {
     if (this != &other) {
         m_vertexBuffer = other.m_vertexBuffer;
         m_texCoordBuffer = other.m_texCoordBuffer;
@@ -29,7 +29,7 @@ BasicQuad& BasicQuad::Copy(const BasicQuad& other) {
 }
 
 
-BasicQuad& BasicQuad::Move(BasicQuad& other) {
+BaseQuad& BaseQuad::Move(BaseQuad& other) {
     if (this != &other) {
         m_vertexBuffer = std::move(other.m_vertexBuffer);
         m_texCoordBuffer = std::move(other.m_texCoordBuffer);
@@ -42,7 +42,7 @@ BasicQuad& BasicQuad::Move(BasicQuad& other) {
 }
 
 
-void BasicQuad::CreateTexCoords(void) {
+void BaseQuad::CreateTexCoords(void) {
     if (m_texCoordBuffer.AppDataLength() > 0) {
         for (auto& tc : m_texCoordBuffer.m_appData)
             m_maxTexCoord = TexCoord({ std::max(m_maxTexCoord.U(), tc.U()), std::max(m_maxTexCoord.V(), tc.V()) });
@@ -66,7 +66,7 @@ void BasicQuad::CreateTexCoords(void) {
 }
 
 
-bool BasicQuad::Setup(std::initializer_list<Vector3f> vertices, std::initializer_list<TexCoord> texCoords, Texture* texture, RGBAColor color/*, float borderWidth*/) {
+bool BaseQuad::Setup(std::initializer_list<Vector3f> vertices, std::initializer_list<TexCoord> texCoords, Texture* texture, RGBAColor color/*, float borderWidth*/) {
     Plane::Init(vertices);
     m_vertexBuffer.m_appData = vertices;
     m_texCoordBuffer.m_appData = texCoords;
@@ -83,7 +83,7 @@ bool BasicQuad::Setup(std::initializer_list<Vector3f> vertices, std::initializer
 }
 
 
-bool BasicQuad::CreateVAO(void) {
+bool BaseQuad::CreateVAO(void) {
     if (m_vao)
         return true;
     if (not (m_vao = new VAO(true)))
@@ -93,7 +93,7 @@ bool BasicQuad::CreateVAO(void) {
 }
 
 
-bool BasicQuad::UpdateVAO(void) {
+bool BaseQuad::UpdateVAO(void) {
     if (not CreateVAO())
         return false;
     if (m_vao->IsValid() and not m_vertexBuffer.m_appData.IsEmpty()) {
@@ -106,7 +106,7 @@ bool BasicQuad::UpdateVAO(void) {
 }
 
 
-float BasicQuad::ComputeAspectRatio(void) {
+float BaseQuad::ComputeAspectRatio(void) {
     Vector3f vMin = Vector3f{ 1e6, 1e6, 1e6 };
     Vector3f vMax = Vector3f{ -1e6, -1e6, -1e6 };
     for (auto& v : m_vertexBuffer.m_appData) {
@@ -117,7 +117,7 @@ float BasicQuad::ComputeAspectRatio(void) {
 }
 
 
-Shader* BasicQuad::LoadShader(bool useTexture, const RGBAColor& color) {
+Shader* BaseQuad::LoadShader(bool useTexture, const RGBAColor& color) {
     Shader* shader = basicShaderHandler->SetupShader(useTexture ? "plainTexture" : "plainColor");
     if (shader)
         shader->SetVector4f("effectColor", color);
@@ -125,7 +125,7 @@ Shader* BasicQuad::LoadShader(bool useTexture, const RGBAColor& color) {
 }
 
 
-void BasicQuad::Render(RGBAColor color) {
+void BaseQuad::Render(RGBAColor color) {
     if (UpdateVAO()) {
         Render(LoadShader(m_texture != nullptr, color), m_texture, false);
         basicShaderHandler->StopShader();
@@ -146,7 +146,7 @@ void BasicQuad::Render(RGBAColor color) {
 }
 
 
-void BasicQuad::Render(Shader* shader, Texture* texture, bool updateVAO) {
+void BaseQuad::Render(Shader* shader, Texture* texture, bool updateVAO) {
     if (not updateVAO or UpdateVAO()) {
         m_vao->Render(shader, texture);
     }
@@ -166,7 +166,7 @@ void BasicQuad::Render(Shader* shader, Texture* texture, bool updateVAO) {
 }
 
 
-void BasicQuad::Render(Texture* texture) {
+void BaseQuad::Render(Texture* texture) {
     if (UpdateVAO()) {
         m_vao->Render(LoadShader(texture != nullptr), texture);
     }
@@ -174,7 +174,7 @@ void BasicQuad::Render(Texture* texture) {
 
 
 // fill 2D area defined by x and y components of vertices with color color
-void BasicQuad::Fill(RGBAColor color) {
+void BaseQuad::Fill(RGBAColor color) {
     if (UpdateVAO()) {
         Render(LoadShader(false, color), nullptr);
         basicShaderHandler->StopShader();
@@ -198,11 +198,11 @@ void BasicQuad::Fill(RGBAColor color) {
 }
 
 
-void BasicQuad::Destroy(void) {
-    if constexpr (not is_static_member_v<&BasicQuad::m_vao>) {
+void BaseQuad::Destroy(void) {
+    if constexpr (not is_static_member_v<&BaseQuad::m_vao>) {
         m_vao->Destroy(); // don't destroy static members as they may be reused by other resources any time during program execution. Will be automatically destroyed at program termination
     }
-    //textureHandler->Remove (m_texture); // BasicQuad textures are shared with quads and maybe reused after such a quad has been destroyed; so don't remove it globally
+    //textureHandler->Remove (m_texture); // BaseQuad textures are shared with quads and maybe reused after such a quad has been destroyed; so don't remove it globally
 }
 
 // =================================================================================================

@@ -51,7 +51,7 @@ public:
     bool                        m_isEnabled;
     int                         m_lastBufferIndex;
     int                         m_lastDestination;
-    BasicQuad                   m_viewportArea;
+    BaseQuad                   m_viewportArea;
 
     struct FBOBufferParams {
         String name = "";

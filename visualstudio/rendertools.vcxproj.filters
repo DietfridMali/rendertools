@@ -27,7 +27,7 @@
     <ClInclude Include="..\include\cubemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\basic_displayhandler.h">
+    <ClInclude Include="..\include\base_displayhandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\fbo.h">
@@ -48,13 +48,13 @@
     <ClInclude Include="..\include\projection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\basic_quad.h">
+    <ClInclude Include="..\include\base_quad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\rectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\basic_renderer.h">
+    <ClInclude Include="..\include\base_renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\rendermatrices.h">
@@ -63,7 +63,7 @@
     <ClInclude Include="..\include\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\basic_shaderhandler.h">
+    <ClInclude Include="..\include\base_shaderhandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\SSBO.hpp">
@@ -93,7 +93,7 @@
     <ClInclude Include="..\include\viewport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\basic_shadercode.h">
+    <ClInclude Include="..\include\base_shadercode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -104,7 +104,7 @@
     <ClCompile Include="..\src\cubemap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\basic_displayhandler.cpp">
+    <ClCompile Include="..\src\base_displayhandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\fbo.cpp">
@@ -122,10 +122,10 @@
     <ClCompile Include="..\src\projection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\basic_quad.cpp">
+    <ClCompile Include="..\src\base_quad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\basic_renderer.cpp">
+    <ClCompile Include="..\src\base_renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\rendermatrices.cpp">

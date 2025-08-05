@@ -3,7 +3,7 @@
 #include "SDL_ttf.h"
 
 #include "vector.hpp"
-#include "basic_quad.h"
+#include "base_quad.h"
 #include "fbo.h"
 #include "dictionary.hpp"
 #include "outlinerenderer.h"
@@ -81,7 +81,7 @@ private:
 
     void CreateTextures(void);
 
-    BasicQuad& CreateQuad(BasicQuad& q, float x, float y, float d, Texture* t);
+    BaseQuad& CreateQuad(BaseQuad& q, float x, float y, float d, Texture* t);
 
     FBO* GetFBO(float scale);
 
