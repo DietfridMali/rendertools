@@ -129,7 +129,7 @@ void BaseRenderer::DrawScreen (bool bRotate) {
         SetViewport(::Viewport(0, 0, m_windowWidth, m_windowHeight), false);
         glClear(GL_COLOR_BUFFER_BIT);
         Translate(0.5, 0.5, 0);
-#if 1
+#if 0
         if (bRotate)
             Rotate(90, 0, 0, 1);
         else

@@ -27,13 +27,15 @@ public:
 
     BaseDisplayHandler()
         : m_width(0), m_height(0), m_maxWidth(0), m_maxHeight(0), m_fullscreen(false), m_vSync(true), m_isLandscape(false), m_aspectRatio(1.0f), m_window(nullptr), m_context(SDL_GLContext(0))
-    { }
+    { 
+        // _instance = this;
+    }
 
     virtual ~BaseDisplayHandler();
 
     void Create (String windowTitle = "", int width = 1920, int height = 1080, bool fullscreen = true, bool vSync = true);
 
-    static BaseDisplayHandler& Instance(void) { return static_cast<BaseDisplayHandler&>(SingletonInstance()); }
+    static BaseDisplayHandler& Instance(void) { return static_cast<BaseDisplayHandler&>(PolymorphSingleton::Instance()); }
 
     virtual void ComputeDimensions(int width, int height, bool fullscreen);
 

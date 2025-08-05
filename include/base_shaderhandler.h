@@ -20,9 +20,8 @@ public:
 
 
     BaseShaderHandler() 
-        : m_kernels(16), m_shaderCode(nullptr)
+        : m_kernels(16), m_shaderCode(nullptr), m_activeShader (nullptr)
     {
-        m_activeShader = nullptr;
 #if 0
         List<String> filenames = { appData->textureFolder + "graynoise.png" };
         m_grayNoise.CreateFromFile(filenames, appData->flipImagesVertically);

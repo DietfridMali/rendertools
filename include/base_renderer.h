@@ -56,9 +56,11 @@ class BaseRenderer
     public:
         BaseRenderer()
             : m_activeBuffer(nullptr), m_windowWidth(0), m_windowHeight(0), m_sceneWidth(0), m_sceneHeight(0), m_sceneLeft(0), m_aspectRatio(1.0f), m_screenIsAvailable(false)
-        { }
+        { 
+            _instance = this;
+        }
 
-        static BaseRenderer& Instance(void) { return static_cast<BaseRenderer&>(SingletonInstance()); }
+        static BaseRenderer& Instance(void) { return static_cast<BaseRenderer&>(PolymorphSingleton::Instance()); }
 
         void Init(int width, int height, float fov);
 

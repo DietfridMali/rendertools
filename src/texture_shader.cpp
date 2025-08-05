@@ -20,7 +20,7 @@ const ShaderSource& PlainColorShader() {
     )"
         R"(
         void main() {
-            fragColor = vec4(1,0.5,0,1); //surfaceColor;
+            fragColor = surfaceColor;
     }
     )"
     );
@@ -47,7 +47,7 @@ const ShaderSource& PlainTextureShader() {
         void main() {
             vec4 texColor = texture (source, fragTexCoord);
             if (texColor.a == 0) discard;
-            fragColor = vec4 (texColor.rgb * surfaceColor.rgb, texColor.a * surfaceColor.a);
+            fragColor = vec4(1,0.5,0,1); //vec4 (texColor.rgb * surfaceColor.rgb, texColor.a * surfaceColor.a);
             }
     )"
     );
