@@ -34,18 +34,12 @@ void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
                 params.shader->SetInt("radius", aaMethod.strength);
                 params.destination = fbo->GetLastDestination();
                 
-                //for (int i = 0; i < 1; i++) 
-                {
+                for (int i = 0; i < 1; ++i) {
                     // the following code only works if not called multiple times in a loop!
-                    params.shader->SetFloat("direction", 0.0f);
+                    params.shader->SetFloat("direction", float (i));
                     params.source = params.destination;
                     params.destination = fbo->NextBuffer(params.source);
                     fbo->Render(params);
-                    params.shader->SetFloat("direction", 1.0f);
-                    params.source = params.destination;
-                    params.destination = fbo->NextBuffer(params.source);
-                    fbo->Render(params);
-                    BaseRenderer::CheckGLError();
                 }
             }
         }

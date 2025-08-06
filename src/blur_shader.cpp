@@ -8,7 +8,7 @@
 const ShaderSource& BoxBlurShader() {
     static const ShaderSource boxBlurShader(
         "boxblur",
-        StandardVS(),
+        OffsetVS(),
         R"(
             //#version 140
             //#extension GL_ARB_explicit_attrib_location : enable
@@ -55,7 +55,7 @@ const ShaderSource& BoxBlurShader() {
 const ShaderSource& FxaaShader() {
     static const ShaderSource fxaaShader(
         "fxaa",
-        StandardVS(),
+        OffsetVS(),
         R"(
         //#version 140
         //#extension GL_ARB_explicit_attrib_location : enable
@@ -102,7 +102,7 @@ const ShaderSource& FxaaShader() {
 const ShaderSource& GaussBlurShader() {
     static const ShaderSource gaussBlurShader(
         "gaussblur",
-        StandardVS(),
+        OffsetVS(),
         R"(
         //#version 140
         //#extension GL_ARB_explicit_attrib_location : enable
@@ -114,10 +114,10 @@ const ShaderSource& GaussBlurShader() {
         uniform int radius; 
         uniform float coeffs[33];
         void main() {
-           vec2 texelSize = 1.0 / vec2(textureSize(source, 0));
-           vec2 offset = vec2 (1 - direction, direction);
+            vec2 texelSize = 1.0 / vec2(textureSize(source, 0));
+            vec2 offset = vec2 (1.0 - direction, direction);
     	    vec4 sum = vec4(0.0);
-           int n = 2 * radius + 1;
+            int n = 2 * radius + 1;
     	    for (int i = 0; i < n; ++i)	{
     		    vec2 coord = fragTexCoord + offset * float(i - radius) * texelSize;
     		    sum += vec4 (coeffs[i] * texture(source, coord));

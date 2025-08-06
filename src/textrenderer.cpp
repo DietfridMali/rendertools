@@ -238,7 +238,7 @@ void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& v
 void TextRenderer::RenderToScreen(FBO* fbo) {
 #if USE_TEXT_FBOS
     if (m_isAvailable)
-        fbo->RenderToScreen({ .clearBuffer = false, .scale = m_scale }, m_color); // render outline to viewport
+        fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .scale = m_scale}, m_color); // render outline to viewport
 #endif
 }
 

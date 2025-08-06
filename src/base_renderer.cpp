@@ -234,11 +234,12 @@ void BaseRenderer::ClearGLError(void) {
 
 bool BaseRenderer::CheckGLError (const char* operation) {
     GLenum glError = glGetError ();
-    if (glError) {
-        fprintf (stderr, "OpenGL Error %d (%s)\n", glError, operation);
-        return false;
-    }
-    return true;
+    if (not glError) 
+        return true;
+#ifdef _DEBUG
+    fprintf (stderr, "OpenGL Error %d (%s)\n", glError, operation);
+#endif
+    return false;
 }
 
 BaseRenderer* baseRendererInstance = nullptr;

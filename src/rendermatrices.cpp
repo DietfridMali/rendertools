@@ -87,7 +87,7 @@ bool RenderMatrices::CheckProjection(void) {
 
 
 Matrix4f& RenderMatrices::Scale(float xScale, float yScale, float zScale, const char* caller) {
-    fprintf(stderr, "   Scale(%1.2f, %1.2f, %1.2f)\n", xScale, yScale, zScale);
+    //fprintf(stderr, "   Scale(%1.2f, %1.2f, %1.2f)\n", xScale, yScale, zScale);
 #if DEBUG_MATRICES
     float glData[16];
     Shader::GetFloatData(GL_MODELVIEW_MATRIX, 16, glData);
@@ -109,7 +109,7 @@ Matrix4f& RenderMatrices::Scale(float xScale, float yScale, float zScale, const 
 
 
 Matrix4f& RenderMatrices::Translate(float xTranslate, float yTranslate, float zTranslate, const char* caller) {
-    fprintf(stderr, "   Translate(%1.2f, %1.2f, %1.2f)\n", xTranslate, yTranslate, zTranslate);
+    //fprintf(stderr, "   Translate(%1.2f, %1.2f, %1.2f)\n", xTranslate, yTranslate, zTranslate);
 #if DEBUG_MATRICES
     float glData[16];
     Shader::GetFloatData(GL_MODELVIEW_MATRIX, 16, glData);
@@ -192,7 +192,7 @@ Matrix4f& RenderMatrices::Rotate(Vector3f angles) {
 
 
 void RenderMatrices::PushMatrix(eMatrixType matrixType) {
-    fprintf(stderr, "PushMatrix\n");
+    //fprintf(stderr, "PushMatrix\n");
     if (DEBUG_MATRICES or m_legacyMode) {
         glMatrixMode((matrixType == mtModelView) ? GL_MODELVIEW : GL_PROJECTION);
         glPushMatrix();
@@ -207,7 +207,7 @@ void RenderMatrices::PushMatrix(eMatrixType matrixType) {
 
 
 void RenderMatrices::PopMatrix(eMatrixType matrixType) {
-    fprintf(stderr, "PopMatrix\n");
+    //fprintf(stderr, "PopMatrix\n");
     if (DEBUG_MATRICES or m_legacyMode) {
         glMatrixMode((matrixType == mtModelView) ? GL_MODELVIEW : GL_PROJECTION);
         glPopMatrix();

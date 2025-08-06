@@ -177,6 +177,20 @@ void FBO::Clear(int bufferIndex, bool clearBuffer) { // clear color has been set
 }
 
 
+bool FBO::EnableBuffer(int bufferIndex, bool clearBuffer, bool reenable) {
+    if (not AttachBuffer(bufferIndex))
+        return false;
+    SelectDrawBuffer(bufferIndex, reenable);
+    if (m_depthBufferIndex >= 0)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
+    Clear(m_bufferInfo[bufferIndex].m_attachment, clearBuffer);
+    m_lastBufferIndex = bufferIndex;
+    return baseRenderer.CheckGLError();
+}
+
+
 bool FBO::Enable(int bufferIndex, bool clearBuffer, bool reenable) {
     if (not m_isAvailable)
         return false;
@@ -186,24 +200,13 @@ bool FBO::Enable(int bufferIndex, bool clearBuffer, bool reenable) {
     if (bufferIndex < 0)
         Disable();
     else {
-        m_lastBufferIndex = bufferIndex;
-        BufferInfo& bi = m_bufferInfo[bufferIndex];
         glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
-        BaseRenderer::CheckGLError();
-        if (!AttachBuffer(bufferIndex))
+        if (not (m_isEnabled = baseRenderer.CheckGLError()))
             return false;
-        BaseRenderer::CheckGLError();
-        SelectDrawBuffer(bufferIndex, reenable);
-        BaseRenderer::CheckGLError();
-        if (m_depthBufferIndex >= 0)
-            glEnable(GL_DEPTH_TEST);
-        else
-            glDisable(GL_DEPTH_TEST);
+        if (not EnableBuffer(bufferIndex, clearBuffer, reenable))
+            return false;
     }
-    Clear(m_bufferInfo[bufferIndex].m_attachment, clearBuffer);
-    BaseRenderer::CheckGLError();
-    //baseRenderer.SetupOpenGL();
-    return m_isEnabled = true;
+    return m_isEnabled;
 }
 
 
@@ -225,6 +228,9 @@ bool FBO::BindBuffer(int bufferIndex, int tmuIndex) {
     glEnable(GL_TEXTURE_2D);
     if (tmuIndex < 0)
         tmuIndex = bufferIndex;
+    for (int i = 0; i < m_bufferCount; ++i)
+        if ((i != bufferIndex) and (m_bufferInfo[i].m_tmuIndex == tmuIndex))
+            m_bufferInfo[i].m_tmuIndex = -1;
     glActiveTexture(GL_TEXTURE0 + tmuIndex);
     glBindTexture(GL_TEXTURE_2D, m_bufferInfo[bufferIndex].m_handle);
     baseRenderer.CheckGLError("FBO::BindBuffer");
@@ -261,7 +267,6 @@ void FBO::RestoreViewport(void) {
 
 
 bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RGBAColor& color) {
-    m_viewportArea.SetTexture(source);
     if (params.destination > -1) { // rendering to another FBO
         if (not Enable(params.destination, params.clearBuffer))
             return false;
@@ -280,16 +285,18 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
         baseRenderer.Scale(params.scale, params.scale, 1);
     glDepthFunc(GL_ALWAYS);
     glDisable(GL_CULL_FACE);
+    m_viewportArea.SetTexture(source);
     if (params.shader)
         m_viewportArea.Render(params.shader, source);
-    else 
+    else {
 #if 1
         m_viewportArea.Render(source);
+        baseShaderHandler.StopShader();
 #else
         m_viewportArea.Fill(ColorData::Orange);
 #endif
+    }
     glDisable(GL_CULL_FACE);
-    baseShaderHandler.StopShader();
     glDepthFunc(GL_LESS);
     baseRenderer.PopMatrix();
     if (params.destination > -1)

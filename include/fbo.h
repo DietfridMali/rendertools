@@ -6,6 +6,7 @@
 #include "array.hpp"
 #include "viewport.h"
 #include "texture.h"
+#include "colordata.h"
 
 // =================================================================================================
 
@@ -82,6 +83,8 @@ public:
 
     bool Enable(int bufferIndex = 0, bool clearBuffer = false, bool reenable = false);
 
+    bool EnableBuffer(int bufferIndex, bool clearBuffer, bool reenable);
+
     void Disable(void);
 
     Viewport SetViewport(void);
@@ -104,7 +107,7 @@ public:
     }
 
     inline bool RenderTexture(Texture* texture, const FBORenderParams& params) {
-        return RenderTexture(texture, params, RGBAColor(1, 1, 1, 1));
+        return RenderTexture(texture, params, ColorData::White);
     }
 
     bool Render(const FBORenderParams& params, const RGBAColor& color);
@@ -114,7 +117,7 @@ public:
     }
 
     inline bool Render(const FBORenderParams& params) {
-        return Render(params, RGBAColor(1, 1, 1, 1));
+        return Render(params, ColorData::White);
     }
 
     bool AutoRender(const FBORenderParams& params, const RGBAColor& color);
@@ -124,7 +127,7 @@ public:
     }
 
     bool AutoRender(const FBORenderParams& params) {
-        return AutoRender(params, RGBAColor(1, 1, 1, 1));
+        return AutoRender(params, ColorData::White);
     }
 
     bool RenderToScreen(const FBORenderParams& params, const RGBAColor&);
@@ -134,7 +137,7 @@ public:
     }
 
     inline bool RenderToScreen(const FBORenderParams& params) {
-        return RenderToScreen(params, RGBAColor(1, 1, 1, 1));
+        return RenderToScreen(params, ColorData::White);
     }
 
     inline bool IsAvailable(void) {
