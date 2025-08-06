@@ -33,7 +33,7 @@ class BaseRenderer
     , public PolymorphSingleton<BaseRenderer>
 
 {
-    public:
+    protected:
         FBO                     m_screenBuffer;
         FBO                     m_sceneBuffer;
         FBO*                    m_activeBuffer;
@@ -44,27 +44,27 @@ class BaseRenderer
         BaseQuad                m_viewportArea;
         Texture                 m_renderTexture;
 
-    protected:
         int                     m_windowWidth;
         int                     m_windowHeight;
         int                     m_sceneWidth;
         int                     m_sceneHeight;
         int                     m_sceneLeft;
+        int                     m_sceneTop;
         float                   m_aspectRatio;
         bool                    m_screenIsAvailable;
 
     public:
         BaseRenderer()
-            : m_activeBuffer(nullptr), m_windowWidth(0), m_windowHeight(0), m_sceneWidth(0), m_sceneHeight(0), m_sceneLeft(0), m_aspectRatio(1.0f), m_screenIsAvailable(false)
+            : m_activeBuffer(nullptr), m_windowWidth(0), m_windowHeight(0), m_sceneWidth(0), m_sceneHeight(0), m_sceneLeft(0), m_sceneTop(0), m_aspectRatio(1.0f), m_screenIsAvailable(false)
         { 
             _instance = this;
         }
 
-         static BaseRenderer& Instance(void) { return static_cast<BaseRenderer&>(PolymorphSingleton::Instance()); }
+        static BaseRenderer& Instance(void) { return dynamic_cast<BaseRenderer&>(PolymorphSingleton::Instance()); }
 
-        void Init(int width, int height, float fov);
+        virtual void Init(int width, int height, float fov);
 
-        void Create(int width = 1920, int height = 1080, float fov = 45);
+        virtual void Create(int width = 1920, int height = 1080, float fov = 45);
             
         void SetupOpenGL (void);
 
@@ -84,43 +84,27 @@ class BaseRenderer
 
         virtual void DisableCamera(void) { }
 
-        inline FBO& SceneBuffer(void) {
-            return m_sceneBuffer;
-        }
+        inline FBO& SceneBuffer(void) { return m_sceneBuffer; }
 
-        inline FBO& ScreenBuffer(void) {
-            return m_screenBuffer;
-        }
+        inline FBO& ScreenBuffer(void) { return m_screenBuffer; }
 
         bool SetActiveBuffer(FBO* buffer, bool clearBuffer = false);
 
-        inline int WindowWidth(void) {
-            return m_windowWidth;
-        }
+        inline int WindowWidth(void) { return m_windowWidth; }
 
-        inline int WindowHeight(void) {
-            return m_windowHeight;
-        }
+        inline int WindowHeight(void) { return m_windowHeight; }
 
-        inline int SceneWidth(void) {
-            return m_sceneWidth;
-        }
+        inline int SceneWidth(void) { return m_sceneWidth; }
 
-        inline int SceneHeight(void) {
-            return m_sceneHeight;
-        }
+        inline int SceneHeight(void) { return m_sceneHeight; }
 
-        inline float AspectRatio(void) {
-            return m_aspectRatio;
-        }
+        inline float AspectRatio(void) { return m_aspectRatio; }
 
         typedef struct {
             int width, height;
         } tViewport;
 
-        Viewport& Viewport(void) {
-            return m_viewport;
-        }
+        Viewport& Viewport(void) { return m_viewport; }
 
         void SetViewport(bool isFBO = false);
 

@@ -20,7 +20,6 @@ void BaseRenderer::Init(int width, int height, float fov) {
         m_windowWidth = width; // (width > height) ? width : height;
     m_sceneHeight =
         m_windowHeight = height; // (height > width) ? width : height;
-    m_sceneLeft = 0;
 
     m_aspectRatio = float(m_windowWidth) / float(m_windowHeight); // just for code clarity
     m_drawBuffers.Resize(1);
@@ -109,7 +108,7 @@ void BaseRenderer::Draw3DScene(void) {
         baseRenderer.Scale(1, -1, 1);
         glDepthFunc(GL_ALWAYS);
         glDisable(GL_CULL_FACE);
-        SetViewport(::Viewport(m_sceneLeft, 0, m_sceneWidth, m_sceneHeight), false);
+        SetViewport(::Viewport(m_sceneLeft, m_sceneTop, m_sceneWidth, m_sceneHeight), false);
 #if 1
         m_renderTexture.m_handle = m_sceneBuffer.BufferHandle(0);
         m_viewportArea.Render(&m_renderTexture);

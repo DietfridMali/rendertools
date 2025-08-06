@@ -161,7 +161,7 @@
     <ClCompile Include="..\src\linesegment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\basic_shaderhandler.cpp">
+    <ClCompile Include="..\src\base_shaderhandler.cpp">
       <Filter>Source Files\Shader</Filter>
     </ClCompile>
     <ClCompile Include="..\src\shader_macros.cpp">
@@ -176,7 +176,7 @@
     <ClCompile Include="..\src\texture_shader.cpp">
       <Filter>Source Files\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\basic_shadercode.cpp">
+    <ClCompile Include="..\src\base_shadercode.cpp">
       <Filter>Source Files\Shader</Filter>
     </ClCompile>
     <ClCompile Include="..\src\blur_shader.cpp">
