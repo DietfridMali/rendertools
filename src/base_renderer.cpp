@@ -120,7 +120,7 @@ void BaseRenderer::Draw3DScene(void) {
 }
 
 
-void BaseRenderer::DrawScreen (bool bRotate) {
+void BaseRenderer::DrawScreen (bool bRotate, bool bFlipVertically) {
     if (m_screenIsAvailable) {
         Stop2DScene();
         m_screenIsAvailable = false;
@@ -129,18 +129,12 @@ void BaseRenderer::DrawScreen (bool bRotate) {
         SetViewport(::Viewport(0, 0, m_windowWidth, m_windowHeight), false);
         glClear(GL_COLOR_BUFFER_BIT);
         Translate(0.5, 0.5, 0);
-#if 1
         if (bRotate)
             Rotate(90, 0, 0, 1);
-#if 0
-        else
+        if (bFlipVertically)
             Scale(1, -1, 1);
-#endif
         m_renderTexture.m_handle = m_screenBuffer.BufferHandle(0);
         m_viewportArea.Render(&m_renderTexture);
-#else
-        m_viewportArea.Fill(ColorData::Orange);
-#endif
     }
 }
 

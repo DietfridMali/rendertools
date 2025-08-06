@@ -78,7 +78,7 @@ class BaseRenderer
 
         virtual void Draw3DScene(void);
             
-        virtual void DrawScreen(bool bRotate);
+        virtual void DrawScreen(bool bRotate, bool bFlipVertically);
 
         virtual void EnableCamera(void) { }
 
