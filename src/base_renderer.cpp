@@ -66,7 +66,7 @@ bool BaseRenderer::Start3DScene(void) {
     ResetDrawBuffers(&m_sceneBuffer);
     SetupTransformation();
     SetupOpenGL();
-    SetViewport(::Viewport(m_sceneLeft, 0, m_sceneWidth, m_sceneHeight), false);
+    SetViewport(::Viewport(0, 0, m_sceneWidth, m_sceneHeight), false);
     EnableCamera();
     return true;
 }
