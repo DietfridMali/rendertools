@@ -124,11 +124,11 @@ TextRenderer::tTextDimensions TextRenderer::TextSize(String text) {
 
 
 FBO* TextRenderer::GetFBO(float scale) {
-    FBO** fboRef = m_fbos.Find(FBOID(baseRenderer.m_viewport.m_width, baseRenderer.m_viewport.m_height));
+    FBO** fboRef = m_fbos.Find(FBOID(baseRenderer.Viewport().m_width, baseRenderer.Viewport().m_height));
     if (fboRef != nullptr)
         return *fboRef;
     FBO* fbo = new FBO();
-    fbo->Create(baseRenderer.m_viewport.m_width, baseRenderer.m_viewport.m_height, 2, { .name = "text", .colorBufferCount = 2});
+    fbo->Create(baseRenderer.Viewport().m_width, baseRenderer.Viewport().m_height, 2, {.name = "text", .colorBufferCount = 2});
     m_fbos.Insert(FBOID(fbo), fbo);
     return fbo;
 }
@@ -247,7 +247,7 @@ void TextRenderer::Render(String text, bool centered, int renderAreaWidth, int r
     if (m_isAvailable) {
         FBO* fbo = GetFBO(2);
         if (fbo != nullptr) {
-            RenderToFBO(text, centered, fbo, baseRenderer.m_viewport, renderAreaWidth, renderAreaHeight, outlineWidth);
+            RenderToFBO(text, centered, fbo, baseRenderer.Viewport(), renderAreaWidth, renderAreaHeight, outlineWidth);
             fbo->m_name = text;
             RenderToScreen(fbo);
         }

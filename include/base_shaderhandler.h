@@ -8,7 +8,7 @@
 // =================================================================================================
 
 class BaseShaderHandler 
-    : public BaseSingleton<BaseShaderHandler>
+    : public PolymorphSingleton<BaseShaderHandler>
 {
 public:
     typedef Shader* (__cdecl* tShaderLoader) (void);
