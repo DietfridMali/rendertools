@@ -33,7 +33,7 @@ public:
 
     virtual ~BaseDisplayHandler();
 
-    void Create (String windowTitle = "", int width = 1920, int height = 1080, bool fullscreen = true, bool vSync = true);
+    void Create (String windowTitle = "", int width = 1920, int height = 1080, bool fullscreen = true, bool vSync = false);
 
     static BaseDisplayHandler& Instance(void) { return dynamic_cast<BaseDisplayHandler&>(PolymorphSingleton::Instance()); }
 
