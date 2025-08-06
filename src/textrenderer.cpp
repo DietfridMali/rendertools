@@ -243,13 +243,12 @@ void TextRenderer::RenderToScreen(FBO* fbo) {
 }
 
 
-void TextRenderer::Render(String text, bool centered, int renderAreaWidth, int renderAreaHeight, float outlineWidth, Vector4f outlineColor) {
+void TextRenderer::Render(String text, bool centered, bool flipVertically, int renderAreaWidth, int renderAreaHeight, float outlineWidth, Vector4f outlineColor) {
     if (m_isAvailable) {
         FBO* fbo = GetFBO(2);
         if (fbo != nullptr) {
             RenderToFBO(text, centered, fbo, baseRenderer.Viewport(), renderAreaWidth, renderAreaHeight, outlineWidth);
-            fbo->m_name = text;
-            RenderToScreen(fbo);
+            fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .flipVertically = flipVertically, .clearBuffer = false, .scale = m_scale }, m_color); // render outline to viewport
         }
     }
 }

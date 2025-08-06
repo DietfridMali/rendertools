@@ -49,7 +49,7 @@ public:
 
     void RenderToScreen(FBO* fbo);
 
-    void Render(String text, bool centered = false, int renderAreaWidth = 0, int renderAreaHeight = 0, float outlineWidth = 0., Vector4f outlineColor = Vector4f{0, 0, 0, 0});
+    void Render(String text, bool centered = false, bool flipVertically = false, int renderAreaWidth = 0, int renderAreaHeight = 0, float outlineWidth = 0., Vector4f outlineColor = Vector4f{0, 0, 0, 0});
 
     inline bool SetColor(Vector4f color = ColorData::White) {
         if (color.A() < 0.0f)
