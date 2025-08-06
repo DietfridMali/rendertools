@@ -35,7 +35,7 @@ public:
 
     void Create (String windowTitle = "", int width = 1920, int height = 1080, bool fullscreen = true, bool vSync = true);
 
-    static BaseDisplayHandler& Instance(void) { return static_cast<BaseDisplayHandler&>(PolymorphSingleton::Instance()); }
+    static BaseDisplayHandler& Instance(void) { return dynamic_cast<BaseDisplayHandler&>(PolymorphSingleton::Instance()); }
 
     virtual void ComputeDimensions(int width, int height, bool fullscreen);
 
@@ -55,8 +55,6 @@ public:
         return m_aspectRatio;
     }
 };
-
-extern BaseDisplayHandler* baseDisplayHandlerInstance;
 
 #define baseDisplayHandler BaseDisplayHandler::Instance()
 

@@ -34,6 +34,8 @@ public:
             delete m_shaderCode; // Speicherbereinigung nicht vergessen!
     }
 
+    static BaseShaderHandler& Instance(void) { return dynamic_cast<BaseShaderHandler&>(PolymorphSingleton::Instance()); }
+
 protected:
     virtual void CreateShaderCode(void) {  m_shaderCode = new BaseShaderCode(); }
 
