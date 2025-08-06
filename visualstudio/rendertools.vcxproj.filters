@@ -96,6 +96,9 @@
     <ClInclude Include="..\include\base_shadercode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\colordata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\cube.cpp">

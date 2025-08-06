@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\base_shadercode.h" />
+    <ClInclude Include="..\include\colordata.h" />
     <ClInclude Include="..\include\cube.h" />
     <ClInclude Include="..\include\cubemap.h" />
     <ClInclude Include="..\include\base_displayhandler.h" />

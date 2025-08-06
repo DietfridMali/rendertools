@@ -78,4 +78,5 @@ public:
     inline static const RGBAColor   LightGreen = RGBAColor{ 0.0f, 1.0f, 0.8f, 1 };
     inline static const RGBAColor   Magenta = RGBAColor{ 1.0f, 0.0f, 1.0f, 1 };
     inline static const RGBAColor   Purple = RGBAColor{ 0.5f, 0.0f, 0.5f, 1 };
+    inline static const RGBAColor   Brown = RGBAColor{ 0.45f, 0.25f, 0.1f, 1 };
 };
