@@ -44,7 +44,7 @@ void PrerenderedText::RenderOutline(float outlineWidth, RGBAColor outlineColor, 
         m_fbo.SetViewport();
         m_fbo.SetLastDestination(0);
         textRenderer.SetAAMethod(aaMethod);
-        textRenderer.RenderOutline(&m_fbo, outlineWidth * 2, outlineColor);
+        textRenderer.RenderOutline(&m_fbo, outlineWidth * 2, outlineColor, aaMethod);
         m_fbo.RestoreViewport();
     }
 }
