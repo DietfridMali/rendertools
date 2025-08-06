@@ -58,7 +58,6 @@ Shader* BaseShaderHandler::SelectShader(Texture* texture) {
     return SetupShader(shaderId);
 }
 
-size_t tEnableShader = 0, tGetShader = 0, tUpdateShader = 0;
 
 Shader* BaseShaderHandler::SetupShader(String shaderId) {
     Shader* shader;
@@ -78,13 +77,9 @@ Shader* BaseShaderHandler::SetupShader(String shaderId) {
         }
         //fprintf(stderr, "loading shader '%s'\r\n", (char*) shaderId);
         m_activeShader = shader;
-        size_t t = SDL_GetTicks();
         shader->Enable();
-        tEnableShader += SDL_GetTicks() - t;
     }
-    size_t t = SDL_GetTicks();
     shader->UpdateMatrices();
-    tUpdateShader += SDL_GetTicks() - t;
     return shader;
 }
 

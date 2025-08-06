@@ -90,10 +90,8 @@ void Shader::UpdateMatrices(void) {
     }
     else {
         // both matrices must be column major
-        size_t t = SDL_GetTicks();
         SetMatrix4f("mModelView", baseRenderer.ModelView().AsArray(), m_modelView, false);
         SetMatrix4f("mProjection", baseRenderer.Projection().AsArray(), m_projection, false);
-        tSetMatrix += SDL_GetTicks() - t;
     }
 #if 0
     baseRenderer.CheckModelView();

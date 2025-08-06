@@ -59,24 +59,15 @@ void BaseRenderer::SetupOpenGL (void) {
     SetViewport ();
 }
 
-size_t tBuffers = 0, tTrafo = 0, tOpenGL = 0, tCamera = 0;
 
 bool BaseRenderer::Start3DScene(void) {
     if (not m_sceneBuffer.IsAvailable())
         return false;
-    size_t t = SDL_GetTicks();
     ResetDrawBuffers(&m_sceneBuffer);
-    tBuffers += SDL_GetTicks() - t;
-    t = SDL_GetTicks();
     SetupTransformation();
-    tTrafo += SDL_GetTicks() - t;
-    t = SDL_GetTicks();
     SetupOpenGL();
-    tOpenGL += SDL_GetTicks() - t;
     SetViewport(::Viewport(0, 0, m_sceneWidth, m_sceneHeight), false);
-    t = SDL_GetTicks();
     EnableCamera();
-    tCamera += SDL_GetTicks() - t;
     return true;
 }
 
@@ -165,17 +156,13 @@ void BaseRenderer::SetViewport(::Viewport viewport, bool flipVertically, bool is
 }
 
 
-size_t tActiveBuffer = 0, tDrawBuffer = 0;
-
 bool BaseRenderer::SetActiveBuffer(FBO* buffer, bool clearBuffer) {
-    size_t t = SDL_GetTicks();
     if (m_activeBuffer != buffer) {
         if (m_activeBuffer)
             m_activeBuffer->Disable();
         m_activeBuffer = buffer;
     }
     bool b = m_activeBuffer and (m_activeBuffer->IsEnabled() or m_activeBuffer->Enable(0, clearBuffer));
-    tActiveBuffer += SDL_GetTicks() - t;
     return b;
 }
 
@@ -187,9 +174,7 @@ void BaseRenderer::ResetDrawBuffers(FBO* activeBuffer, bool clearBuffer) {
     }
     m_drawBufferInfo = DrawBufferInfo(nullptr, &m_drawBuffers); // &m_drawBuffer, m_drawBuffer.m_colorBufferInfo[0].m_attachment);
     if (not SetActiveBuffer(activeBuffer, clearBuffer)) {
-        size_t t = SDL_GetTicks();
         glDrawBuffers(m_drawBufferInfo.m_drawBuffers->Length(), m_drawBufferInfo.m_drawBuffers->Data());
-        tDrawBuffer += SDL_GetTicks() - t;
     }
 }
 
