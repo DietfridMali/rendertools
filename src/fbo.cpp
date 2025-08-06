@@ -177,6 +177,8 @@ void FBO::Clear(int bufferIndex, bool clearBuffer) { // clear color has been set
 }
 
 
+size_t tFBO = 0;
+
 bool FBO::EnableBuffer(int bufferIndex, bool clearBuffer, bool reenable) {
     if (not AttachBuffer(bufferIndex))
         return false;
@@ -196,21 +198,24 @@ bool FBO::Enable(int bufferIndex, bool clearBuffer, bool reenable) {
         return false;
     if (not reenable and (bufferIndex == m_lastBufferIndex))
         return true;
-    BaseRenderer::ClearGLError();
+    //BaseRenderer::ClearGLError();
     if (bufferIndex < 0)
         Disable();
     else {
         glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
         if (not (m_isEnabled = baseRenderer.CheckGLError()))
             return false;
+        size_t t = SDL_GetTicks();
         if (not EnableBuffer(bufferIndex, clearBuffer, reenable))
             return false;
+        tFBO += SDL_GetTicks() - t;
     }
     return m_isEnabled;
 }
 
 
 void FBO::Disable(void) {
+    //size_t t = SDL_GetTicks();
     if (m_lastBufferIndex != INVALID_BUFFER_INDEX) {
         m_lastBufferIndex = INVALID_BUFFER_INDEX;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -218,6 +223,7 @@ void FBO::Disable(void) {
         baseRenderer.RestoreDrawBuffer();
         m_isEnabled = false;
     }
+    //tFBO += SDL_GetTicks() - t;
 }
 
 

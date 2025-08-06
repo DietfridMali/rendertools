@@ -6,6 +6,7 @@
 // =================================================================================================
 // Some basic shader handling: Compiling, enabling, setting shader variables
 
+Dictionary<String, GLint> Shader::locations;
 
 String Shader::GetInfoLog (GLuint handle, bool isProgram)
 {
@@ -79,22 +80,27 @@ GLuint Shader::Link(GLuint vsHandle, GLuint fsHandle) {
     return 0;
 }
 
+size_t tSetMatrix = 0;
 
 void Shader::UpdateMatrices(void) {
     float glData[16];
     if (RenderMatrices::m_legacyMode) {
-        SetMatrix4f("mModelView", GetFloatData(GL_MODELVIEW_MATRIX, 16, glData));
-        SetMatrix4f("mProjection", GetFloatData(GL_PROJECTION_MATRIX, 16, glData));
+        SetMatrix4f("mModelView", m_modelView, GetFloatData(GL_MODELVIEW_MATRIX, 16, glData));
+        SetMatrix4f("mProjection", m_projection, GetFloatData(GL_PROJECTION_MATRIX, 16, glData));
     }
     else {
         // both matrices must be column major
-        SetMatrix4f("mModelView", baseRenderer.ModelView().AsArray(), false);
-        SetMatrix4f("mProjection", baseRenderer.Projection().AsArray(), false);
+        size_t t = SDL_GetTicks();
+        SetMatrix4f("mModelView", baseRenderer.ModelView().AsArray(), m_modelView, false);
+        SetMatrix4f("mProjection", baseRenderer.Projection().AsArray(), m_projection, false);
+        tSetMatrix += SDL_GetTicks() - t;
     }
+#if 0
     baseRenderer.CheckModelView();
     baseRenderer.CheckProjection();
     float glmData[16];
     memcpy(glmData, baseRenderer.Projection().AsArray(), sizeof(glmData));
+#endif
 }
 
 // =================================================================================================

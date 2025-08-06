@@ -6,6 +6,7 @@
 #include "vector.hpp"
 #include "string.hpp"
 #include "texture.h"
+#include <cstring>
 
 // =================================================================================================
 // Some basic shader handling: Compiling, enabling, setting shader variables
@@ -17,12 +18,19 @@ class Shader
         String          m_name;
         String          m_vs;
         String          m_fs;
+        float           m_modelView[16];
+        float           m_projection[16];
+
+        static Dictionary<String, GLint>   locations;
 
         using KeyType = String;
 
         Shader(String name = "", String vs = "", String fs = "") : 
             m_handle(0), m_name(name) 
-        { }
+        { 
+            memset(m_modelView, 0, sizeof(m_modelView));
+            memset(m_projection, 0, sizeof(m_projection));
+        }
 
         Shader(const Shader& other) {
             m_handle = other.m_handle;
@@ -73,17 +81,28 @@ class Shader
 
 
         inline GLint GetLocation(const char* name) const {
-            return glGetUniformLocation(m_handle, name);
+            GLint location;
+            String key = String::Concat(m_name, "::", name);
+            if (not locations.Find(key, location)) {
+                location = glGetUniformLocation(m_handle, name);
+                locations[key] = location;
+            }
+            return location;
         }
 
 
-        inline void SetMatrix4f(const char* name, const float* data, bool transpose = false) const {
-            glUniformMatrix4fv(GetLocation(name), 1, GLboolean(transpose), data);
+        inline void SetMatrix4f(const char* name, const float* data, float* cachedData, bool transpose = false) const {
+            if (not cachedData)
+                glUniformMatrix4fv(GetLocation(name), 1, GLboolean(transpose), data);
+            else if (memcmp(cachedData, data, 16 * sizeof(float))) {
+                memcpy(cachedData, data, 16 * sizeof(float));
+                glUniformMatrix4fv(GetLocation(name), 1, GLboolean(transpose), data);
+            }
         }
 
 
-        inline void SetMatrix4f(const char* name, ManagedArray<GLfloat>& data, bool transpose = false) {
-            SetMatrix4f(name, data.Data(), transpose);
+        inline void SetMatrix4f(const char* name, ManagedArray<GLfloat>& data, float* cachedData, bool transpose = false) {
+            SetMatrix4f(name, data.Data(), cachedData, transpose);
         }
 
 

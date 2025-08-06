@@ -58,23 +58,33 @@ Shader* BaseShaderHandler::SelectShader(Texture* texture) {
     return SetupShader(shaderId);
 }
 
+size_t tEnableShader = 0, tGetShader = 0, tUpdateShader = 0;
 
 Shader* BaseShaderHandler::SetupShader(String shaderId) {
-    Shader* shader = GetShader(shaderId);
-    //Shader** shaderPtr = m_shaders.Find(shaderId); // m_shaders[shaderId];
-    if (shader == nullptr) {
-        //fprintf(stderr, "*** couldn't find shader'%s'\r\n", (char*)shaderId);
-        return nullptr;
+    Shader* shader;
+    if ((m_activeShaderId == shaderId) and (m_activeShader != nullptr))
+        shader = m_activeShader;
+    else {
+        shader = GetShader(shaderId);
+        //Shader** shaderPtr = m_shaders.Find(shaderId); // m_shaders[shaderId];
+        if (shader == nullptr) {
+            //fprintf(stderr, "*** couldn't find shader'%s'\r\n", (char*)shaderId);
+            return nullptr;
+        }
+        //Shader* shader = *shaderPtr;
+        if (shader->m_handle == 0) {
+            fprintf(stderr, "*** shader'%s' is not available\r\n", (char*)shaderId);
+            return nullptr;
+        }
+        //fprintf(stderr, "loading shader '%s'\r\n", (char*) shaderId);
+        m_activeShader = shader;
+        size_t t = SDL_GetTicks();
+        shader->Enable();
+        tEnableShader += SDL_GetTicks() - t;
     }
-    //Shader* shader = *shaderPtr;
-    if (shader->m_handle == 0) {
-        fprintf(stderr, "*** shader'%s' is not available\r\n", (char*)shaderId);
-        return nullptr;
-    }
-    //fprintf(stderr, "loading shader '%s'\r\n", (char*) shaderId);
-    m_activeShader = shader;
-    shader->Enable();
+    size_t t = SDL_GetTicks();
     shader->UpdateMatrices();
+    tUpdateShader += SDL_GetTicks() - t;
     return shader;
 }
 
