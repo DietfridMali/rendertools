@@ -51,16 +51,25 @@ public:
 
     void Render(String text, bool centered = false, int renderAreaWidth = 0, int renderAreaHeight = 0, float outlineWidth = 0., Vector4f outlineColor = Vector4f{0, 0, 0, 0});
 
-    inline void SetColor(Vector4f color = Vector4f{1, 1, 1, 1}) {
+    inline bool SetColor(Vector4f color = ColorData::White) {
+        if (color.A() < 0.0f)
+            return false;
         m_color = color;
+        return true;
     }
 
-    inline void SetAlpha(float alpha = 1.0) {
+    inline bool SetAlpha(float alpha = 1.0) {
+        if (alpha < 0.0f)
+            return false;
         m_color.A() = alpha;
+        return true;
     }
 
-    inline void SetScale(float scale = 1.0) {
+    inline bool SetScale(float scale = 1.0) {
+        if (scale < 0.0f)
+            return false;
         m_scale = scale;
+        return true;
     }
 
     inline Texture* FindTexture(String key) {

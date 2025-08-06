@@ -80,7 +80,7 @@ public:
 
     void RenderOutline(float outlineWidth, RGBAColor outlineColor, OutlineRenderer::tAAMethod aaMethod = { "", 0 });
 
-    virtual void Render(bool setViewport = true, RGBAColor color = ColorData::White, float alpha = -1.0f, float scale = -1.0f);
+    virtual void Render(bool setViewport = true, RGBAColor color = RGBAColor(1.0f, 1.0f, 1.0f, -1.0f), float alpha = -1.0f, float scale = -1.0f);
 };
 
 // =================================================================================================

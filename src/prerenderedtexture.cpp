@@ -51,20 +51,17 @@ void PrerenderedText::RenderOutline(float outlineWidth, RGBAColor outlineColor, 
 
 
 void PrerenderedText::Render(bool setViewport, RGBAColor color, float alpha, float scale) {
-    if (color.A() >= 0)
-        textRenderer.SetColor(color);
-    if (alpha >= 0)
-        textRenderer.SetAlpha(alpha); // must be called after SetColor() to affect rendered text's alpha
-    if (scale >= 0)
-        textRenderer.SetScale(scale);
+    bool resetColor = textRenderer.SetColor(color) or textRenderer.SetColor(m_color);
+    bool resetAlpha = textRenderer.SetAlpha(alpha) or textRenderer.SetAlpha(m_alpha); // must be called after SetColor() to affect rendered text's alpha
+    bool resetScale = textRenderer.SetScale(scale) or textRenderer.SetScale(m_scale);
     if (setViewport)
         m_viewport.SetViewport();
     textRenderer.RenderToScreen(&m_fbo); // m_outlineWidth == 0);
-    if (alpha >= 0)
+    if (resetAlpha)
         textRenderer.SetAlpha();
-    if (scale >= 0)
+    if (resetScale)
         textRenderer.SetScale();
-    if (color.A() >= 0)
+    if (resetColor)
         textRenderer.SetColor();
 }
 
