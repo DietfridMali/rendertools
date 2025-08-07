@@ -172,7 +172,7 @@ bool Texture::IsAvailable(void) {
 #else
         (m_handle != 0)
 #endif
-        && (HasBuffer() or not m_buffers.IsEmpty());
+        and (HasBuffer() or not m_buffers.IsEmpty());
 }
 
 

@@ -10,7 +10,7 @@
 #include "base_renderer.h"
 
 // =================================================================================================
-// basic renderer class. Initializes display && OpenGL && sets up projections && view transformation
+// basic renderer class. Initializes display and OpenGL and sets up projections and view transformation
 // the renderer enforces window width >= window height, so for portrait screen mode, the window contents
 // rendered sideways. That's why BaseRenderer class has m_windowWidth, m_windowHeight and m_aspectRatio
 // separate from DisplayHandler.
@@ -185,7 +185,7 @@ void BaseRenderer::SaveDrawBuffer() {
 
 
 void BaseRenderer::SetDrawBuffers(FBO* fbo, ManagedArray<GLuint>* drawBuffers) {
-    if ((fbo != nullptr) && (m_drawBufferInfo.m_fbo != nullptr) && (fbo->m_handle == m_drawBufferInfo.m_fbo->m_handle))
+    if ((fbo != nullptr) and (m_drawBufferInfo.m_fbo != nullptr) and (fbo->m_handle == m_drawBufferInfo.m_fbo->m_handle))
         m_drawBufferInfo.m_drawBuffers = drawBuffers;
     else {
         SaveDrawBuffer();

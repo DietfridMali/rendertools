@@ -25,7 +25,7 @@ bool PrerenderedItem::Create(int bufferCount) {
 bool PrerenderedText::Create(String text, bool centered, int bufferCount, OutlineRenderer::tAAMethod aaMethod) {
     if (bufferCount == 0)
         bufferCount = 2;//  (m_outlineWidth == 0) ? 1 : 2;
-    if (not PrerenderedItem::Create(bufferCount) && (m_text == text))
+    if (not PrerenderedItem::Create(bufferCount) and (m_text == text))
         return false;
     m_text = text;
     textRenderer.SetColor(m_color);

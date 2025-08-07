@@ -302,7 +302,7 @@ bool Plane::SphereIntersection(lineSegment line, float r, Vector3f& vCollide, Ve
 
     // Kanten
     const auto UpdateCollision = [&](float t) {
-        if ((t >= 0.0f) && (t <= 1.0f) && (t < tCollide)) {
+        if ((t >= 0.0f) and (t <= 1.0f) and (t < tCollide)) {
             tCollide = t;
             vFirstCollide = line.p0 + line.Normal() * t;
             }

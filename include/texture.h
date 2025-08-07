@@ -138,7 +138,7 @@ class AbstractTexture {
 
         // CTextureBuffer(CTextureBuffer&& other) = default;            // move construct
 
-        // CTextureBuffer& operator=(CTextureBuffer && other) = default; // move assignment
+        // CTextureBuffer& operator=(CTextureBuffer and other) = default; // move assignment
     };
 
 // =================================================================================================

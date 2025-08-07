@@ -66,7 +66,7 @@ float LineSegment::ComputeNearestPoints(LineSegment& other, LineSegment& nearest
     float f = d2.Dot(r);
 
     float s = 0.0f, t = 0.0f;
-    if (a <= m_tolerance && e <= m_tolerance) {
+    if (a <= m_tolerance and e <= m_tolerance) {
         // Beide Segmente sind Punkte
         nearestPoints.Init(p0, other.p0);
         return (p0 - other.p0).Length();
