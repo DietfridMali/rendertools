@@ -136,6 +136,8 @@ public:
         matrixStack.Pop(m);
         return m;
     }
+
+    void UpdateLegacyMatrices(void);
 };
 
 // =================================================================================================

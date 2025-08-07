@@ -50,7 +50,7 @@ public:
 
     Shader* SetupShader(String shaderId);
 
-    void StopShader(void);
+    void StopShader(bool needLegacyMatrices = false);
 
     inline bool ShaderIsActive(Shader* shader = nullptr) {
         return m_activeShader != shader;

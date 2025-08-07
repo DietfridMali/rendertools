@@ -217,7 +217,6 @@ void BaseRenderer::Fill(const RGBAColor& color, float scale) {
     baseRenderer.PopMatrix();
 }
 
-
 void BaseRenderer::ClearGLError(void) {
 #if 0
     while (glGetError() != GL_NO_ERROR)

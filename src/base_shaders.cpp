@@ -14,16 +14,10 @@ const ShaderSource& PlainColorShader() {
         //#extension GL_ARB_explicit_attrib_location : enable
         #version 330
         uniform vec4 surfaceColor;
-        uniform float maxDist;
-        in vec3 fragPos;
         out vec4 fragColor;
-    )"
-        R"(
-        void main() {
-            fragColor = surfaceColor;
-    }
-    )"
-    );
+        void main() { fragColor = surfaceColor; }
+        )"
+        );
     return plainColorShader;
 }
 

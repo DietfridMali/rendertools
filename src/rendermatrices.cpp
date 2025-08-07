@@ -248,4 +248,12 @@ void RenderMatrices::PopMatrix(eMatrixType matrixType) {
     }
 }
 
+
+void RenderMatrices::UpdateLegacyMatrices(void) {
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(Projection().AsArray());
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixf(ModelView().AsArray());
+}
+
 // =================================================================================================

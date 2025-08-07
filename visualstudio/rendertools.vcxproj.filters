@@ -176,7 +176,7 @@
     <ClCompile Include="..\src\outline_shader.cpp">
       <Filter>Source Files\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\texture_shader.cpp">
+    <ClCompile Include="..\src\base_shaders.cpp">
       <Filter>Source Files\Shader</Filter>
     </ClCompile>
     <ClCompile Include="..\src\base_shadercode.cpp">

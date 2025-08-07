@@ -1,6 +1,7 @@
 
 #include "matrix.hpp"
 #include "base_shaderhandler.h"
+#include "base_renderer.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -84,10 +85,12 @@ Shader* BaseShaderHandler::SetupShader(String shaderId) {
 }
 
 
-void BaseShaderHandler::StopShader(void) {
+void BaseShaderHandler::StopShader(bool needLegacyMatrices) {
     if (ShaderIsActive()) {
         m_activeShader->Disable();
         m_activeShader = nullptr;
+        if (needLegacyMatrices)
+            baseRenderer.UpdateLegacyMatrices();
     }
 }
 
