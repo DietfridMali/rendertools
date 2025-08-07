@@ -128,7 +128,7 @@ Shader* BaseQuad::LoadShader(bool useTexture, const RGBAColor& color) {
 void BaseQuad::Render(RGBAColor color) {
     if (UpdateVAO()) {
         Render(LoadShader(m_texture != nullptr, color), m_texture, false);
-        baseShaderHandler.StopShader();
+        //baseShaderHandler.StopShader();
     }
     else {
         glEnable(GL_TEXTURE_2D);
@@ -177,7 +177,7 @@ void BaseQuad::Render(Texture* texture) {
 void BaseQuad::Fill(RGBAColor color) {
     if (UpdateVAO()) {
         Render(LoadShader(false, color), nullptr);
-        baseShaderHandler.StopShader();
+        //baseShaderHandler.StopShader();
     }
     else {
         glDisable(GL_TEXTURE_2D);

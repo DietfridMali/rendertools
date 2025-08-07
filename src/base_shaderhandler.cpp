@@ -78,6 +78,7 @@ Shader* BaseShaderHandler::SetupShader(String shaderId) {
         }
         //fprintf(stderr, "loading shader '%s'\r\n", (char*) shaderId);
         m_activeShader = shader;
+        m_activeShaderId = shaderId;
         shader->Enable();
     }
     shader->UpdateMatrices();
@@ -89,8 +90,11 @@ void BaseShaderHandler::StopShader(bool needLegacyMatrices) {
     if (ShaderIsActive()) {
         m_activeShader->Disable();
         m_activeShader = nullptr;
+        m_activeShaderId = "";
+#if 1
         if (needLegacyMatrices)
             baseRenderer.UpdateLegacyMatrices();
+#endif
     }
 }
 

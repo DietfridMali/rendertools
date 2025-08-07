@@ -80,9 +80,9 @@ class BaseRenderer
             
         virtual void DrawScreen(bool bRotate, bool bFlipVertically);
 
-        virtual void EnableCamera(void) { }
+        virtual bool EnableCamera(void) { return false; }
 
-        virtual void DisableCamera(void) { }
+        virtual bool DisableCamera(void) { return false; }
 
         inline FBO& SceneBuffer(void) { return m_sceneBuffer; }
 

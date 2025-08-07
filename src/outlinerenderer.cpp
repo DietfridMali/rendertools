@@ -43,7 +43,7 @@ void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
                 }
             }
         }
-        baseShaderHandler.StopShader();
+        //baseShaderHandler.StopShader();
     }
 }
 
@@ -55,7 +55,7 @@ void OutlineRenderer::RenderOutline(FBO* fbo, float outlineWidth, RGBAColor colo
         shader->SetVector4f("outlineColor", color);
         shader->SetFloat("offset", 0.5f);
         fbo->AutoRender({ .clearBuffer = true, .shader = shader });
-        baseShaderHandler.StopShader();
+        //baseShaderHandler.StopShader();
         AntiAlias(fbo, aaMethod);
     }
 }

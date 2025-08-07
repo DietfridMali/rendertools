@@ -128,7 +128,7 @@ void VAO::Render(Shader* shader, Texture* texture) {
     Disable();
 #if 0
     if (shader != nullptr)
-        baseShaderHandler.StopShader();
+        //baseShaderHandler.StopShader();
 #endif
     DisableTexture(texture);
 }

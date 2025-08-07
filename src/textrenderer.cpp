@@ -168,7 +168,7 @@ void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float 
             x += w;
         }
     }
-    baseShaderHandler.StopShader();
+    //baseShaderHandler.StopShader();
     baseRenderer.PopMatrix();
 #if USE_TEXT_FBOS
     glDepthFunc(GL_LESS);

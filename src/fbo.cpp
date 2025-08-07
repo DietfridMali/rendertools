@@ -291,7 +291,7 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     else {
 #if 1
         m_viewportArea.Render(color); // texture has been assigned to m_viewportArea above
-        baseShaderHandler.StopShader();
+        //baseShaderHandler.StopShader();
 #else
         m_viewportArea.Fill(ColorData::Orange);
 #endif

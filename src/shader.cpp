@@ -80,7 +80,6 @@ GLuint Shader::Link(GLuint vsHandle, GLuint fsHandle) {
     return 0;
 }
 
-size_t tSetMatrix = 0;
 
 void Shader::UpdateMatrices(void) {
     float glData[16];
