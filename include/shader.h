@@ -19,6 +19,7 @@ class Shader
         String          m_vs;
         String          m_fs;
         float           m_modelView[16];
+        float           m_baseModelView[16];
         float           m_projection[16];
 
         static Dictionary<String, GLint>   locations;
@@ -29,6 +30,7 @@ class Shader
             m_handle(0), m_name(name) 
         { 
             memset(m_modelView, 0, sizeof(m_modelView));
+            memset(m_baseModelView, 0, sizeof(m_modelView));
             memset(m_projection, 0, sizeof(m_projection));
         }
 
@@ -54,6 +56,12 @@ class Shader
         String& GetKey(void) {
             return m_name;
         }
+
+        inline float* ModelViewCache(void) { return m_modelView; }
+
+        inline float* BaseModelViewCache(void) { return m_baseModelView; }
+
+        inline float* ProjectionCache(void) { return m_projection; }
 
         String GetInfoLog (GLuint handle, bool isProgram = false);
             
@@ -91,81 +99,118 @@ class Shader
         }
 
 
-        inline void SetMatrix4f(const char* name, const float* data, float* cachedData, bool transpose = false) const {
-            if (not cachedData)
-                glUniformMatrix4fv(GetLocation(name), 1, GLboolean(transpose), data);
-            else if (memcmp(cachedData, data, 16 * sizeof(float))) {
-                memcpy(cachedData, data, 16 * sizeof(float));
-                glUniformMatrix4fv(GetLocation(name), 1, GLboolean(transpose), data);
+        inline GLint SetMatrix4f(const char* name, const float* data, float* cachedData, bool transpose = false) const {
+            GLint location = GetLocation(name);
+            if (location >= 0) {
+                if (not cachedData)
+                    glUniformMatrix4fv(GetLocation(name), 1, GLboolean(transpose), data);
+                else if (memcmp(cachedData, data, 16 * sizeof(float))) {
+                    memcpy(cachedData, data, 16 * sizeof(float));
+                    glUniformMatrix4fv(GetLocation(name), 1, GLboolean(transpose), data);
+                }
             }
+            return location;
         }
 
 
-        inline void SetMatrix4f(const char* name, ManagedArray<GLfloat>& data, float* cachedData, bool transpose = false) {
-            SetMatrix4f(name, data.Data(), cachedData, transpose);
+        inline GLint SetMatrix4f(const char* name, ManagedArray<GLfloat>& data, float* cachedData, bool transpose = false) {
+            return SetMatrix4f(name, data.Data(), cachedData, transpose);
         }
 
 
-        inline void SetMatrix3f(const char* name, float* data, bool transpose = false) {
-            glUniformMatrix3fv(GetLocation(name), 1, GLboolean(transpose), data);
+        inline GLint SetMatrix3f(const char* name, float* data, bool transpose = false) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniformMatrix3fv(location, 1, GLboolean(transpose), data);
+            return location;
         }
 
 
-        inline void SetMatrix3f(const char* name, ManagedArray<GLfloat>& data, bool transpose) {
+        inline GLint SetMatrix3f(const char* name, ManagedArray<GLfloat>& data, bool transpose) {
             SetMatrix3f(name, data.Data(), transpose);
         }
 
 
         template<typename T>
-        inline void SetVector4f(const char* name, T&& data) {
-            glUniform4fv(GetLocation(name), 1, std::forward<T>(data).Data());
+        inline GLint SetVector4f(const char* name, T&& data) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniform4fv(location, 1, std::forward<T>(data).Data());
+            return location;
         }
 
 
         template<typename T>
-        inline void SetVector3f(const char* name, T&& data) {
-            glUniform3fv(GetLocation(name), 1, std::forward<T>(data).Data());
+        inline GLint SetVector3f(const char* name, T&& data) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniform3fv(location, 1, std::forward<T>(data).Data());
+            return location;
         }
 
 
         template<typename T>
-        inline void SetVector2f(const char* name, T&& data) {
-            glUniform2fv(GetLocation(name), 1, std::forward<T>(data).Data());
+        inline GLint SetVector2f(const char* name, T&& data) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniform2fv(location, 1, std::forward<T>(data).Data());
+            return location;
         }
 
 
-        inline void SetVector2f(const char* name, float x, float y) {
-            glUniform2f(GetLocation(name), x, y);
+        inline GLint SetVector2f(const char* name, float x, float y) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniform2f(location, x, y);
+            return location;
         }
 
 
-        inline void SetFloat(const char* name, float data) {
-            glUniform1f(GetLocation(name), GLfloat(data));
+        inline GLint SetFloat(const char* name, float data) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniform1f(location, GLfloat(data));
+            return location;
         }
 
 
-        inline void SetVector2i(const char* name, const GLint* data) {
-            glUniform2iv(GetLocation(name), 1, data);
+        inline GLint SetVector2i(const char* name, const GLint* data) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniform2iv(location, 1, data);
+            return location;
         }
 
 
-        inline void SetVector3i(const char* name, const GLint* data) {
-            glUniform3iv(GetLocation(name), 1, data);
+        inline GLint SetVector3i(const char* name, const GLint* data) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniform3iv(location, 1, data);
+            return location;
         }
 
 
-        inline void SetVector4i(const char* name, const GLint* data) {
-            glUniform4iv(GetLocation(name), 1, data);
+        inline GLint SetVector4i(const char* name, const GLint* data) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniform4iv(location, 1, data);
+            return location;
         }
 
 
-        inline void SetInt(const char* name, int data) {
-            glUniform1i(GetLocation(name), GLint(data));
+        inline GLint SetInt(const char* name, int data) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniform1i(location, GLint(data));
+            return location;
         }
 
 
-        void SetFloatData(const char* name, FloatArray& data) {
-            glUniform1fv(GetLocation(name), GLsizei(data.Length()), (GLfloat*)data.Data());
+        inline GLint SetFloatData(const char* name, FloatArray& data) {
+            GLint location = GetLocation(name);
+            if (location >= 0)
+                glUniform1fv(location, GLsizei(data.Length()), (GLfloat*)data.Data());
+            return location;
         }
 
 

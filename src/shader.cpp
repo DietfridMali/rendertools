@@ -91,6 +91,9 @@ void Shader::UpdateMatrices(void) {
         // both matrices must be column major
         SetMatrix4f("mModelView", baseRenderer.ModelView().AsArray(), m_modelView, false);
         SetMatrix4f("mProjection", baseRenderer.Projection().AsArray(), m_projection, false);
+#if 0
+        SetMatrix4f("mBaseModelView", baseRenderer.ModelView().AsArray(), m_baseModelView, false);
+#endif
     }
 #if 0
     baseRenderer.CheckModelView();
