@@ -48,6 +48,7 @@ class IcoSphere : public Mesh
             : Mesh(false), m_vertexCount (0), m_faceCount (0) 
         {
             Mesh::Init (shape, 100);
+            Mesh::SetName("IcoSphere");
         }
 
         IcoSphere(GLenum shape, Texture* texture, String textureFolder, List<String> textureNames) 

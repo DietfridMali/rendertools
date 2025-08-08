@@ -57,6 +57,7 @@ public:
 class Mesh : public AbstractMesh
 {
 public:
+    String              m_name;
     TextureList         m_textures;
     VertexBuffer        m_vertices;
     VertexBuffer        m_normals;
@@ -79,6 +80,10 @@ public:
     }
 
     void Init(GLenum shape, int32_t listSegmentSize, Texture* texture = nullptr, String textureFolder = "", List<String> textureNames = List<String>(), GLenum textureType = GL_TEXTURE_2D);
+
+    void SetName(String name) { m_name = name; }
+
+    String GetName(void) { return m_name; }
 
     virtual void Create(int quality, Texture* texture, List<String> textureNames) {}
 
