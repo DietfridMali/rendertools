@@ -289,7 +289,7 @@ bool Plane::SphereIntersection(lineSegment line, float r, Vector3f& vCollide, Ve
         float t1 = (r - d0) / delta;
         float t2 = (-r - d0) / delta;
         for (float tEntry : {t1, t2}) {
-            if (tEntry >= 0.0f and tEntry <= 1.0f and tEntry < tCollide) {
+            if ((tEntry >= 0.0f) and (tEntry <= 1.0f) and (tEntry < tCollide)) {
                 Vector3f centerHit = line.p0 + line.Normal() * tEntry;
                 Vector3f planeHit = centerHit - m_normal * Distance(centerHit);
                 if (Contains(planeHit)) {
@@ -471,7 +471,7 @@ int Plane::SphereIntersection(LineSegment line, float radius, Vector3f& collisio
 
 #else // -------------------------------------------------------------------------------------------------
 
-int Plane::SphereIntersection(LineSegment line, float radius, Vector3f& collisionPoint, Vector3f& endPoint)
+int Plane::SphereIntersection(LineSegment line, float radius, Vector3f& collisionPoint, Vector3f& endPoint, Conversions::FloatInterval limits)
 {
     float d0 = Distance(line.p0);
     float d1 = Distance(line.p1);
@@ -488,7 +488,7 @@ int Plane::SphereIntersection(LineSegment line, float radius, Vector3f& collisio
     if (fabs(denom) > m_tolerance) {
         float r = (d0 >= 0) ? radius : -radius;
         float t = (r - d0) / denom;
-        if (/*(t > -m_tolerance) and */ (t < 1.0f + m_tolerance)) {
+        if ((t > -limits.min) and (t < limits.max + m_tolerance)) {
             Vector3f candidate = line.p0 + line.Direction() * t;
             float d = Distance(candidate);
             Vector3f vPlane = candidate - m_normal * d;

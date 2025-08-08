@@ -52,7 +52,7 @@ class Plane : public Vector3f {
         // (i.e. both points are on the same side of the plane)
         int LineIntersection(const Vector3f& p0, const Vector3f& p1, Vector3f& vPlanePoint);
 
-        int SphereIntersection(LineSegment line, float radius, Vector3f& collisionPoint, Vector3f& endPoint);
+        int SphereIntersection(LineSegment line, float radius, Vector3f& collisionPoint, Vector3f& endPoint, Conversions::FloatInterval limits);
 
         int PointOnLineAt(LineSegment& line, float d, Vector3f& vLinePoint);
 
