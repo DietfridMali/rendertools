@@ -533,7 +533,7 @@ int Plane::SphereIntersection(LineSegment line, float radius, Vector3f& collisio
         collisionPoint = bestPoints.p0;
         }
     else
-        return 0;
+        return -1;
 
     endPoint = line.p0 + line.Direction() * t;
     if (line.Normal().Dot(m_normal) > 0) // just touching quad and moving away
