@@ -484,12 +484,11 @@ int Plane::SphereIntersection(LineSegment line, float radius, Vector3f& collisio
     }
 
     // 1. Schnittpunkt mit Ebene in Abstand radius prüfen (Projektion im Quad)
-    float angle = m_normal.Dot(line.Normal());
     float denom = m_normal.Dot(line.Direction());
     if (fabs(denom) > m_tolerance) {
         float r = (d0 >= 0) ? radius : -radius;
         float t = (r - d0) / denom;
-        if ((t > -m_tolerance) and t < (1.0f + m_tolerance)) {
+        if (/*(t > -m_tolerance) and */ (t < 1.0f + m_tolerance)) {
             Vector3f candidate = line.p0 + line.Direction() * t;
             float d = Distance(candidate);
             Vector3f vPlane = candidate - m_normal * d;
