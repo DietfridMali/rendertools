@@ -488,7 +488,7 @@ int Plane::SphereIntersection(LineSegment line, float radius, Vector3f& collisio
     if (fabs(denom) > m_tolerance) {
         float r = (d0 >= 0) ? radius : -radius;
         float t = (r - d0) / denom;
-        if ((t > -limits.min) and (t < limits.max + m_tolerance)) {
+        if (limits.Contains(t)) {
             Vector3f candidate = line.p0 + line.Direction() * t;
             float d = Distance(candidate);
             Vector3f vPlane = candidate - m_normal * d;
@@ -506,7 +506,7 @@ int Plane::SphereIntersection(LineSegment line, float radius, Vector3f& collisio
 
     for (int i = 0; i < 4; ++i) {
         LineSegment edge(m_vertices[i], m_vertices[(i + 1) % 4]), collisionPoints;
-        line.ComputeCapsuleIntersection(edge, collisionPoints, radius, { .max = 1.0f });
+        line.ComputeCapsuleIntersection(edge, collisionPoints, radius, limits);
         for (int j = 0; j < collisionPoints.solutions; ++j) {
             if (collisionPoints.offsets[j] < 0.0f) {
                 if (collisionPoints.offsets[j] > bestPoints.offsets[0]) {
