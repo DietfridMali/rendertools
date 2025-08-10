@@ -2,9 +2,15 @@
 
 #include "glew.h"
 #include "vector.hpp"
+#include "singletonbase.hpp"
 
-class Cube {
+class Cube 
+    : public BaseSingleton<Cube>
+{
 public:
+    Cube() = default;
+    ~Cube() = default;
+
     static constexpr int vertexCount = 8;
 
     static Vector3f vertices[vertexCount];
