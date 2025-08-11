@@ -20,6 +20,10 @@ public:
 
 public:
     DrawBufferInfo(FBO* fbo = nullptr, ManagedArray<GLuint>* drawBuffers = nullptr) {
+        Update(fbo, drawBuffers);
+    }
+
+    inline void Update (FBO* fbo, ManagedArray<GLuint>* drawBuffers) {
         m_fbo = fbo;
         m_drawBuffers = drawBuffers;
     }
@@ -37,7 +41,7 @@ class BaseRenderer
         FBO                     m_screenBuffer;
         FBO                     m_sceneBuffer;
         FBO*                    m_activeBuffer;
-        ManagedArray<GLuint>    m_drawBuffers;
+        ManagedArray<GLuint>    m_defaultDrawBuffers;
         DrawBufferInfo          m_drawBufferInfo;
         List<DrawBufferInfo>    m_drawBufferStack;
         Viewport                m_viewport;
@@ -110,8 +114,14 @@ class BaseRenderer
 
         void SetViewport(::Viewport viewport, bool flipVertically = false, bool isFBO = false);
 
-        inline ManagedArray<GLuint>* DrawBuffer(void) {
+        inline ManagedArray<GLuint>* ActiveDrawBuffers(void) {
             return m_drawBufferInfo.m_drawBuffers;
+        }
+
+        void SetupDrawBuffers(void);
+            
+        inline void SetActiveDrawBuffers(void) {
+            glDrawBuffers(ActiveDrawBuffers()->Length(), ActiveDrawBuffers()->Data());
         }
 
         void SaveDrawBuffer();

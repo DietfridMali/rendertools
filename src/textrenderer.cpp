@@ -240,7 +240,7 @@ void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& v
 void TextRenderer::RenderToScreen(FBO* fbo, bool flipVertically) {
 #if USE_TEXT_FBOS
     if (m_isAvailable)
-        fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .flipVertically = flipVertically, .scale = m_scale}); // render outline to viewport
+        fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .flipVertically = flipVertically, .scale = m_scale}, m_color); // render outline to viewport
 #endif
 }
 
@@ -250,7 +250,7 @@ void TextRenderer::Render(String text, bool centered, bool flipVertically, int r
         FBO* fbo = GetFBO(2.0f);
         if (fbo != nullptr) {
             RenderToFBO(text, centered, fbo, baseRenderer.Viewport(), renderAreaWidth, renderAreaHeight);
-            fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .flipVertically = flipVertically, .scale = m_scale }, m_color); // render outline to viewport
+            RenderToScreen(fbo, flipVertically); // render outline to viewport
         }
     }
 }

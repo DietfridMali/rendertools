@@ -22,9 +22,7 @@ void BaseRenderer::Init(int width, int height, float fov) {
         m_windowHeight = height; // (height > width) ? width : height;
 
     m_aspectRatio = float(m_windowWidth) / float(m_windowHeight); // just for code clarity
-    m_drawBuffers.Resize(1);
-    m_drawBuffers[0] = GL_BACK;
-    ResetDrawBuffers(nullptr); // required to initialize m_drawBufferInfo. If not done here, subsequent renders to FBOs ahead of main rendering loop will crash the app
+    SetupDrawBuffers();
     CreateMatrices(m_windowWidth, m_windowHeight, float(m_sceneWidth) / float(m_sceneHeight), fov);
     ResetTransformation();
 }
@@ -164,15 +162,24 @@ bool BaseRenderer::SetActiveBuffer(FBO* buffer, bool clearBuffer) {
     return b;
 }
 
+
+void BaseRenderer::SetupDrawBuffers(void) {
+    m_defaultDrawBuffers.Resize(1);
+    m_defaultDrawBuffers[0] = GL_BACK;
+    m_drawBufferInfo.Update(nullptr, &m_defaultDrawBuffers);
+    ResetDrawBuffers(nullptr); // required to initialize m_drawBufferInfo. If not done here, subsequent renders to FBOs ahead of main rendering loop will crash the app
+}
+
+
 void BaseRenderer::ResetDrawBuffers(FBO* activeBuffer, bool clearBuffer) {
-    DrawBufferInfo info;
-    while (m_drawBufferStack.Pop(info)) {
-        if (info.m_fbo)
-            info.m_fbo->Disable();
+    // m_defaultDrawBufferInfo must always be the first entry in the drawBufferStack, so it must be the final draw buffer info retrieved
+    while ((m_drawBufferStack.Length() > 0) and m_drawBufferStack.Pop(m_drawBufferInfo)) {
+        if (m_drawBufferInfo.m_fbo)
+            m_drawBufferInfo.m_fbo->Disable();
     }
-    m_drawBufferInfo = DrawBufferInfo(nullptr, &m_drawBuffers); // &m_drawBuffer, m_drawBuffer.m_colorBufferInfo[0].m_attachment);
+    //m_drawBufferInfo.Update(nullptr, &m_defaultDrawBuffers);
     if (not SetActiveBuffer(activeBuffer, clearBuffer)) {
-        glDrawBuffers(m_drawBufferInfo.m_drawBuffers->Length(), m_drawBufferInfo.m_drawBuffers->Data());
+        SetActiveDrawBuffers();
     }
 }
 
@@ -183,15 +190,11 @@ void BaseRenderer::SaveDrawBuffer() {
 
 
 void BaseRenderer::SetDrawBuffers(FBO* fbo, ManagedArray<GLuint>* drawBuffers) {
-    if ((fbo != nullptr) and (m_drawBufferInfo.m_fbo != nullptr) and (fbo->m_handle == m_drawBufferInfo.m_fbo->m_handle))
-        m_drawBufferInfo.m_drawBuffers = drawBuffers;
-    else {
+    if ((fbo == nullptr) or (m_drawBufferInfo.m_fbo == nullptr) or (fbo->m_handle != m_drawBufferInfo.m_fbo->m_handle)) {
         SaveDrawBuffer();
         m_drawBufferInfo = DrawBufferInfo(fbo, drawBuffers);
     }
-    ClearGLError();
-    glDrawBuffers(m_drawBufferInfo.m_drawBuffers->Length(), m_drawBufferInfo.m_drawBuffers->Data());
-    CheckGLError("setting draw buffer");
+    SetActiveDrawBuffers();
 }
 
 
@@ -200,10 +203,9 @@ void BaseRenderer::RestoreDrawBuffer(void) {
     glBindTexture(GL_TEXTURE_2D, 0);
     if (m_drawBufferInfo.m_fbo != nullptr)
         m_drawBufferInfo.m_fbo->Reenable();
-    else {
+    else
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glDrawBuffers(m_drawBufferInfo.m_drawBuffers->Length(), m_drawBufferInfo.m_drawBuffers->Data());
-    }
+    SetActiveDrawBuffers();
 }
 
 
