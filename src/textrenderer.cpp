@@ -26,9 +26,14 @@ int TextRenderer::CompareTextures(void* context, const char& key1, const char& k
 }
 
 
-TextRenderer::TextRenderer() 
-    : m_isAvailable(false), m_color(ColorData::White), m_scale(1.0), m_font(nullptr), m_centerText(true)
+TextRenderer::TextRenderer(RGBAColor color, const TextDecoration& decoration, float scale)
+    : m_color(color), m_scale(scale), m_font(nullptr), m_centerText(true), m_decoration(decoration), m_isAvailable(false)
 {
+    Setup();
+}
+
+
+void TextRenderer::Setup(void) {
 #ifdef _WIN32
     m_euroChar = "\xE2\x82\xAC"; // "\u20AC";
 #else

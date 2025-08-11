@@ -31,19 +31,18 @@ bool PrerenderedText::Create(String text, bool centered, int bufferCount, const 
     /*textRenderer.*/SetColor(m_color);
     /*textRenderer.*/SetDecoration(decoration);
     /*textRenderer.*/SetScale(1.0f);
-    /*textRenderer.*/RenderToFBO(m_text, centered, &m_fbo, m_fbo.m_viewport, 0, 0, m_outlineWidth, m_outlineColor); // m_outlineWidth == 0);
-    /*textRenderer.*/SetColor();
+    /*textRenderer.*/RenderToFBO(m_text, centered, &m_fbo, m_fbo.m_viewport, 0, 0); // m_outlineWidth == 0);
+    /*textRenderer.SetColor();*/
     return true;
 }
 
 
 void PrerenderedText::RenderOutline(const TextDecoration& decoration) {
-    m_outlineWidth = outlineWidth;
-    if (outlineWidth > 0) {
+    if (decoration.HaveOutline()) {
         m_fbo.SetViewport();
         m_fbo.SetLastDestination(0);
         /*textRenderer.*/SetDecoration(decoration);
-        /*textRenderer.*/RenderOutline(&m_fbo, decoration);
+        /*textRenderer.*/OutlineRenderer::RenderOutline(&m_fbo, decoration);
         m_fbo.RestoreViewport();
     }
 }

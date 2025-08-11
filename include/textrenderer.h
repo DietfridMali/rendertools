@@ -6,6 +6,7 @@
 #include "base_quad.h"
 #include "fbo.h"
 #include "dictionary.hpp"
+#include "colordata.h"
 #include "outlinerenderer.h"
 #include "singletonbase.hpp"
 
@@ -40,7 +41,9 @@ public:
 
     static int CompareTextures(void* context, const char& key1, const char& key2);
 
-    TextRenderer();
+    TextRenderer(RGBAColor color = ColorData::White, const TextDecoration& decoration = {}, float scale = 1.0f);
+
+    void Setup(void);
 
     bool Create(String fontFolder, String fontName);
 

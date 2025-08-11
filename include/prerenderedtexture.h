@@ -59,8 +59,8 @@ public:
 
     PrerenderedText(Viewport viewport, RGBAColor color = ColorData::White, const TextDecoration& decoration = {}, float scale = 1.0f)
         : PrerenderedItem(viewport)
-        , TextRenderer()
-        , m_color(color), m_outlineWidth(decoration.outlineWidth), m_outlineColor(decoration.outlineColor), m_decoration(decoration), m_scale(scale), m_text("")
+        , TextRenderer(color, decoration, scale)
+        , m_text("")
     { }
 
     void Destroy() {
@@ -83,10 +83,10 @@ public:
     }
 
     inline void SetOutlineWidth(float outlineWidth = 0) {
-        m_outlineWidth = outlineWidth;
+        m_decoration.outlineWidth = outlineWidth;
     }
 
-    void RenderOutline(float outlineWidth, RGBAColor outlineColor, const OutlineRenderer::AAMethod& aaMethod = {});
+    void RenderOutline(const TextDecoration& decoration = {});
 
     virtual void Render(bool setViewport = true, bool flipVertically = false, RGBAColor color = ColorData::Invisible, float scale = 0.0f);
 };
