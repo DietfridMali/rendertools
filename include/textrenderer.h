@@ -47,7 +47,7 @@ public:
 
     void RenderToFBO(String text, bool centered, FBO* fbo, Viewport& viewport, int renderAreaWidth = 0, int renderAreaHeight = 0, float outlineWidth = 0., Vector4f outlineColor = Vector4f{0, 0, 0, 0});
 
-    void RenderToScreen(FBO* fbo);
+    void RenderToScreen(FBO* fbo, bool flipVertically = false);
 
     void Render(String text, bool centered = false, bool flipVertically = false, int renderAreaWidth = 0, int renderAreaHeight = 0, float outlineWidth = 0., Vector4f outlineColor = Vector4f{0, 0, 0, 0});
 

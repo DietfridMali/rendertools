@@ -58,6 +58,14 @@ public:
     inline int Height(void) {
         return m_height;
     }
+
+    bool operator==(Rectangle& other) {
+        return m_left == other.m_left and m_top == other.m_top and m_width == other.m_width and m_height == other.m_height;
+    }
+
+    bool operator!=(Rectangle& other) {
+        return m_left != other.m_left or m_top != other.m_top or m_width != other.m_width or m_height != other.m_height;
+    }
 };
 
 // =================================================================================================
