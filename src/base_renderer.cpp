@@ -85,6 +85,7 @@ bool BaseRenderer::Start2DScene(void) {
     ResetDrawBuffers(&m_screenBuffer, not m_screenIsAvailable);
     m_screenIsAvailable = true;
     ResetTransformation();
+    SetViewport(::Viewport(0, 0, m_windowWidth, m_windowHeight), false);
     return true;
 }
 
@@ -127,10 +128,12 @@ void BaseRenderer::DrawScreen (bool bRotate, bool bFlipVertically) {
         Translate(0.5, 0.5, 0);
         if (bRotate)
             Rotate(90, 0, 0, 1);
+#if 0
         if (bFlipVertically)
             Scale(1, -1, 1);
+#endif
         m_renderTexture.m_handle = m_screenBuffer.BufferHandle(0);
-        m_viewportArea.Render(&m_renderTexture);
+        m_viewportArea.Render(&m_renderTexture, bFlipVertically);
     }
 }
 

@@ -279,8 +279,9 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     }
     baseRenderer.PushMatrix();
     baseRenderer.Translate(0.5, 0.5, 0);
-    if (params.flipVertically or (params.source & 1))
-        baseRenderer.Scale(params.scale, -params.scale, 1);
+    bool flipVertically = params.flipVertically or (params.source & 1);
+    if (flipVertically)
+        ; // baseRenderer.Scale(params.scale, -params.scale, 1);
     else if (params.scale != 1.0f)
         baseRenderer.Scale(params.scale, params.scale, 1);
     glDepthFunc(GL_ALWAYS);
@@ -288,12 +289,12 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     m_viewportArea.SetTexture(source);
     static bool fillArea = false;
     if (params.shader)
-        m_viewportArea.Render(params.shader, source);
+        m_viewportArea.Render(params.shader, source, flipVertically);
     else {
         if (fillArea)
             m_viewportArea.Fill(ColorData::Orange);
         else
-            m_viewportArea.Render(color); // texture has been assigned to m_viewportArea above
+            m_viewportArea.Render(flipVertically, color); // texture has been assigned to m_viewportArea above
         //baseShaderHandler.StopShader();
     }
     glEnable(GL_CULL_FACE);

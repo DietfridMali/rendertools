@@ -143,6 +143,7 @@ Shader* TextRenderer::LoadShader(void) {
     Shader* shader = baseShaderHandler.SetupShader("plainTexture");
     if (shader) {
         shader->SetVector4f("surfaceColor", ColorData::White);
+        shader->SetFloat("flipVertically", 0.0f);
     }
     return shader;
 }
@@ -167,7 +168,7 @@ void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float 
             int tw = t->GetWidth();
             float w = float(tw) * letterScale;
             CreateQuad(q, x, yOffset, w, t);
-            q.Render(shader, t);
+            q.Render(shader, t, false);
             //q.Fill(ColorData::Orange.ToRGB());
             //q.Render(m_color, m_color.A());
             x += w;
@@ -211,8 +212,8 @@ void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& v
         textWidth -= int (2 * outlineWidth + 0.5f);
         textHeight -= int (2 * outlineWidth + 0.5f);
 #if USE_TEXT_FBOS
-        fbo->SetViewport();
         if (fbo->Enable(0, true)) {
+            fbo->SetViewport();
             if (outlineWidth > 0) {
                 offset.x -= outlineWidth / float(fbo->m_width);
                 offset.y -= outlineWidth / float(fbo->m_height);
@@ -220,18 +221,18 @@ void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& v
             fbo->m_lastDestination = 0;
             RenderText(text, textWidth, offset.x, offset.y, centered);
             fbo->Disable();
+            fbo->RestoreViewport();
+            if (fbo->IsAvailable()) {
+                if (HaveOutline())
+                    RenderOutline(fbo, m_decoration);
+                else if (ApplyAA())
+                    AntiAlias(fbo, m_decoration.aaMethod);
+            }
         }
 #else
         RenderText(text, textWidth, offset.x, offset.y, centered);
 #endif
-        if (fbo->IsAvailable()) {
-            if (HaveOutline())
-                RenderOutline(fbo, m_decoration);
-            else if (ApplyAA())
-                AntiAlias(fbo, m_decoration.aaMethod);
-        }
 #if USE_TEXT_FBOS
-        fbo->RestoreViewport();
 #endif
     }
 }

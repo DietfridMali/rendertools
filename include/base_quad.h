@@ -74,13 +74,13 @@ class BaseQuad
         m_color = color;
     }
 
-    Shader* LoadShader(bool useTexture, const RGBAColor& color = ColorData::White);
+    Shader* LoadShader(bool useTexture, bool flipVertically, const RGBAColor& color = ColorData::White);
 
-    void Render(RGBAColor color = ColorData::White);
+    void Render(bool flipVertically, RGBAColor color = ColorData::White);
 
-    void Render(Shader* shader, Texture* texture, bool updateVAO = true);
+    void Render(Shader* shader, Texture* texture, bool flipVertically, bool updateVAO = true);
 
-    void Render(Texture* texture);
+    void Render(Texture* texture, bool flipVertically);
 
     // fill 2D area defined by x and y components of vertices with color color
     void Fill(RGBAColor color);

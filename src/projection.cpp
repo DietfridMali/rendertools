@@ -65,11 +65,16 @@ Matrix4f Projection::ComputeFrustum(float left, float right, float bottom, float
 
 Matrix4f Projection::ComputeOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar, bool rowMajor) {
 #if USE_GLM
-    Matrix4f m({ Vector4f{ 2.0f,  0.0f,  0.0f, -1.0f },  // erste Zeile
+#   if 1
+    Matrix4f m (glm::ortho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0));
+    return m;
+#else
+    m = Matrix4f({ Vector4f{ 2.0f,  0.0f,  0.0f, -1.0f },  // erste Zeile
                  Vector4f{ 0.0f,  2.0f,  0.0f, -1.0f },  // zweite Zeile
                  Vector4f{ 0.0f,  0.0f, -1.0f,  0.0f },  // dritte Zeile
                  Vector4f{ 0.0f,  0.0f,  0.0f,  1.0f }   // vierte Zeile
         });
+#   endif
 #else
     Matrix4f m ({ Vector4f{ 2.0f,  0.0f,  0.0f,  0.0f },  // erste Zeile
                   Vector4f{ 0.0f,  2.0f,  0.0f,  0.0f },  // zweite Zeile

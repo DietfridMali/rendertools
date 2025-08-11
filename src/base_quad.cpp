@@ -117,17 +117,19 @@ float BaseQuad::ComputeAspectRatio(void) {
 }
 
 
-Shader* BaseQuad::LoadShader(bool useTexture, const RGBAColor& color) {
+Shader* BaseQuad::LoadShader(bool useTexture, bool flipVertically, const RGBAColor& color) {
     Shader* shader = baseShaderHandler.SetupShader(useTexture ? "plainTexture" : "plainColor");
-    if (shader)
+    if (shader) {
         shader->SetVector4f("surfaceColor", color);
+        shader->SetFloat("flipVertically", flipVertically ? 1.0f : 0.0f);
+    }
     return shader;
 }
 
 
-void BaseQuad::Render(RGBAColor color) {
+void BaseQuad::Render(bool flipVertically, RGBAColor color) {
     if (UpdateVAO()) {
-        Render(LoadShader(m_texture != nullptr, color), m_texture, false);
+        Render(LoadShader(m_texture != nullptr, flipVertically, color), m_texture, false);
         //baseShaderHandler.StopShader();
     }
     else {
@@ -146,7 +148,7 @@ void BaseQuad::Render(RGBAColor color) {
 }
 
 
-void BaseQuad::Render(Shader* shader, Texture* texture, bool updateVAO) {
+void BaseQuad::Render(Shader* shader, Texture* texture, bool flipVertically, bool updateVAO) {
     if (not updateVAO or UpdateVAO()) {
         m_vao->Render(shader, texture);
     }
@@ -166,9 +168,9 @@ void BaseQuad::Render(Shader* shader, Texture* texture, bool updateVAO) {
 }
 
 
-void BaseQuad::Render(Texture* texture) {
+void BaseQuad::Render(Texture* texture, bool flipVertically) {
     if (UpdateVAO()) {
-        m_vao->Render(LoadShader(texture != nullptr), texture);
+        m_vao->Render(LoadShader(texture != nullptr, flipVertically), texture);
     }
 }
 
@@ -176,7 +178,7 @@ void BaseQuad::Render(Texture* texture) {
 // fill 2D area defined by x and y components of vertices with color color
 void BaseQuad::Fill(RGBAColor color) {
     if (UpdateVAO()) {
-        Render(LoadShader(false, color), nullptr);
+        Render(LoadShader(false, color), nullptr, false);
         //baseShaderHandler.StopShader();
     }
     else {
