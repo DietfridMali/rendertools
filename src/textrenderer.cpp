@@ -27,7 +27,7 @@ int TextRenderer::CompareTextures(void* context, const char& key1, const char& k
 
 
 TextRenderer::TextRenderer() 
-    : m_isAvailable(false), m_color (ColorData::White), m_outlineColor (ColorData::White), m_aaMethod ({ "", 0 }), m_scale (1.0)
+    : m_isAvailable(false), m_color(ColorData::White), m_scale(1.0), m_font(nullptr), m_centerText(true)
 {
 #ifdef _WIN32
     m_euroChar = "\xE2\x82\xAC"; // "\u20AC";
@@ -103,14 +103,14 @@ BaseQuad& TextRenderer::CreateQuad(BaseQuad& q, float x, float y, float d, Textu
 }
 
 
-TextRenderer::tTextDimensions TextRenderer::TextSize(String text) {
+struct TextRenderer::TextDimensions TextRenderer::TextSize(String text) {
     int w = 0;
     int h = 0;
     for (char* p = text.Data(); *p; p++) {
         Texture* t = FindTexture(String(*p));
         if (not t) {
             fprintf(stderr, "texture '%c' not found\r\n", *p);
-            return tTextDimensions { 0, 0, 1 };
+            return { .width = 0, .height = 0, .aspectRatio = 1.0f };
         }
         int tw = t->GetWidth();
         w += tw;
@@ -119,7 +119,7 @@ TextRenderer::tTextDimensions TextRenderer::TextSize(String text) {
         if (h < th)
             h = th;
     }
-    return tTextDimensions { w, h, float (w) / float (h) };
+    return { .width = w, .height = h, .aspectRatio = float (w) / float (h) };
 }
 
 
@@ -188,11 +188,11 @@ void TextRenderer::Fill(Vector4f color) {
 }
 
 
-void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& viewport, int renderAreaWidth, int renderAreaHeight, float outlineWidth, Vector4f outlineColor) {
+void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& viewport, int renderAreaWidth, int renderAreaHeight) {
     if (m_isAvailable) {
         fbo->m_name = String::Concat ("[", text, "]");
         auto [textWidth, textHeight, aspectRatio] = TextSize(text);
-        outlineWidth *= 2;
+        float outlineWidth = m_decoration.outlineWidth * 2;
         textWidth += int (2 * outlineWidth + 0.5f);
         textHeight += int (2 * outlineWidth + 0.5f);
         tRenderOffsets offset = 
@@ -220,13 +220,10 @@ void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& v
         RenderText(text, textWidth, offset.x, offset.y, centered);
 #endif
         if (fbo->IsAvailable()) {
-            if (outlineWidth == 0)
-                AntiAlias(fbo, m_aaMethod);
-            else {
-                if (outlineColor.A() == 0)
-                    outlineColor = m_outlineColor;
-                RenderOutline(fbo, outlineWidth, outlineColor, m_aaMethod);
-            }
+            if (HaveOutline())
+                RenderOutline(fbo, m_decoration);
+            else if (ApplyAA())
+                AntiAlias(fbo, m_decoration.aaMethod);
         }
 #if USE_TEXT_FBOS
         fbo->RestoreViewport();
@@ -238,17 +235,17 @@ void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& v
 void TextRenderer::RenderToScreen(FBO* fbo, bool flipVertically) {
 #if USE_TEXT_FBOS
     if (m_isAvailable)
-        fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .flipVertically = flipVertically, .scale = m_scale}, m_color); // render outline to viewport
+        fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .flipVertically = flipVertically, .scale = m_scale}); // render outline to viewport
 #endif
 }
 
 
-void TextRenderer::Render(String text, bool centered, bool flipVertically, int renderAreaWidth, int renderAreaHeight, float outlineWidth, Vector4f outlineColor) {
+void TextRenderer::Render(String text, bool centered, bool flipVertically, int renderAreaWidth, int renderAreaHeight) {
     if (m_isAvailable) {
-        FBO* fbo = GetFBO(2);
+        FBO* fbo = GetFBO(2.0f);
         if (fbo != nullptr) {
-            RenderToFBO(text, centered, fbo, baseRenderer.Viewport(), renderAreaWidth, renderAreaHeight, outlineWidth);
-            fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .flipVertically = flipVertically, .scale = m_scale }, m_color); // render outline to viewport
+            RenderToFBO(text, centered, fbo, baseRenderer.Viewport(), renderAreaWidth, renderAreaHeight);
+            fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .flipVertically = flipVertically, .scale = m_scale }); // render outline to viewport
         }
     }
 }

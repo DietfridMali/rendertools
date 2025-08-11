@@ -16,21 +16,22 @@ class TextRenderer
     , public BaseSingleton<TextRenderer>
 {
 public:
-    TTF_Font*       m_font;
-    String          m_euroChar;
-    String          m_characters;
-    bool            m_isAvailable;
-    RGBAColor       m_color;
-    RGBAColor       m_outlineColor;
-    float           m_scale;
-    bool            m_centerText;
-    OutlineRenderer::tAAMethod m_aaMethod;
+    using TextDecoration = OutlineRenderer::Decoration;
 
-    typedef struct {
-        int width;
-        int height;
-        float aspectRatio;
-    } tTextDimensions;
+    TTF_Font*               m_font;
+    String                  m_euroChar;
+    String                  m_characters;
+    bool                    m_isAvailable;
+    RGBAColor               m_color;
+    float                   m_scale;
+    bool                    m_centerText;
+    struct TextDecoration   m_decoration;
+
+    struct TextDimensions {
+        int width = 0;
+        int height = 0;
+        float aspectRatio = 0.0f;
+    };
 
     Dictionary<String, Texture*> m_textures;
     Dictionary<int, FBO*>        m_fbos;
@@ -45,13 +46,13 @@ public:
 
     void Fill(Vector4f color);
 
-    void RenderToFBO(String text, bool centered, FBO* fbo, Viewport& viewport, int renderAreaWidth = 0, int renderAreaHeight = 0, float outlineWidth = 0., Vector4f outlineColor = Vector4f{0, 0, 0, 0});
+    void RenderToFBO(String text, bool centered, FBO* fbo, Viewport& viewport, int renderAreaWidth = 0, int renderAreaHeight = 0);
 
     void RenderToScreen(FBO* fbo, bool flipVertically = false);
 
-    void Render(String text, bool centered = false, bool flipVertically = false, int renderAreaWidth = 0, int renderAreaHeight = 0, float outlineWidth = 0., Vector4f outlineColor = Vector4f{0, 0, 0, 0});
+    void Render(String text, bool centered = false, bool flipVertically = false, int renderAreaWidth = 0, int renderAreaHeight = 0);
 
-    inline bool SetColor(Vector4f color = ColorData::White) {
+    inline bool SetColor(RGBAColor color = ColorData::White) {
         if (color.A() < 0.0f)
             return false;
         m_color = color;
@@ -72,20 +73,38 @@ public:
         return true;
     }
 
-    inline Texture* FindTexture(String key) {
-        Texture** texPtr = m_textures.Find(key);
-        return texPtr ? *texPtr : nullptr;
+    void SetAAMethod(const OutlineRenderer::AAMethod& aaMethod) {
+        m_decoration.aaMethod = aaMethod;
     }
 
     inline void CenterText(bool centerText) {
         m_centerText = centerText;
     }
 
-    void SetAAMethod(OutlineRenderer::tAAMethod aaMethod) {
-        m_aaMethod = aaMethod;
+    inline void SetOutline(float outlineWidth = 0.0f, RGBAColor outlineColor = ColorData::Invisible) {
+        m_decoration.outlineWidth = outlineWidth;
+        m_decoration.outlineColor = outlineColor;
     }
 
-    tTextDimensions TextSize(String text);
+
+    inline void SetDecoration(const TextDecoration& decoration = {}) {
+        m_decoration = decoration;
+    }
+
+    inline bool HaveOutline(void) {
+        return m_decoration.HaveOutline();
+    }
+
+    inline bool ApplyAA(void) {
+        return m_decoration.ApplyAA();
+    }
+
+    inline Texture* FindTexture(String key) {
+        Texture** texPtr = m_textures.Find(key);
+        return texPtr ? *texPtr : nullptr;
+    }
+
+    struct TextDimensions TextSize(String text);
 
 private:
     bool InitFont(String fontFolder, String fontName);

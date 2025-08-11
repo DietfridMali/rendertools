@@ -17,8 +17,8 @@
 
 #define AUTORENDER 0
 
-void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
-    if (aaMethod.method != "") {
+void OutlineRenderer::AntiAlias(FBO* fbo, const AAMethod& aaMethod) {
+    if (aaMethod.ApplyAA()) {
         FBO::FBORenderParams params = { .clearBuffer = true, .scale = 1.0f };
         params.shader = baseShaderHandler.SetupShader(aaMethod.method);
         if (params.shader == nullptr)
@@ -48,17 +48,16 @@ void OutlineRenderer::AntiAlias(FBO* fbo, OutlineRenderer::tAAMethod aaMethod) {
 }
 
 
-void OutlineRenderer::RenderOutline(FBO* fbo, float outlineWidth, RGBAColor color, tAAMethod aaMethod) {
-    if (outlineWidth > 0) {
+void OutlineRenderer::RenderOutline(FBO* fbo, const Decoration& decoration) {
+    if (decoration.HaveOutline()) {
         Shader* shader = baseShaderHandler.SetupShader("outline");
-        shader->SetFloat("outlineWidth", outlineWidth);
-        shader->SetVector4f("outlineColor", color);
+        shader->SetFloat("outlineWidth", decoration.outlineWidth);
+        shader->SetVector4f("outlineColor", decoration.outlineColor);
         shader->SetFloat("offset", 0.5f);
         fbo->AutoRender({ .clearBuffer = true, .shader = shader });
         //baseShaderHandler.StopShader();
-        AntiAlias(fbo, aaMethod);
+        AntiAlias(fbo, decoration.aaMethod);
     }
 }
 
 // =================================================================================================
-

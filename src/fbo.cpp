@@ -267,7 +267,7 @@ void FBO::RestoreViewport(void) {
 
 
 bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RGBAColor& color) {
-    if (params.destination > -1) { // rendering to another FBO
+    if (params.destination > -1) { // rendering to another FBO (than the main buffer)
         if (not Enable(params.destination, params.clearBuffer))
             return false;
         m_lastDestination = params.destination;
@@ -286,17 +286,17 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     glDepthFunc(GL_ALWAYS);
     glDisable(GL_CULL_FACE);
     m_viewportArea.SetTexture(source);
+    static bool fillArea = false;
     if (params.shader)
         m_viewportArea.Render(params.shader, source);
     else {
-#if 1
-        m_viewportArea.Render(color); // texture has been assigned to m_viewportArea above
+        if (fillArea)
+            m_viewportArea.Fill(ColorData::Orange);
+        else
+            m_viewportArea.Render(color); // texture has been assigned to m_viewportArea above
         //baseShaderHandler.StopShader();
-#else
-        m_viewportArea.Fill(ColorData::Orange);
-#endif
     }
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glDepthFunc(GL_LESS);
     baseRenderer.PopMatrix();
     if (params.destination > -1)

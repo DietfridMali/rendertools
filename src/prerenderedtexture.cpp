@@ -22,47 +22,39 @@ bool PrerenderedItem::Create(int bufferCount) {
 
 // =================================================================================================
 
-bool PrerenderedText::Create(String text, bool centered, int bufferCount, OutlineRenderer::tAAMethod aaMethod) {
+bool PrerenderedText::Create(String text, bool centered, int bufferCount, const TextDecoration& decoration) {
     if (bufferCount == 0)
         bufferCount = 2;//  (m_outlineWidth == 0) ? 1 : 2;
     if (not PrerenderedItem::Create(bufferCount) and (m_text == text))
         return false;
     m_text = text;
-    textRenderer.SetColor(m_color);
-    textRenderer.SetAlpha(1.0f);
-    textRenderer.SetScale(1.0f);
-    textRenderer.SetAAMethod(aaMethod);
-    textRenderer.RenderToFBO(m_text, centered, &m_fbo, m_fbo.m_viewport, 0, 0, m_outlineWidth, m_outlineColor); // m_outlineWidth == 0);
-    textRenderer.SetColor();
+    /*textRenderer.*/SetColor(m_color);
+    /*textRenderer.*/SetDecoration(decoration);
+    /*textRenderer.*/SetScale(1.0f);
+    /*textRenderer.*/RenderToFBO(m_text, centered, &m_fbo, m_fbo.m_viewport, 0, 0, m_outlineWidth, m_outlineColor); // m_outlineWidth == 0);
+    /*textRenderer.*/SetColor();
     return true;
 }
 
 
-void PrerenderedText::RenderOutline(float outlineWidth, RGBAColor outlineColor, OutlineRenderer::tAAMethod aaMethod) {
+void PrerenderedText::RenderOutline(const TextDecoration& decoration) {
     m_outlineWidth = outlineWidth;
     if (outlineWidth > 0) {
         m_fbo.SetViewport();
         m_fbo.SetLastDestination(0);
-        textRenderer.SetAAMethod(aaMethod);
-        textRenderer.RenderOutline(&m_fbo, outlineWidth * 2, outlineColor, aaMethod);
+        /*textRenderer.*/SetDecoration(decoration);
+        /*textRenderer.*/RenderOutline(&m_fbo, decoration);
         m_fbo.RestoreViewport();
     }
 }
 
 
-void PrerenderedText::Render(bool setViewport, bool flipVertically, RGBAColor color, float alpha, float scale) {
-    bool resetColor = textRenderer.SetColor(color) or textRenderer.SetColor(m_color);
-    bool resetAlpha = textRenderer.SetAlpha(alpha) or textRenderer.SetAlpha(m_alpha); // must be called after SetColor() to affect rendered text's alpha
-    bool resetScale = textRenderer.SetScale(scale) or textRenderer.SetScale(m_scale);
+void PrerenderedText::Render(bool setViewport, bool flipVertically, RGBAColor color, float scale) {
+    /*textRenderer.*/if (color.A() > 0.0f) SetColor(color);
+    /*textRenderer.*/if (scale > 0.0f) SetScale(scale);
     if (setViewport)
         m_viewport.SetViewport();
-    textRenderer.RenderToScreen(&m_fbo, flipVertically); // m_outlineWidth == 0);
-    if (resetAlpha)
-        textRenderer.SetAlpha();
-    if (resetScale)
-        textRenderer.SetScale();
-    if (resetColor)
-        textRenderer.SetColor();
+    RenderToScreen(&m_fbo, flipVertically); // m_outlineWidth == 0);
 }
 
 // =================================================================================================

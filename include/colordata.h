@@ -63,6 +63,7 @@ inline RGBColor::operator RGBAColor() const {
 
 class ColorData {
 public:
+    inline static const RGBAColor   Invisible = RGBAColor{ 0, 0, 0, 0 };
     inline static const RGBAColor   Black = RGBAColor{ 0, 0, 0, 1 };
     inline static const RGBAColor   White = RGBAColor{ 1, 1, 1, 1 };
     inline static const RGBAColor   Gray = RGBAColor{ 0.5f, 0.5f, 0.5f, 1 };

@@ -38,21 +38,29 @@ public:
 
 // =================================================================================================
 
-class PrerenderedText : public PrerenderedItem {
+class PrerenderedText 
+    : public PrerenderedItem 
+    , public TextRenderer
+{
 public:
     String      m_text;
+#if 0
     RGBAColor   m_color;
     float       m_outlineWidth;
     Vector4f    m_outlineColor;
-    float       m_alpha;
     float       m_scale;
+#endif
 
     PrerenderedText()
-        : PrerenderedItem(), m_color(RGBAColor{ 1,1,1,-1 }), m_outlineWidth(0.0), m_outlineColor(ColorData::White), m_alpha(-1), m_scale(-1), m_text("")
+        : PrerenderedItem()
+        , TextRenderer()
+        , /*m_color(ColorData::White), m_outlineWidth(0.0f), m_outlineColor(ColorData::Invisible), m_scale(1.0f),*/ m_text("")
     { }
 
-    PrerenderedText(Viewport viewport, RGBAColor color = ColorData::White, float outlineWidth = 0, RGBAColor outlineColor = ColorData::White)
-        : PrerenderedItem(viewport), m_color(color), m_outlineWidth(outlineWidth), m_outlineColor(outlineColor), m_alpha(-1), m_scale(-1), m_text("")
+    PrerenderedText(Viewport viewport, RGBAColor color = ColorData::White, const TextDecoration& decoration = {}, float scale = 1.0f)
+        : PrerenderedItem(viewport)
+        , TextRenderer()
+        , m_color(color), m_outlineWidth(decoration.outlineWidth), m_outlineColor(decoration.outlineColor), m_decoration(decoration), m_scale(scale), m_text("")
     { }
 
     void Destroy() {
@@ -60,14 +68,14 @@ public:
         PrerenderedItem::Destroy();
     }
 
-    bool Create(String text, bool centered, int bufferCount = 0, OutlineRenderer::tAAMethod aaMethod = { "", 0 });
+    bool Create(String text, bool centered, int bufferCount = 0, const TextDecoration& decoration = {});
 
     inline void SetColor(RGBAColor color) {
         m_color = color;
     }
 
     inline void SetAlpha(float alpha) {
-        m_alpha = alpha;
+        m_color.A() = alpha;
     }
 
     void SetScale(float scale = 1.0) {
@@ -78,9 +86,9 @@ public:
         m_outlineWidth = outlineWidth;
     }
 
-    void RenderOutline(float outlineWidth, RGBAColor outlineColor, OutlineRenderer::tAAMethod aaMethod = { "", 0 });
+    void RenderOutline(float outlineWidth, RGBAColor outlineColor, const OutlineRenderer::AAMethod& aaMethod = {});
 
-    virtual void Render(bool setViewport = true, bool flipVertically = false, RGBAColor color = RGBAColor(1.0f, 1.0f, 1.0f, -1.0f), float alpha = -1.0f, float scale = -1.0f);
+    virtual void Render(bool setViewport = true, bool flipVertically = false, RGBAColor color = ColorData::Invisible, float scale = 0.0f);
 };
 
 // =================================================================================================

@@ -100,9 +100,7 @@ bool BaseRenderer::Stop2DScene(void) {
 
 
 void BaseRenderer::Draw3DScene(void) {
-    if (m_sceneBuffer.IsAvailable()) {
-        Stop3DScene();
-        Start2DScene();
+    if (Stop3DScene() and Start2DScene()) {
         baseRenderer.PushMatrix();
         baseRenderer.Translate(0.5, 0.5, 0);
         baseRenderer.Scale(1, -1, 1);
