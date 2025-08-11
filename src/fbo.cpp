@@ -286,16 +286,19 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     glDepthFunc(GL_ALWAYS);
     glDisable(GL_CULL_FACE);
     m_viewportArea.SetTexture(source);
-    static bool fillArea = false;
-    static int i = 0;
     if (params.shader)
         m_viewportArea.Render(params.shader, source);
     else {
-        if (fillArea)
+#ifdef _DEBUG
+        static bool fillArea = false;
+        static int i = 0;
+        if (fillArea) {
             m_viewportArea.Fill(i ? ColorData::Orange : ColorData::MediumBlue);
+            i ^= 1;
+        }
         else
+#endif
             m_viewportArea.Render(color); // texture has been assigned to m_viewportArea above
-        i ^= 1;
         //baseShaderHandler.StopShader();
     }
     glEnable(GL_CULL_FACE);

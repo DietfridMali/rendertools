@@ -10,43 +10,24 @@
 #include "rendermatrices.h"
 #include "viewport.h"
 #include "fbo.h"
-
-// =================================================================================================
-
-class DrawBufferInfo {
-public:
-    FBO*                    m_fbo;
-    ManagedArray<GLuint>*   m_drawBuffers;
-
-public:
-    DrawBufferInfo(FBO* fbo = nullptr, ManagedArray<GLuint>* drawBuffers = nullptr) {
-        Update(fbo, drawBuffers);
-    }
-
-    inline void Update (FBO* fbo, ManagedArray<GLuint>* drawBuffers) {
-        m_fbo = fbo;
-        m_drawBuffers = drawBuffers;
-    }
-};
+#include "drawbufferhandler.h"
 
 // =================================================================================================
 // basic renderer class. Initializes display and OpenGL and sets up projections and view matrix
 
 class BaseRenderer 
     : public RenderMatrices
+    , DrawBufferHandler
     , public PolymorphSingleton<BaseRenderer>
-
 {
     protected:
         FBO                     m_screenBuffer;
         FBO                     m_sceneBuffer;
-        FBO*                    m_activeBuffer;
-        ManagedArray<GLuint>    m_defaultDrawBuffers;
-        DrawBufferInfo          m_drawBufferInfo;
-        List<DrawBufferInfo>    m_drawBufferStack;
+        Texture                 m_renderTexture;
+        bool                    m_screenIsAvailable;
+
         Viewport                m_viewport;
         BaseQuad                m_viewportArea;
-        Texture                 m_renderTexture;
 
         int                     m_windowWidth;
         int                     m_windowHeight;
@@ -55,11 +36,10 @@ class BaseRenderer
         int                     m_sceneLeft;
         int                     m_sceneTop;
         float                   m_aspectRatio;
-        bool                    m_screenIsAvailable;
 
     public:
         BaseRenderer()
-            : m_activeBuffer(nullptr), m_windowWidth(0), m_windowHeight(0), m_sceneWidth(0), m_sceneHeight(0), m_sceneLeft(0), m_sceneTop(0), m_aspectRatio(1.0f), m_screenIsAvailable(false)
+            : m_windowWidth(0), m_windowHeight(0), m_sceneWidth(0), m_sceneHeight(0), m_sceneLeft(0), m_sceneTop(0), m_aspectRatio(1.0f), m_screenIsAvailable(false)
         { 
             _instance = this;
         }
@@ -113,24 +93,6 @@ class BaseRenderer
         void SetViewport(bool isFBO = false);
 
         void SetViewport(::Viewport viewport, bool flipVertically = false); // , bool isFBO = false);
-
-        inline ManagedArray<GLuint>* ActiveDrawBuffers(void) {
-            return m_drawBufferInfo.m_drawBuffers;
-        }
-
-        void SetupDrawBuffers(void);
-            
-        inline void SetActiveDrawBuffers(void) {
-            glDrawBuffers(ActiveDrawBuffers()->Length(), ActiveDrawBuffers()->Data());
-        }
-
-        void SaveDrawBuffer();
-
-        void SetDrawBuffers(FBO* fbo, ManagedArray<GLuint>* drawBuffers);
-
-        void RestoreDrawBuffer(void);
-
-        void ResetDrawBuffers(FBO* activeBuffer, bool clearBuffer = true);
 
         void Fill(const RGBAColor& color, float scale = 1.0f);
 

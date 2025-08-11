@@ -150,63 +150,6 @@ void BaseRenderer::SetViewport(::Viewport viewport, bool flipVertically) { //, b
 }
 
 
-bool BaseRenderer::SetActiveBuffer(FBO* buffer, bool clearBuffer) {
-    if (m_activeBuffer != buffer) {
-        if (m_activeBuffer)
-            m_activeBuffer->Disable();
-        m_activeBuffer = buffer;
-    }
-    bool b = m_activeBuffer and (m_activeBuffer->IsEnabled() or m_activeBuffer->Enable(0, clearBuffer));
-    return b;
-}
-
-
-void BaseRenderer::SetupDrawBuffers(void) {
-    m_defaultDrawBuffers.Resize(1);
-    m_defaultDrawBuffers[0] = GL_BACK;
-    m_drawBufferInfo.Update(nullptr, &m_defaultDrawBuffers);
-    ResetDrawBuffers(nullptr); // required to initialize m_drawBufferInfo. If not done here, subsequent renders to FBOs ahead of main rendering loop will crash the app
-}
-
-
-void BaseRenderer::ResetDrawBuffers(FBO* activeBuffer, bool clearBuffer) {
-    // m_defaultDrawBufferInfo must always be the first entry in the drawBufferStack, so it must be the final draw buffer info retrieved
-    while ((m_drawBufferStack.Length() > 0) and m_drawBufferStack.Pop(m_drawBufferInfo)) {
-        if (m_drawBufferInfo.m_fbo)
-            m_drawBufferInfo.m_fbo->Disable();
-    }
-    //m_drawBufferInfo.Update(nullptr, &m_defaultDrawBuffers);
-    if (not SetActiveBuffer(activeBuffer, clearBuffer)) {
-        SetActiveDrawBuffers();
-    }
-}
-
-
-void BaseRenderer::SaveDrawBuffer() {
-    m_drawBufferStack.Push(m_drawBufferInfo);
-}
-
-
-void BaseRenderer::SetDrawBuffers(FBO* fbo, ManagedArray<GLuint>* drawBuffers) {
-    if ((fbo == nullptr) or (m_drawBufferInfo.m_fbo == nullptr) or (fbo->m_handle != m_drawBufferInfo.m_fbo->m_handle)) {
-        SaveDrawBuffer();
-        m_drawBufferInfo = DrawBufferInfo(fbo, drawBuffers);
-    }
-    SetActiveDrawBuffers();
-}
-
-
-void BaseRenderer::RestoreDrawBuffer(void) {
-    m_drawBufferStack.Pop(m_drawBufferInfo);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    if (m_drawBufferInfo.m_fbo != nullptr)
-        m_drawBufferInfo.m_fbo->Reenable();
-    else
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    SetActiveDrawBuffers();
-}
-
-
 void BaseRenderer::Fill(const RGBAColor& color, float scale) {
     baseRenderer.PushMatrix();
     baseRenderer.Translate(0.5, 0.5, 0.0);
