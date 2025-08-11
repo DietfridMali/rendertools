@@ -252,14 +252,14 @@ void FBO::ReleaseBuffers(void) {
 
 Viewport FBO::SetViewport(void) {
     m_viewportSave = new Viewport(baseRenderer.Viewport());
-    baseRenderer.SetViewport(m_viewport, true, true);
+    baseRenderer.SetViewport(m_viewport, false);
     return *m_viewportSave;
 }
 
 
 void FBO::RestoreViewport(void) {
     if (m_viewportSave != nullptr) {
-        baseRenderer.SetViewport(*m_viewportSave, true);
+        baseRenderer.SetViewport(*m_viewportSave, false);
         delete m_viewportSave;
         m_viewportSave = nullptr;
     }
@@ -279,22 +279,23 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     }
     baseRenderer.PushMatrix();
     baseRenderer.Translate(0.5, 0.5, 0);
-    bool flipVertically = params.flipVertically or (params.source & 1);
-    if (flipVertically)
-        ; // baseRenderer.Scale(params.scale, -params.scale, 1);
+    if (params.flipVertically or (params.source & 1))
+        baseRenderer.Scale(params.scale, -params.scale, 1);
     else if (params.scale != 1.0f)
         baseRenderer.Scale(params.scale, params.scale, 1);
     glDepthFunc(GL_ALWAYS);
     glDisable(GL_CULL_FACE);
     m_viewportArea.SetTexture(source);
     static bool fillArea = false;
+    static int i = 0;
     if (params.shader)
-        m_viewportArea.Render(params.shader, source, flipVertically);
+        m_viewportArea.Render(params.shader, source);
     else {
         if (fillArea)
-            m_viewportArea.Fill(ColorData::Orange);
+            m_viewportArea.Fill(i ? ColorData::Orange : ColorData::MediumBlue);
         else
-            m_viewportArea.Render(flipVertically, color); // texture has been assigned to m_viewportArea above
+            m_viewportArea.Render(color); // texture has been assigned to m_viewportArea above
+        i ^= 1;
         //baseShaderHandler.StopShader();
     }
     glEnable(GL_CULL_FACE);

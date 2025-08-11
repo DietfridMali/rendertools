@@ -93,14 +93,14 @@ void TextRenderer::CreateTextures(void) {
 }
 
 
-BaseQuad& TextRenderer::CreateQuad(BaseQuad& q, float x, float y, float d, Texture* t) {
+BaseQuad& TextRenderer::CreateQuad(BaseQuad& q, float x, float y, float w, Texture* t) {
 #if USE_TEXT_FBOS
-    q.Setup({ Vector3f{x, y, 0.0}, Vector3f{x + d, y, 0.0}, Vector3f{x + d, -y, 0.0}, Vector3f{x, -y, 0.0} },
-            { TexCoord{0, 0}, TexCoord{1, 0}, TexCoord{1, 1}, TexCoord{0, 1} },
+    q.Setup({ Vector3f{x, y, 0.0}, Vector3f{x + w, y, 0.0}, Vector3f{x + w, -y, 0.0}, Vector3f{x, -y, 0.0} },
+            { TexCoord{0, 1}, TexCoord{1, 1}, TexCoord{1, 0}, TexCoord{0, 0} },
             t, m_color);
 #else
     x += 0.5f;
-    q.Setup({ Vector3f{x, y + 0.5f, 0.0}, Vector3f{x + d, y + 0.5f, 0.0}, Vector3f{x + d, -y + 0.5f, 0.0}, Vector3f{x, -y + 0.5f, 0.0} },
+    q.Setup({ Vector3f{x, y + 0.5f, 0.0}, Vector3f{x + w, y + 0.5f, 0.0}, Vector3f{x + w, -y + 0.5f, 0.0}, Vector3f{x, -y + 0.5f, 0.0} },
             { TexCoord{0, 0}, TexCoord{1, 0}, TexCoord{1, 1}, TexCoord{0, 1} },
             t, m_color);
 #endif
@@ -143,7 +143,6 @@ Shader* TextRenderer::LoadShader(void) {
     Shader* shader = baseShaderHandler.SetupShader("plainTexture");
     if (shader) {
         shader->SetVector4f("surfaceColor", ColorData::White);
-        shader->SetFloat("flipVertically", 0.0f);
     }
     return shader;
 }
@@ -160,7 +159,8 @@ void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float 
     float x = centered ? -xOffset : -0.5f;
     Shader* shader = LoadShader();
     BaseQuad q;
-    for (char* p = text.Data(); *p; p++) {
+    int i = 0;
+    for (char* p = text.Data(); *p; ++p, ++i) {
         Texture* t = FindTexture(String(*p));
         if (not t) 
             fprintf(stderr, "texture '%c' not found\r\n", *p);
@@ -168,8 +168,11 @@ void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float 
             int tw = t->GetWidth();
             float w = float(tw) * letterScale;
             CreateQuad(q, x, yOffset, w, t);
-            q.Render(shader, t, false);
-            //q.Fill(ColorData::Orange.ToRGB());
+#if 1
+            q.Render(shader, t, true);
+#else
+            q.Fill((i & 1) ? ColorData::Orange : ColorData::MediumBlue);
+#endif
             //q.Render(m_color, m_color.A());
             x += w;
         }
@@ -221,13 +224,13 @@ void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& v
             fbo->m_lastDestination = 0;
             RenderText(text, textWidth, offset.x, offset.y, centered);
             fbo->Disable();
-            fbo->RestoreViewport();
             if (fbo->IsAvailable()) {
                 if (HaveOutline())
                     RenderOutline(fbo, m_decoration);
                 else if (ApplyAA())
                     AntiAlias(fbo, m_decoration.aaMethod);
             }
+            fbo->RestoreViewport();
         }
 #else
         RenderText(text, textWidth, offset.x, offset.y, centered);
@@ -241,7 +244,7 @@ void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& v
 void TextRenderer::RenderToScreen(FBO* fbo, bool flipVertically) {
 #if USE_TEXT_FBOS
     if (m_isAvailable)
-        fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .flipVertically = flipVertically, .scale = m_scale}, m_color); // render outline to viewport
+        fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .flipVertically = flipVertically, .scale = m_scale }, m_color); // render outline to viewport
 #endif
 }
 

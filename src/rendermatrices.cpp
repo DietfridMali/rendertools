@@ -1,6 +1,6 @@
 #include "rendermatrices.h"
 
-#define DEBUG_MATRICES 1
+#define DEBUG_MATRICES 0
 
 #if DEBUG_MATRICES
 bool RenderMatrices::m_legacyMode = false;

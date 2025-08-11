@@ -112,7 +112,7 @@ class BaseRenderer
 
         void SetViewport(bool isFBO = false);
 
-        void SetViewport(::Viewport viewport, bool flipVertically = false, bool isFBO = false);
+        void SetViewport(::Viewport viewport, bool flipVertically = false); // , bool isFBO = false);
 
         inline ManagedArray<GLuint>* ActiveDrawBuffers(void) {
             return m_drawBufferInfo.m_drawBuffers;

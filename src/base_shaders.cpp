@@ -33,14 +33,12 @@ const ShaderSource& PlainTextureShader() {
         #version 330
         uniform sampler2D source;
         uniform vec4 surfaceColor;
-        uniform float flipVertically;
         in vec3 fragPos;
         in vec2 fragTexCoord;
 
         layout(location = 0) out vec4 fragColor;
         
         void main() {
-            vec2 uv = vec2 (fragTexCoord.x, mix(fragTexCoord.y, 1.0 - fragTexCoord.y, float(flipVertically)));
             vec4 texColor = texture (source, fragTexCoord);
             if (texColor.a == 0) discard;
             fragColor = vec4 (texColor.rgb * surfaceColor.rgb, texColor.a * surfaceColor.a);

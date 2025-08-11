@@ -116,7 +116,7 @@ private:
 
     void CreateTextures(void);
 
-    BaseQuad& CreateQuad(BaseQuad& q, float x, float y, float d, Texture* t);
+    BaseQuad& CreateQuad(BaseQuad& q, float x, float y, float w, Texture* t);
 
     FBO* GetFBO(float scale);
 

@@ -128,12 +128,10 @@ void BaseRenderer::DrawScreen (bool bRotate, bool bFlipVertically) {
         Translate(0.5, 0.5, 0);
         if (bRotate)
             Rotate(90, 0, 0, 1);
-#if 0
         if (bFlipVertically)
             Scale(1, -1, 1);
-#endif
         m_renderTexture.m_handle = m_screenBuffer.BufferHandle(0);
-        m_viewportArea.Render(&m_renderTexture, bFlipVertically);
+        m_viewportArea.Render(&m_renderTexture); // bFlipVertically);
     }
 }
 
@@ -143,15 +141,12 @@ void BaseRenderer::SetViewport(bool isFBO) {
 }
 
 
-void BaseRenderer::SetViewport(::Viewport viewport, bool flipVertically, bool isFBO) {
-    m_viewport = viewport;
+void BaseRenderer::SetViewport(::Viewport viewport, bool flipVertically) { //, bool isFBO) {
     if (flipVertically)
-        if (isFBO)
-            glViewport(viewport.m_left, viewport.m_top, viewport.m_width, viewport.m_height);
-        else
-            glViewport(viewport.m_left, m_windowHeight - viewport.m_top - viewport.m_height, viewport.m_width, viewport.m_height);
+        m_viewport = ::Viewport(viewport.m_left, m_windowHeight - viewport.m_top - viewport.m_height, viewport.m_width, viewport.m_height);
     else
-        glViewport(viewport.m_left, viewport.m_top, viewport.m_width, viewport.m_height);
+        m_viewport = viewport;
+    glViewport(m_viewport.m_left, m_viewport.m_top, m_viewport.m_width, m_viewport.m_height);
 }
 
 
