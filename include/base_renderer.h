@@ -17,7 +17,7 @@
 
 class BaseRenderer 
     : public RenderMatrices
-    , DrawBufferHandler
+    , public DrawBufferHandler
     , public PolymorphSingleton<BaseRenderer>
 {
     protected:
