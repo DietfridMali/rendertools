@@ -22,38 +22,43 @@ bool PrerenderedItem::Create(int bufferCount) {
 
 // =================================================================================================
 
-bool PrerenderedText::Create(String text, bool centered, int bufferCount, const TextDecoration& decoration) {
+PrerenderedText::PrerenderedText(Viewport viewport, RGBAColor color, const TextRenderer::TextDecoration& decoration, float scale)
+    : PrerenderedItem(viewport)
+    , m_color(color), m_decoration(decoration), m_scale(scale), m_text("")
+{ }
+
+bool PrerenderedText::Create(String text, bool centered, int bufferCount, const TextRenderer::TextDecoration& decoration) {
     if (bufferCount == 0)
         bufferCount = 2;//  (m_outlineWidth == 0) ? 1 : 2;
     if (not PrerenderedItem::Create(bufferCount) and (m_text == text))
         return false;
     m_text = text;
-    /*textRenderer.*/SetColor(m_color);
-    /*textRenderer.*/SetDecoration(decoration);
-    /*textRenderer.*/SetScale(1.0f);
-    /*textRenderer.*/RenderToFBO(m_text, centered, &m_fbo, m_fbo.m_viewport, 0, 0); // m_outlineWidth == 0);
+    textRenderer.SetColor(m_color);
+    textRenderer.SetDecoration(decoration);
+    textRenderer.SetScale(1.0f);
+    textRenderer.RenderToFBO(m_text, centered, &m_fbo, m_fbo.m_viewport, 0, 0); // m_outlineWidth == 0);
     /*textRenderer.SetColor();*/
     return true;
 }
 
 
-void PrerenderedText::RenderOutline(const TextDecoration& decoration) {
+void PrerenderedText::RenderOutline(const TextRenderer::TextDecoration& decoration) {
     if (decoration.HaveOutline()) {
         m_fbo.SetViewport();
         m_fbo.SetLastDestination(0);
-        /*textRenderer.*/SetDecoration(decoration);
-        /*textRenderer.*/OutlineRenderer::RenderOutline(&m_fbo, decoration);
+        textRenderer.SetDecoration(decoration);
+        textRenderer.RenderOutline(&m_fbo, decoration);
         m_fbo.RestoreViewport();
     }
 }
 
 
 void PrerenderedText::Render(bool setViewport, bool flipVertically, RGBAColor color, float scale) {
-    /*textRenderer.*/if (color.A() > 0.0f) SetColor(color);
-    /*textRenderer.*/if (scale > 0.0f) SetScale(scale);
+    if (color.A() > 0.0f) textRenderer.SetColor(color);
+    if (scale > 0.0f) textRenderer.SetScale(scale);
     if (setViewport)
         m_viewport.SetViewport();
-    RenderToScreen(&m_fbo, flipVertically); // m_outlineWidth == 0);
+    textRenderer.RenderToScreen(&m_fbo, flipVertically); // m_outlineWidth == 0);
 }
 
 // =================================================================================================

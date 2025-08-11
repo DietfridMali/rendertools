@@ -40,35 +40,21 @@ public:
 
 class PrerenderedText 
     : public PrerenderedItem 
-    , public TextRenderer
 {
 public:
-    String      m_text;
-#if 0
-    RGBAColor   m_color;
-    float       m_outlineWidth;
-    Vector4f    m_outlineColor;
-    float       m_scale;
-#endif
+    String          m_text;
+    RGBAColor       m_color;
+    TextRenderer::TextDecoration  m_decoration;
+    float           m_scale;
 
-    PrerenderedText()
-        : PrerenderedItem()
-        , TextRenderer()
-        , /*m_color(ColorData::White), m_outlineWidth(0.0f), m_outlineColor(ColorData::Invisible), m_scale(1.0f),*/ m_text("")
-    { }
-
-    PrerenderedText(Viewport viewport, RGBAColor color = ColorData::White, const TextDecoration& decoration = {}, float scale = 1.0f)
-        : PrerenderedItem(viewport)
-        , TextRenderer(color, decoration, scale)
-        , m_text("")
-    { }
+    PrerenderedText(Viewport viewport = Viewport(), RGBAColor color = ColorData::White, const TextRenderer::TextDecoration& decoration = {}, float scale = 1.0f);
 
     void Destroy() {
         m_text.Destroy();
         PrerenderedItem::Destroy();
     }
 
-    bool Create(String text, bool centered, int bufferCount = 0, const TextDecoration& decoration = {});
+    bool Create(String text, bool centered, int bufferCount = 0, const TextRenderer::TextDecoration& decoration = {});
 
     inline void SetColor(RGBAColor color) {
         m_color = color;
@@ -86,7 +72,7 @@ public:
         m_decoration.outlineWidth = outlineWidth;
     }
 
-    void RenderOutline(const TextDecoration& decoration = {});
+    void RenderOutline(const TextRenderer::TextDecoration& decoration = {});
 
     virtual void Render(bool setViewport = true, bool flipVertically = false, RGBAColor color = ColorData::Invisible, float scale = 0.0f);
 };
