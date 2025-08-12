@@ -18,7 +18,7 @@ void FrameCounter::Update(void) {
 void FrameCounter::Draw(bool update) {
     if (update)
         Update();
-    baseRenderer.SetViewport(m_viewport, TextRenderer::taRight);
+    baseRenderer.SetViewport(m_viewport, false);
     char szFPS[20];
     sprintf(szFPS, "%1.1f fps", m_fps[0]);
     textRenderer.SetColor(m_color);

@@ -95,7 +95,7 @@ class Shader
             String key = String::Concat(m_name, "::", name);
             UniformHandle** uniformHandle = uniforms.Find(key);
             if (uniformHandle)
-                return reinterpret_cast<T*>(*uniformHandle);
+                return dynamic_cast<T*>(*uniformHandle);
             GLint location = glGetUniformLocation(m_handle, name);
             T* uniform = new T(name, location);
             uniforms[key] = uniform;

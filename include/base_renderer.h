@@ -93,7 +93,7 @@ class BaseRenderer
 #endif
         Viewport& Viewport(void) { return m_viewport; }
 
-        void SetViewport(bool isFBO = false);
+        void SetViewport(bool flipVertically = false);
 
         void SetViewport(::Viewport viewport, bool flipVertically = false); // , bool isFBO = false);
 

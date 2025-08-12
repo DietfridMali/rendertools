@@ -2,7 +2,6 @@
 
 #include <utility>
 #include <type_traits>
-#include <GL/gl.h> // oder <OpenGL/gl3.h> je nach Plattform
 #include "string.hpp"
 
 // =================================================================================================

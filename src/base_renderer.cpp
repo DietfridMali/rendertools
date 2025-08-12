@@ -141,8 +141,8 @@ void BaseRenderer::DrawScreen (bool bRotate, bool bFlipVertically) {
 }
 
 
-void BaseRenderer::SetViewport(bool isFBO) {
-    SetViewport(m_viewport, isFBO);
+void BaseRenderer::SetViewport(bool flipVertically) {
+    SetViewport(m_viewport, flipVertically);
 }
 
 
