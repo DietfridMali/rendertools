@@ -102,6 +102,9 @@
     <ClInclude Include="..\include\drawbufferhandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\framecounter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\cube.cpp">
@@ -189,6 +192,9 @@
       <Filter>Source Files\Shader</Filter>
     </ClCompile>
     <ClCompile Include="..\src\drawbufferhandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framecounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

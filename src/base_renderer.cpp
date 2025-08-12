@@ -25,6 +25,8 @@ void BaseRenderer::Init(int width, int height, float fov) {
     SetupDrawBuffers();
     CreateMatrices(m_windowWidth, m_windowHeight, float(m_sceneWidth) / float(m_sceneHeight), fov);
     ResetTransformation();
+    int w = m_windowWidth / 10;
+    m_frameCounter.Setup(::Viewport(m_windowWidth - w, 0, w, int(w / m_aspectRatio)));
 }
 
 
@@ -59,6 +61,7 @@ void BaseRenderer::SetupOpenGL (void) {
 
 
 bool BaseRenderer::Start3DScene(void) {
+    m_frameCounter.Start();
     if (not m_sceneBuffer.IsAvailable())
         return false;
     ResetDrawBuffers(&m_sceneBuffer);
@@ -80,6 +83,7 @@ bool BaseRenderer::Stop3DScene(void) {
 
 
 bool BaseRenderer::Start2DScene(void) {
+    m_frameCounter.Start();
     if (not m_screenBuffer.IsAvailable())
         return false;
     ResetDrawBuffers(&m_screenBuffer, not m_screenIsAvailable);
@@ -119,6 +123,7 @@ void BaseRenderer::Draw3DScene(void) {
 
 void BaseRenderer::DrawScreen (bool bRotate, bool bFlipVertically) {
     if (m_screenIsAvailable) {
+        m_frameCounter.Draw(true);
         Stop2DScene();
         m_screenIsAvailable = false;
         glDepthFunc(GL_ALWAYS);

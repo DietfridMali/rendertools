@@ -11,6 +11,7 @@
 #include "viewport.h"
 #include "fbo.h"
 #include "drawbufferhandler.h"
+#include "framecounter.h"
 
 // =================================================================================================
 // basic renderer class. Initializes display and OpenGL and sets up projections and view matrix
@@ -36,6 +37,8 @@ class BaseRenderer
         int                     m_sceneLeft;
         int                     m_sceneTop;
         float                   m_aspectRatio;
+
+        FrameCounter            m_frameCounter;
 
     public:
         BaseRenderer()
@@ -83,11 +86,11 @@ class BaseRenderer
         inline int SceneHeight(void) { return m_sceneHeight; }
 
         inline float AspectRatio(void) { return m_aspectRatio; }
-
+#if 0
         typedef struct {
             int width, height;
         } tViewport;
-
+#endif
         Viewport& Viewport(void) { return m_viewport; }
 
         void SetViewport(bool isFBO = false);
