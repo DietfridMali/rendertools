@@ -1,12 +1,15 @@
 #pragma once
 
+#include <type_traits>
+#include <cstring>
+#include <memory>
+
 #include "glew.h"
 #include "array.hpp"
 #include "dictionary.hpp"
 #include "vector.hpp"
 #include "string.hpp"
 #include "texture.h"
-#include <cstring>
 
 // =================================================================================================
 
@@ -16,19 +19,31 @@ struct UniformID
     String  m_name{ "" };
 
     UniformID() = default;
-    UniformID(String name, GLint location) : m_location{ location }, m_name{ std::move(name) } {}
+    UniformID(String name, GLint location) 
+        : m_location{ location }, m_name{ std::move(name) } 
+    { }
+
     virtual ~UniformID() = default; // falls du polymorph speichern willst
 
     inline GLint& Location(void) { return m_location; }
+    
     inline String& Name(void) { return m_name; }
+
+    bool operator<(const UniformID& other) const noexcept { return m_name < other.m_name; }
+    
+    bool operator>(const UniformID& other) const noexcept { return m_name > other.m_name; }
+    
+    bool operator==(const UniformID& other) const noexcept { return m_name == other.m_name; }
+    
+    bool operator!=(const UniformID& other) const noexcept { return m_name != other.m_name; }
 };
 
+// -------------------------------------------------------------------------------------------------
 
 template<typename T>
 struct UniformVariable
     : public UniformID
 {
-
     T m_value{};
 
     UniformVariable() = default;
@@ -54,12 +69,7 @@ struct UniformVariable
 };
 
 
-#include <type_traits>
-#include <cstring>
-#include <memory>
-#include <GL/gl.h>
-
-// angenommen: using String = std::string; // falls nicht bereits vorhanden
+// -------------------------------------------------------------------------------------------------
 
 template<typename PointerType>
 struct UniformArray : public UniformID {
@@ -106,13 +116,18 @@ bool operator()(PointerType value, size_t size) {
     return Create(value, size);
 }
 
+bool operator==(PointerType other) const noexcept {
+    return m_value and other and std::memcmp(m_value.get(), other, m_size) == 0;
+}
+
+
 // Vergleich mit externem Buffer + Bytegröße
 bool operator==(PointerType other, size_t size) const noexcept {
     if (not m_value or not other)
         return false;
     if (m_size != size) // also catches size == 0
         return false;
-    return std::memcmp(m_value.get(), other, size) == 0;
+    return std::memcmp(m_value.get(), other, m_size) == 0;
 }
 
 
@@ -124,6 +139,47 @@ bool operator!=(PointerType other, size_t size) const noexcept {
 inline PointerType Value() noexcept { return m_value.get(); }
 inline const BaseType* Value() const noexcept { return m_value.get(); }
 };
+
+// =================================================================================================
+
+template<typename PointerType, size_t ElemCount>
+struct FixedUniformArray : public UniformArray<PointerType> {
+    using Base = UniformArray<PointerType>;
+    using BaseType = typename Base::BaseType;
+
+    static constexpr size_t m_length = ElemCount;
+    static constexpr size_t m_size = ElemCount * sizeof(BaseType);
+
+    FixedUniformArray() = default;
+    FixedUniformArray(String name, GLint location)
+        : Base(std::move(name), location) {
+    }
+
+    // fester Create/Update ohne size-Parameter
+    inline bool Create(PointerType values) {
+        return Base::Create(values, m_size);
+    }
+    inline bool operator()(PointerType values) {
+        return Base::Create(values, m_size);
+    }
+
+    // Vergleich gegen externen Buffer gleicher fester Größe
+    inline bool operator==(PointerType other) const noexcept {
+        return Base::operator==(other, m_size);
+    }
+    inline bool operator!=(PointerType other) const noexcept {
+        return !(*this == other);
+    }
+
+    // Größen-API
+    static constexpr size_t Length() noexcept { return m_length; }
+    static constexpr size_t Size()    noexcept { return m_size; }
+};
+
+// bequeme Aliasse
+using UniformArray9f = FixedUniformArray<float*, 9>;
+
+using UniformArray16f = FixedUniformArray<float*, 16>;
 
 // =================================================================================================
 // Some basic shader handling: Compiling, enabling, setting shader variables
@@ -139,7 +195,7 @@ class Shader
         float           m_baseModelView[16];
         float           m_projection[16];
 
-        static Dictionary<String, GLint>   locations;
+        static Dictionary<String, UniformID*> uniforms;
 
         using KeyType = String;
 
@@ -204,15 +260,28 @@ class Shader
             return m_handle;
         }
 
-
+#if 0
         inline GLint GetLocation(const char* name) const {
             GLint location;
             String key = String::Concat(m_name, "::", name);
-            if (not locations.Find(key, location)) {
+            if (not uniforms.Find(key, uniform)) {
                 location = glGetUniformLocation(m_handle, name);
                 locations[key] = location;
             }
             return location;
+        }
+#endif
+
+        template <typename T>
+        inline T* GetUniform(const char* name) const {
+            T* uniform;
+            String key = String::Concat(m_name, "::", name);
+            if (not uniforms.Find(key, uniform)) {
+                uniform.location = glGetUniformLocation(m_handle, name);
+                uniform = new T(location, name);
+                    uniforms[key] = uniform;
+            }
+            return uniform;
         }
 
 
@@ -236,8 +305,10 @@ class Shader
 
 
         inline GLint SetMatrix3f(const char* name, float* data, bool transpose = false) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
+            UniformArray9f* uniform = GetUniform<UniformArray9f>(name);
+            if (not uniform)
+                return -1;
+            if (uniform->location >= 0) and (*uniform != )
                 glUniformMatrix3fv(location, 1, GLboolean(transpose), data);
             return location;
         }
