@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Shader">
       <UniqueIdentifier>{d78f0489-b830-4095-a6af-6e8fed934984}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Shader">
+      <UniqueIdentifier>{e6ca474f-2ea0-403c-bd6a-622b49a80074}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -60,12 +63,6 @@
     <ClInclude Include="..\include\rendermatrices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\base_shaderhandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\SSBO.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,9 +90,6 @@
     <ClInclude Include="..\include\viewport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\base_shadercode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\colordata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -104,6 +98,18 @@
     </ClInclude>
     <ClInclude Include="..\include\framecounter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\base_shaderhandler.h">
+      <Filter>Header Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\base_shadercode.h">
+      <Filter>Header Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\shader.h">
+      <Filter>Header Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\shaderdata.h">
+      <Filter>Header Files\Shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

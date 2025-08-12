@@ -10,176 +10,7 @@
 #include "vector.hpp"
 #include "string.hpp"
 #include "texture.h"
-
-// =================================================================================================
-
-struct UniformID
-{
-    GLint   m_location{};
-    String  m_name{ "" };
-
-    UniformID() = default;
-    UniformID(String name, GLint location) 
-        : m_location{ location }, m_name{ std::move(name) } 
-    { }
-
-    virtual ~UniformID() = default; // falls du polymorph speichern willst
-
-    inline GLint& Location(void) { return m_location; }
-    
-    inline String& Name(void) { return m_name; }
-
-    bool operator<(const UniformID& other) const noexcept { return m_name < other.m_name; }
-    
-    bool operator>(const UniformID& other) const noexcept { return m_name > other.m_name; }
-    
-    bool operator==(const UniformID& other) const noexcept { return m_name == other.m_name; }
-    
-    bool operator!=(const UniformID& other) const noexcept { return m_name != other.m_name; }
-};
-
-// -------------------------------------------------------------------------------------------------
-
-template<typename T>
-struct UniformVariable
-    : public UniformID
-{
-    T m_value{};
-
-    UniformVariable() = default;
-    UniformVariable(String name, GLint location, T value = {})
-        : UniformID(std::move(name), location), m_value(std::move(value)) {
-    }
-
-    // Zuweisung AUS einem T
-    UniformVariable& operator=(const T& other) {
-        m_value = other;
-        return *this;
-    }
-    UniformVariable& operator=(T&& other) noexcept(std::is_nothrow_move_assignable_v<T>) {
-        m_value = std::move(other);
-        return *this;
-    }
-
-    // optional: Vergleich mit T
-    inline bool operator==(const T& other) const noexcept { return m_value == other; }
-    inline bool operator!=(const T& other) const noexcept { return !(*this == other); }
-
-    inline T& Value(void) { return m_value; }
-};
-
-
-// -------------------------------------------------------------------------------------------------
-
-template<typename PointerType>
-struct UniformArray : public UniformID {
-    static_assert(std::is_pointer_v<PointerType>, "UniformArray only works with pointer types.");
-    using BaseType = std::remove_pointer_t<PointerType>;
-
-    std::unique_ptr<BaseType[]> m_value; // eigener Speicher
-    size_t                      m_size{ 0 }; // Größe in BYTES
-    size_t                      m_elems{ 0 };
-
-    UniformArray() = default;
-
-    bool Create(PointerType value, size_t size)
-        if (not value or (size == 0)) {
-            m_value.reset();
-            m_size =
-                m_elems = 0;
-            return true;
-        }
-
-    if (size % sizeof(BaseType)) // size must be a multiple of sizeof(BaseType)
-        return false;
-    m_elems = size / sizeof(BaseType);
-
-    if (not m_value or (m_size != size)) {
-        m_value = std::make_unique<BaseType[]>(m_elems);
-        m_size = bytes;
-    }
-
-    std::memcpy(m_value.get(), value, size);
-    return true;
-}
-
-UniformArray(String name, GLint location, PointerType value = nullptr, size_t size = 0)
-    : UniformID(std::move(name), location)
-{
-    Create(value, size);
-}
-
-// Setzen/Updaten via Funktionsaufruf-Operator:
-// - Wenn Größe unterschiedlich: reallozieren + kopieren -> true zurück
-// - Wenn Größe gleich: memcmp, falls anders -> kopieren -> true, sonst false
-bool operator()(PointerType value, size_t size) {
-    return Create(value, size);
-}
-
-bool operator==(PointerType other) const noexcept {
-    return m_value and other and std::memcmp(m_value.get(), other, m_size) == 0;
-}
-
-
-// Vergleich mit externem Buffer + Bytegröße
-bool operator==(PointerType other, size_t size) const noexcept {
-    if (not m_value or not other)
-        return false;
-    if (m_size != size) // also catches size == 0
-        return false;
-    return std::memcmp(m_value.get(), other, m_size) == 0;
-}
-
-
-bool operator!=(PointerType other, size_t size) const noexcept {
-    return !(*this == other, size); // Komma-Operator als Guard gegen versehentliche Klammerfehler
-}
-
-// Zugriff
-inline PointerType Value() noexcept { return m_value.get(); }
-inline const BaseType* Value() const noexcept { return m_value.get(); }
-};
-
-// =================================================================================================
-
-template<typename PointerType, size_t ElemCount>
-struct FixedUniformArray : public UniformArray<PointerType> {
-    using Base = UniformArray<PointerType>;
-    using BaseType = typename Base::BaseType;
-
-    static constexpr size_t m_length = ElemCount;
-    static constexpr size_t m_size = ElemCount * sizeof(BaseType);
-
-    FixedUniformArray() = default;
-    FixedUniformArray(String name, GLint location)
-        : Base(std::move(name), location) {
-    }
-
-    // fester Create/Update ohne size-Parameter
-    inline bool Create(PointerType values) {
-        return Base::Create(values, m_size);
-    }
-    inline bool operator()(PointerType values) {
-        return Base::Create(values, m_size);
-    }
-
-    // Vergleich gegen externen Buffer gleicher fester Größe
-    inline bool operator==(PointerType other) const noexcept {
-        return Base::operator==(other, m_size);
-    }
-    inline bool operator!=(PointerType other) const noexcept {
-        return !(*this == other);
-    }
-
-    // Größen-API
-    static constexpr size_t Length() noexcept { return m_length; }
-    static constexpr size_t Size()    noexcept { return m_size; }
-};
-
-// bequeme Aliasse
-using UniformArray9f = FixedUniformArray<float*, 9>;
-
-using UniformArray16f = FixedUniformArray<float*, 16>;
+#include "shaderdata.h"
 
 // =================================================================================================
 // Some basic shader handling: Compiling, enabling, setting shader variables
@@ -285,32 +116,32 @@ class Shader
         }
 
 
-        inline GLint SetMatrix4f(const char* name, const float* data, float* cachedData, bool transpose = false) const {
-            GLint location = GetLocation(name);
-            if (location >= 0) {
-                if (not cachedData)
-                    glUniformMatrix4fv(GetLocation(name), 1, GLboolean(transpose), data);
-                else if (memcmp(cachedData, data, 16 * sizeof(float))) {
-                    memcpy(cachedData, data, 16 * sizeof(float));
-                    glUniformMatrix4fv(GetLocation(name), 1, GLboolean(transpose), data);
-                }
+        inline GLint SetMatrix4f(const char* name, const float* data, bool transpose = false) const {
+            UniformArray16f* uniform = GetUniform<UniformArray16f>(name);
+            if (not uniform or (uniform->location < 0))
+                return -1;
+            if (*uniform != data) {
+                *uniform = data;
+                glUniformMatrix4fv(GetLocation(name), 1, GLboolean(transpose), data);
             }
-            return location;
+            return uniform->location;
         }
 
 
-        inline GLint SetMatrix4f(const char* name, ManagedArray<GLfloat>& data, float* cachedData, bool transpose = false) {
-            return SetMatrix4f(name, data.Data(), cachedData, transpose);
+        inline GLint SetMatrix4f(const char* name, ManagedArray<GLfloat>& data, bool transpose = false) {
+            return SetMatrix4f(name, data.Data(), transpose);
         }
 
 
         inline GLint SetMatrix3f(const char* name, float* data, bool transpose = false) {
             UniformArray9f* uniform = GetUniform<UniformArray9f>(name);
-            if (not uniform)
+            if (not uniform or (uniform->location < 0))
                 return -1;
-            if (uniform->location >= 0) and (*uniform != )
+            if (*uniform != data) {
+                *uniform = data;
                 glUniformMatrix3fv(location, 1, GLboolean(transpose), data);
-            return location;
+            }
+            return uniform->location;
         }
 
 
@@ -321,83 +152,116 @@ class Shader
 
         template<typename T>
         inline GLint SetVector4f(const char* name, T&& data) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
+            UniformVector4f* uniform = GetUniform<UniformVector4f>(name);
+            if (not uniform or (uniform->location < 0))
+                return -1;
+            if (*uniform != data) {
+                *uniform = data;
                 glUniform4fv(location, 1, std::forward<T>(data).Data());
-            return location;
+            }
+            return uniform->location;
         }
 
 
         template<typename T>
         inline GLint SetVector3f(const char* name, T&& data) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
-                glUniform3fv(location, 1, std::forward<T>(data).Data());
-            return location;
+            UniformVector3f* uniform = GetUniform<UniformVector3f>(name);
+            if (not uniform or (uniform->location < 0))
+                return -1;
+            if (*uniform != data) {
+                *uniform = data;
+                glUniform4fv(location, 1, std::forward<T>(data).Data());
+            }
+            return uniform->location;
         }
 
 
         template<typename T>
         inline GLint SetVector2f(const char* name, T&& data) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
-                glUniform2fv(location, 1, std::forward<T>(data).Data());
-            return location;
+            UniformVector2f* uniform = GetUniform<UniformVector2f>(name);
+            if (not uniform or (uniform->location < 0))
+                return -1;
+            if (*uniform != data) {
+                *uniform = data;
+                glUniform4fv(location, 1, std::forward<T>(data).Data());
+            }
+            return uniform->location;
         }
 
 
         inline GLint SetVector2f(const char* name, float x, float y) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
-                glUniform2f(location, x, y);
-            return location;
+            return SetVector2f(name, Vector2f(x, y));
         }
 
 
         inline GLint SetFloat(const char* name, float data) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
+            UniformFloat* = GetUniform<UniformFloat>(name);
+            if (not uniform or (uniform->location < 0))
+                return -1;
+            if (*uniform != data) {
+                *uniform = data;
                 glUniform1f(location, GLfloat(data));
-            return location;
+            }
+            return uniform->location;
         }
 
 
         inline GLint SetVector2i(const char* name, const GLint* data) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
+            UniformArray2i* uniform = GetUniform<UniformArray2i>(name);
+            if (not uniform or (uniform->location < 0))
+                return -1;
+            if (*uniform != data) {
+                *uniform = data;
                 glUniform2iv(location, 1, data);
-            return location;
+            }
+            return uniform->location;
         }
 
 
         inline GLint SetVector3i(const char* name, const GLint* data) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
+            UniformArray3i* uniform = GetUniform<UniformArray3i>(name);
+            if (not uniform or (uniform->location < 0))
+                return -1;
+            if (*uniform != data) {
+                *uniform = data;
                 glUniform3iv(location, 1, data);
-            return location;
+            }
+            return uniform->location;
         }
 
 
         inline GLint SetVector4i(const char* name, const GLint* data) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
+            UniformArray4i* uniform = GetUniform<UniformArray4i>(name);
+            if (not uniform or (uniform->location < 0))
+                return -1;
+            if (*uniform != data) {
+                *uniform = data;
                 glUniform4iv(location, 1, data);
-            return location;
+            }
+            return uniform->location;
         }
 
 
         inline GLint SetInt(const char* name, int data) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
+            UniformInt* uniform = GetUniform<UniformInt>(name);
+            if (not uniform or (uniform->location < 0))
+                return -1;
+            if (*uniform != data) {
+                *uniform = data;
                 glUniform1i(location, GLint(data));
-            return location;
+            }
+            return uniform->location;
         }
 
 
         inline GLint SetFloatData(const char* name, FloatArray& data) {
-            GLint location = GetLocation(name);
-            if (location >= 0)
+            UniformArray<float>* uniform = location = GetUniform<UniformArray<float>>(name);
+            if (not uniform or (uniform->location < 0))
+                return -1;
+            if (*uniform != data) {
+                * uniform = UniformArrayData(data, data.Length());
                 glUniform1fv(location, GLsizei(data.Length()), (GLfloat*)data.Data());
+            }
             return location;
         }
 
