@@ -6,7 +6,7 @@
 // =================================================================================================
 // Some basic shader handling: Compiling, enabling, setting shader variables
 
-Dictionary<String, GLint> Shader::locations;
+Dictionary<String, UniformHandle*> Shader::uniforms;
 
 String Shader::GetInfoLog (GLuint handle, bool isProgram)
 {
@@ -84,15 +84,15 @@ GLuint Shader::Link(GLuint vsHandle, GLuint fsHandle) {
 void Shader::UpdateMatrices(void) {
     float glData[16];
     if (RenderMatrices::m_legacyMode) {
-        SetMatrix4f("mModelView", m_modelView, GetFloatData(GL_MODELVIEW_MATRIX, 16, glData));
-        SetMatrix4f("mProjection", m_projection, GetFloatData(GL_PROJECTION_MATRIX, 16, glData));
+        SetMatrix4f("mModelView", GetFloatData(GL_MODELVIEW_MATRIX, 16, glData));
+        SetMatrix4f("mProjection", GetFloatData(GL_PROJECTION_MATRIX, 16, glData));
     }
     else {
         // both matrices must be column major
-        SetMatrix4f("mModelView", baseRenderer.ModelView().AsArray(), m_modelView, false);
-        SetMatrix4f("mProjection", baseRenderer.Projection().AsArray(), m_projection, false);
+        SetMatrix4f("mModelView", baseRenderer.ModelView().AsArray(), false);
+        SetMatrix4f("mProjection", baseRenderer.Projection().AsArray(), false);
 #if 0
-        SetMatrix4f("mBaseModelView", baseRenderer.ModelView().AsArray(), m_baseModelView, false);
+        SetMatrix4f("mBaseModelView", baseRenderer.ModelView().AsArray(), false);
 #endif
     }
 #if 0
