@@ -148,15 +148,25 @@ Shader* TextRenderer::LoadShader(void) {
 }
 
 
-void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float yOffset, bool centered) {
+void TextRenderer::RenderText(String& text, int textWidth, float xOffset, float yOffset, eTextAlignments alignment) {
     baseRenderer.PushMatrix();
 #if USE_TEXT_FBOS
     baseRenderer.ResetTransformation();
     baseRenderer.Translate(0.5f, 0.5f, 0.0f);
     glDepthFunc(GL_ALWAYS);
 #endif
-    float letterScale = 2 * xOffset / float(textWidth);
-    float x = centered ? -xOffset : -0.5f;
+    float x, letterScale = 2 * xOffset / float(textWidth);
+    switch (alignment) {
+    case taLeft:
+        x = -0.5f;
+        break;
+    case taRight:
+        x = 1.0f - xOffset * 2;
+        break;
+    case taCenter:
+    default:
+        x = -xOffset;
+    }
     Shader* shader = LoadShader();
     BaseQuad q;
     int i = 0;
@@ -197,7 +207,7 @@ void TextRenderer::Fill(Vector4f color) {
 }
 
 
-void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& viewport, int renderAreaWidth, int renderAreaHeight) {
+void TextRenderer::RenderToFBO(String text, eTextAlignments alignment, FBO* fbo, Viewport& viewport, int renderAreaWidth, int renderAreaHeight) {
     if (m_isAvailable) {
         fbo->m_name = String::Concat ("[", text, "]");
         auto [textWidth, textHeight, aspectRatio] = TextSize(text);
@@ -222,7 +232,7 @@ void TextRenderer::RenderToFBO(String text, bool centered, FBO* fbo, Viewport& v
                 offset.y -= outlineWidth / float(fbo->m_height);
             }
             fbo->m_lastDestination = 0;
-            RenderText(text, textWidth, offset.x, offset.y, centered);
+            RenderText(text, textWidth, offset.x, offset.y, alignment);
             fbo->Disable();
             if (fbo->IsAvailable()) {
                 if (HaveOutline())
@@ -249,11 +259,11 @@ void TextRenderer::RenderToScreen(FBO* fbo, bool flipVertically) {
 }
 
 
-void TextRenderer::Render(String text, bool centered, bool flipVertically, int renderAreaWidth, int renderAreaHeight) {
+void TextRenderer::Render(String text, eTextAlignments alignment, bool flipVertically, int renderAreaWidth, int renderAreaHeight) {
     if (m_isAvailable) {
         FBO* fbo = GetFBO(2.0f);
         if (fbo != nullptr) {
-            RenderToFBO(text, centered, fbo, baseRenderer.Viewport(), renderAreaWidth, renderAreaHeight);
+            RenderToFBO(text, alignment, fbo, baseRenderer.Viewport(), renderAreaWidth, renderAreaHeight);
             RenderToScreen(fbo, flipVertically); // render outline to viewport
         }
     }

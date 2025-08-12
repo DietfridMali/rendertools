@@ -27,7 +27,7 @@ PrerenderedText::PrerenderedText(Viewport viewport, RGBAColor color, const TextR
     , m_color(color), m_decoration(decoration), m_scale(scale), m_text("")
 { }
 
-bool PrerenderedText::Create(String text, bool centered, int bufferCount, const TextRenderer::TextDecoration& decoration) {
+bool PrerenderedText::Create(String text, TextRenderer::eTextAlignments alignment, int bufferCount, const TextRenderer::TextDecoration& decoration) {
     if (bufferCount == 0)
         bufferCount = 2;//  (m_outlineWidth == 0) ? 1 : 2;
     if (not PrerenderedItem::Create(bufferCount) and (m_text == text))
@@ -36,7 +36,7 @@ bool PrerenderedText::Create(String text, bool centered, int bufferCount, const 
     textRenderer.SetColor(m_color);
     textRenderer.SetDecoration(decoration);
     textRenderer.SetScale(1.0f);
-    textRenderer.RenderToFBO(m_text, centered, &m_fbo, m_fbo.m_viewport, 0, 0); // m_outlineWidth == 0);
+    textRenderer.RenderToFBO(m_text, alignment, &m_fbo, m_fbo.m_viewport, 0, 0); // m_outlineWidth == 0);
     /*textRenderer.SetColor();*/
     return true;
 }

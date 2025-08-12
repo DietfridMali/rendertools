@@ -44,8 +44,8 @@ class PrerenderedText
 public:
     String          m_text;
     RGBAColor       m_color;
-    TextRenderer::TextDecoration  m_decoration;
     float           m_scale;
+    TextRenderer::TextDecoration  m_decoration;
 
     PrerenderedText(Viewport viewport = Viewport(), RGBAColor color = ColorData::White, const TextRenderer::TextDecoration& decoration = {}, float scale = 1.0f);
 
@@ -54,7 +54,7 @@ public:
         PrerenderedItem::Destroy();
     }
 
-    bool Create(String text, bool centered, int bufferCount = 0, const TextRenderer::TextDecoration& decoration = {});
+    bool Create(String text, TextRenderer::eTextAlignments alignment = TextRenderer::taLeft, int bufferCount = 0, const TextRenderer::TextDecoration& decoration = {});
 
     inline void SetColor(RGBAColor color) {
         m_color = color;
