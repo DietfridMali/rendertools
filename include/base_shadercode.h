@@ -1,5 +1,11 @@
 #pragma once
 
+#include <string>
+#include <utility>
+#include <map>
+#include <type_traits>
+#include <GL/gl.h> // oder <OpenGL/gl3.h> je nach Plattform
+
 #include "shader.h"
 #include "string.hpp"
 

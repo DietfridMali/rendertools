@@ -243,7 +243,7 @@ void TextRenderer::RenderToFBO(String text, eTextAlignments alignment, FBO* fbo,
             fbo->RestoreViewport();
         }
 #else
-        RenderText(text, textWidth, offset.x, offset.y, centered);
+        RenderText(text, textWidth, offset.x, offset.y, taCentered);
 #endif
 #if USE_TEXT_FBOS
 #endif

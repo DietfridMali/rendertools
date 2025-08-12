@@ -25,8 +25,8 @@ void BaseRenderer::Init(int width, int height, float fov) {
     SetupDrawBuffers();
     CreateMatrices(m_windowWidth, m_windowHeight, float(m_sceneWidth) / float(m_sceneHeight), fov);
     ResetTransformation();
-    int w = m_windowWidth / 10;
-    m_frameCounter.Setup(::Viewport(m_windowWidth - w, 0, w, int(w / m_aspectRatio)));
+    int w = m_windowWidth / 15;
+    m_frameCounter.Setup(::Viewport(m_windowWidth - w, 0, w, int(w * 0.5f / m_aspectRatio)), ColorData::White);
 }
 
 
