@@ -16,6 +16,16 @@
 
 // =================================================================================================
 // Some basic shader handling: Compiling, enabling, setting shader variables
+// Shaders optimize shader location retrieval and uniform value updates by caching these values;
+// see comments in shaderdata.h
+// Some remarks about optimization:
+// #1 Storing all uniform caches in a global map for all shaders actually slowed the renderer down
+// significantly (by about 20%)
+// Storing the uniform caches per shader in a simple array and linearly searching for them using 
+// the uniform name already proved to be surprisingly fast, yielding a speedup of about 33%.
+// Retrieving the location for each uniform of a shader, storing it externally and subsequently 
+// using it directly and also as index of the related uniform value cache brought a speedup of
+// about 50% (debug code), which I consider quite significant for something that simple.
 
 class Shader 
 {
