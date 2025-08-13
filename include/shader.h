@@ -35,15 +35,19 @@ class Shader
 
         Shader(String name = "", String vs = "", String fs = "") : 
             m_handle(0), m_name(name) 
-        { }
+        { 
+            m_uniforms.SetAutoFit(true);
+            m_uniforms.SetShrinkable(false);
+        }
 
         Shader(const Shader& other) {
             m_handle = other.m_handle;
+            m_uniforms = other.m_uniforms;
         }
 
         Shader (Shader&& other) noexcept {
-            m_handle = other.m_handle;
-            other.m_handle = 0;
+            m_handle = std::exchange(other.m_handle, 0);
+            m_uniforms = std::move(other.m_uniforms);
         }
 
         ~Shader () {
@@ -115,7 +119,18 @@ class Shader
             return uniform;
         }
 #else
-        inline T* GetUniform(const char* name) {
+        inline T* GetUniform(const char* name, GLint& location) {
+#   if 1
+            if (location < 0) {
+                if (location == -1)
+                    return nullptr;
+                location = glGetUniformLocation(m_handle, name);
+                if (location < 0)
+                    return nullptr;
+                m_uniforms[location] = new T(name, location); // auto fit must be on for m_uniforms
+            }
+            return dynamic_cast<T*>(m_uniforms[location]);
+#   else
             for (UniformHandle* uniformHandle : m_uniforms)
                 if (uniformHandle->m_name == name)
                     return dynamic_cast<T*>(uniformHandle);
@@ -123,6 +138,7 @@ class Shader
             T* uniform = new T(name, location);
             m_uniforms.Append(uniform);
             return uniform;
+#   endif
         }
 #endif
 
