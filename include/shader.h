@@ -38,6 +38,7 @@ class Shader
         { 
             m_uniforms.SetAutoFit(true);
             m_uniforms.SetShrinkable(false);
+            m_uniforms.SetDefaultValue(nullptr);
         }
 
         Shader(const Shader& other) {

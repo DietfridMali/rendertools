@@ -206,12 +206,15 @@ private:
     ManagedArray<GLint> m_locations;
 
 public:
-    ShaderLocationTable() = default;
+    ShaderLocationTable() {
+        m_locations.SetAutoFit(true);
+        m_locations.SetShrinkable(false);
+        m_locations.SetDefaultValue(std::numeric_limits<GLint>::min());
+    }
+
     ~ShaderLocationTable() = default;
 
     GLint& operator[](int32_t i) {
-        while (i >= m_locations.Length())
-            m_locations.Append(std::numeric_limits<GLint>::min());
         return m_locations[i];
     }
 };
