@@ -6,6 +6,9 @@
 #include <limits>
 
 // =================================================================================================
+// The following code is meant to make caching of uniform variable locations and data as easy as possible.
+// Each shader will hold a list (ManagedArray / std::vector) of uniform variable class instances as 
+// defined below.
 
 struct UniformHandle
 {
@@ -197,6 +200,33 @@ struct FixedUniformArray
 };
 
 // -------------------------------------------------------------------------------------------------
+// ShaderLocationTable's use is intended as follows: For each shader instance, a ShaderLocationTable
+// must be provided. ShaderLocationTable entries are sequentially passed to uniform setter calls as
+// follows:
+// void LoadShader(String shaderName) {
+// Shader* shader = shaderHandler.Setup(shaderName);
+// if (shader) {
+//     static ShaderLocationTable locations;
+//     int iLoc = -1;
+//     shader->SetFloat("someFloatUniform", locations[++iLoc], 1.0f);
+//     shader->SetVector4f("someVectorUniform", locations[++iLoc], Vector4f(1,1,1,1));
+//     etc.
+// 
+// The way this works is that the first time a locations entry is referenced it is initialized with 
+// a value OpenGL will not use or return. To the shader's uniform management this means that the 
+// location hasn't been retrieved yet. In that case, the uniform location will be retrieved using
+// glGetUniformLocation and be stored in the location entry passed to the shader's uniform setter.
+// If the uniform location is valid (>= 0), a new uniform variable cache instance will be created
+// and be used for further writing to that location, only updating it when its contents changes.
+// The entire optimization brings a speedup of almost 50% just in debug mode.
+// 
+// You need to regard that location's entries are tied to uniform variables strictly by the
+// call sequence here. You can ofc. use defines or constexprs to define aptly named index values.
+// You also need to be aware that making locations static means there is only a single table instance
+// for all instances of the method it has been declared in. This is not an issue as it will always
+// be used the same way, but you need to be cautious if a method is called on different shaders
+// which share uniform variable names. In that case, that method needs a ShaderLocationTable for each
+// shader it writes to.
 
 #if 1 // simple version
 

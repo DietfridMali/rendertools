@@ -37,8 +37,11 @@ class Shader
         Shader(String name = "", String vs = "", String fs = "") : 
             m_handle(0), m_name(name) 
         { 
+            // always resize m_uniforms so that any index passed to its operator[] will be valid (i.e. resize the underlying std::vector if needed)
             m_uniforms.SetAutoFit(true);
+            // due to the randomness of uniform location retrieval, it must be made sure that the uniform variable cache list is never shrunk
             m_uniforms.SetShrinkable(false);
+            // default value for automatic resizing
             m_uniforms.SetDefaultValue(nullptr);
         }
 
@@ -123,13 +126,13 @@ class Shader
 #else
         inline T* GetUniform(const char* name, GLint& location) {
 #   if 1
-            if (location >= 0) 
-                return dynamic_cast<T*>(m_uniforms[location]);
-            if (location < -1)
-                location = glGetUniformLocation(m_handle, name);
-            if (location < 0)
+            if (location >= 0) // location has been successfully retrieved from this shader
+                return dynamic_cast<T*>(m_uniforms[location]); // return uniform variable cache
+            if (location < -1) // no location has yet been retrieved for this uniform
+                location = glGetUniformLocation(m_handle, name); // retrieve it
+            if (location < 0) // not present in current shader
                 return nullptr;
-            if (m_uniforms[location] == nullptr) // has never been accessed before
+            if (m_uniforms[location] == nullptr) // location has never been accessed before
                 m_uniforms[location] = new T(name, location); // auto fit must be on for m_uniforms
             return dynamic_cast<T*>(m_uniforms[location]);
 #   else
