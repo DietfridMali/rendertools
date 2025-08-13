@@ -12,6 +12,8 @@
 #include "texture.h"
 #include "shaderdata.h"
 
+#define GLOBAL_UNIFORM_LOOKUP 0
+
 // =================================================================================================
 // Some basic shader handling: Compiling, enabling, setting shader variables
 
@@ -22,8 +24,12 @@ class Shader
         String          m_name;
         String          m_vs;
         String          m_fs;
-
+#if GLOBAL_UNIFORM_LOOKUP
         static Dictionary<String, UniformHandle*> uniforms;
+#else
+        ManagedArray<UniformHandle*> m_uniforms;
+#endif
+        static Dictionary<String, GLint> locations;
 
         using KeyType = String;
 
@@ -78,13 +84,12 @@ class Shader
             return m_handle;
         }
 
-#if 0
+#if 1
         inline GLint GetLocation(const char* name) const {
-            static Dictionary<String, GLint> locations;
             GLint location;
             String key = String::Concat(m_name, "::", name);
             if (not locations.Find(key, location)) {
-                location = glGetUniformLocation(location, name);
+                location = glGetUniformLocation(m_handle, name);
                 locations[key] = location;
             }
             return location;
@@ -92,6 +97,7 @@ class Shader
 #endif
 
         template <typename T>
+#if GLOBAL_LOOKUP
         inline T* GetUniform(const char* name) const {
             String key = String::Concat(m_name, "::", name);
             UniformHandle** uniformHandle = uniforms.Find(key);
@@ -102,33 +108,44 @@ class Shader
             uniforms[key] = uniform;
             return uniform;
         }
+#else
+        inline T* GetUniform(const char* name) {
+            for (UniformHandle* uniformHandle : m_uniforms)
+                if (uniformHandle->m_name == name)
+                    return dynamic_cast<T*>(uniformHandle);
+            GLint location = glGetUniformLocation(m_handle, name);
+            T* uniform = new T(name, location);
+            m_uniforms.Append(uniform);
+            return uniform;
+        }
+#endif
 
 
-        GLint SetMatrix4f(const char* name, const float* data, bool transpose = false) const;
+        GLint SetMatrix4f(const char* name, const float* data, bool transpose = false);
 
         inline GLint SetMatrix4f(const char* name, ManagedArray<GLfloat>& data, bool transpose = false) {
             return SetMatrix4f(name, data.Data(), transpose);
         }
 
-        GLint SetMatrix3f(const char* name, float* data, bool transpose = false) const;
+        GLint SetMatrix3f(const char* name, float* data, bool transpose = false);
 
         inline GLint SetMatrix3f(const char* name, ManagedArray<GLfloat>& data, bool transpose) {
             SetMatrix3f(name, data.Data(), transpose);
         }
 
-        GLint SetVector4f(const char* name, const Vector4f& data) const;
+        GLint SetVector4f(const char* name, const Vector4f& data);
 
         inline GLint SetVector4f(const char* name, Vector4f&& data) {
             return SetVector4f(name, static_cast<const Vector4f&>(data));
         }
 
-        GLint SetVector3f(const char* name, const Vector3f& data) const;
+        GLint SetVector3f(const char* name, const Vector3f& data);
 
         inline GLint SetVector3f(const char* name, Vector3f&& data) {
             return SetVector3f(name, static_cast<const Vector3f&>(data));
         }
 
-        GLint SetVector2f(const char* name, const Vector2f& data) const;
+        GLint SetVector2f(const char* name, const Vector2f& data);
 
         inline GLint SetVector2f(const char* name, Vector2f&& data) {
             return SetVector2f(name, static_cast<const Vector2f&>(data));
@@ -148,15 +165,15 @@ class Shader
 
         GLint SetInt(const char* name, int data);
 
-        GLint SetFloatData(const char* name, const float* data, size_t length) const;
+        GLint SetFloatData(const char* name, const float* data, size_t length);
 
-        inline GLint SetFloatData(const char* name, const FloatArray& data) const {
+        inline GLint SetFloatData(const char* name, const FloatArray& data) {
             return SetFloatData(name, data.Data(), size_t(data.Length()));
         }
 
-        GLint SetIntData(const char* name, const int* data, size_t length) const;
+        GLint SetIntData(const char* name, const int* data, size_t length);
 
-        inline GLint SetIntData(const char* name, const IntArray& data) const {
+        inline GLint SetIntData(const char* name, const IntArray& data) {
             return SetIntData(name, data.Data(), size_t(data.Length()));
         }
 
