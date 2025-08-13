@@ -88,19 +88,18 @@ GLuint Shader::Link(GLuint vsHandle, GLuint fsHandle) {
 
 
 void Shader::UpdateMatrices(void) {
-    static ShaderLocationTable locations;
     int iLoc = -1;
     float glData[16];
     if (RenderMatrices::m_legacyMode) {
-        SetMatrix4f("mModelView", locations[++iLoc], GetFloatData(GL_MODELVIEW_MATRIX, 16, glData));
-        SetMatrix4f("mProjection", locations[++iLoc], GetFloatData(GL_PROJECTION_MATRIX, 16, glData));
+        SetMatrix4f("mModelView", m_locations[++iLoc], GetFloatData(GL_MODELVIEW_MATRIX, 16, glData));
+        SetMatrix4f("mProjection", m_locations[++iLoc], GetFloatData(GL_PROJECTION_MATRIX, 16, glData));
     }
     else {
         // both matrices must be column major
-        SetMatrix4f("mModelView", locations[++iLoc], baseRenderer.ModelView().AsArray(), false);
-        SetMatrix4f("mProjection", locations[++iLoc], baseRenderer.Projection().AsArray(), false);
+        SetMatrix4f("mModelView", m_locations[++iLoc], baseRenderer.ModelView().AsArray(), false);
+        SetMatrix4f("mProjection", m_locations[++iLoc], baseRenderer.Projection().AsArray(), false);
 #if 0
-        SetMatrix4f("mBaseModelView", locations[++iLoc], baseRenderer.ModelView().AsArray(), false);
+        SetMatrix4f("mBaseModelView", m_locations[++iLoc], baseRenderer.ModelView().AsArray(), false);
 #endif
     }
 #if 0

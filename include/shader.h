@@ -28,6 +28,7 @@ class Shader
         static Dictionary<String, UniformHandle*> uniforms;
 #else
         ManagedArray<UniformHandle*>    m_uniforms;
+        ShaderLocationTable             m_locations;
 #endif
         static Dictionary<String, GLint> locations;
 
@@ -122,20 +123,20 @@ class Shader
 #else
         inline T* GetUniform(const char* name, GLint& location) {
 #   if 1
-            if (location < 0) {
-                if (location == -1)
-                    return nullptr;
+            if (location >= 0) 
+                return dynamic_cast<T*>(m_uniforms[location]);
+            if (location < -1)
                 location = glGetUniformLocation(m_handle, name);
-                if (location < 0)
-                    return nullptr;
+            if (location < 0)
+                return nullptr;
+            if (m_uniforms[location] == nullptr) // has never been accessed before
                 m_uniforms[location] = new T(name, location); // auto fit must be on for m_uniforms
-            }
             return dynamic_cast<T*>(m_uniforms[location]);
 #   else
             for (UniformHandle* uniformHandle : m_uniforms)
                 if (uniformHandle->m_name == name)
                     return dynamic_cast<T*>(uniformHandle);
-            GLint location = glGetUniformLocation(m_handle, name);
+            location = glGetUniformLocation(m_handle, name);
             T* uniform = new T(name, location);
             m_uniforms.Append(uniform);
             return uniform;
