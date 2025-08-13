@@ -3,6 +3,7 @@
 #include <utility>
 #include <type_traits>
 #include "string.hpp"
+#include <limits>
 
 // =================================================================================================
 
@@ -194,6 +195,62 @@ struct FixedUniformArray
     }
 #endif
 };
+
+// -------------------------------------------------------------------------------------------------
+
+#if 1 // simple version
+
+class ShaderLocationTable {
+public:
+private:
+    ManagedArray<GLint> m_locations;
+
+public:
+    ShaderLocationTable() = default;
+    ~ShaderLocationTable() = default;
+
+    GLint& operator[](int32_t i) {
+        while (i >= m_locations.Length())
+            m_locations.Append(std::numeric_limits<GLint>::min());
+        return m_locations[i];
+    }
+};
+
+#else
+
+class ShaderLocationTable {
+public:
+    struct ShaderLocation {
+        const char* m_name{ "" };
+        GLint       m_location{ std::numeric_limits<GLint>::min() };
+
+        ShaderLocation(const char* name = "") 
+            : m_name(name), m_location(std::numeric_limits<GLint>::min())
+        { }
+    };
+
+    struct LocationIndex {
+        int32_t     i;
+        const char* name;
+    };
+
+private:
+    ManagedArray<ShaderLocation> m_locations;
+
+public:
+    ShaderLocationTable() = default;
+    ~ShaderLocationTable() = default;
+
+    ShaderLocation& operator[](LocationIndex i) {
+        if (i.i >= m_locations.Length()) {
+            m_locations.Resize(i.i + 1);
+            m_locations [i.i] = ShaderLocation(i.name);
+        }
+        return m_locations[i.i];
+    }
+};
+
+#endif
 
 // -------------------------------------------------------------------------------------------------
 

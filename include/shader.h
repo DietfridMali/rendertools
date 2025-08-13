@@ -27,7 +27,7 @@ class Shader
 #if GLOBAL_UNIFORM_LOOKUP
         static Dictionary<String, UniformHandle*> uniforms;
 #else
-        ManagedArray<UniformHandle*> m_uniforms;
+        ManagedArray<UniformHandle*>    m_uniforms;
 #endif
         static Dictionary<String, GLint> locations;
 
@@ -85,14 +85,20 @@ class Shader
         }
 
 #if 1
-        inline GLint GetLocation(const char* name) const {
-            GLint location;
+        inline GLint GetLocation(const char* name, GLint& location) const {
+#   if 1 // location is returned back to caller of SetUniform method who stores is for future use
+         // initially, that caller sets location to a value < -1 to signal that it has to be initialized here
+         // so if location < -1, return glGetUnifomLocation result, otherwise location has been initialized; just return it
+            return (location < -1) ? glGetUniformLocation(m_handle, name) : location;
+                return -1;
+#   else
             String key = String::Concat(m_name, "::", name);
             if (not locations.Find(key, location)) {
                 location = glGetUniformLocation(m_handle, name);
                 locations[key] = location;
             }
             return location;
+#   endif
         }
 #endif
 
@@ -121,60 +127,60 @@ class Shader
 #endif
 
 
-        GLint SetMatrix4f(const char* name, const float* data, bool transpose = false);
+        GLint SetMatrix4f(const char* name, GLint& location, const float* data, bool transpose = false);
 
-        inline GLint SetMatrix4f(const char* name, ManagedArray<GLfloat>& data, bool transpose = false) {
-            return SetMatrix4f(name, data.Data(), transpose);
+        inline GLint SetMatrix4f(const char* name, GLint& location, ManagedArray<GLfloat>& data, bool transpose = false) {
+            return SetMatrix4f(name, location, data.Data(), transpose);
         }
 
-        GLint SetMatrix3f(const char* name, float* data, bool transpose = false);
+        GLint SetMatrix3f(const char* name, GLint& location, float* data, bool transpose = false);
 
-        inline GLint SetMatrix3f(const char* name, ManagedArray<GLfloat>& data, bool transpose) {
-            SetMatrix3f(name, data.Data(), transpose);
+        inline GLint SetMatrix3f(const char* name, GLint& location, ManagedArray<GLfloat>& data, bool transpose) {
+            SetMatrix3f(name, location, data.Data(), transpose);
         }
 
-        GLint SetVector4f(const char* name, const Vector4f& data);
+        GLint SetVector4f(const char* name, GLint& location, const Vector4f& data);
 
-        inline GLint SetVector4f(const char* name, Vector4f&& data) {
-            return SetVector4f(name, static_cast<const Vector4f&>(data));
+        inline GLint SetVector4f(const char* name, GLint& location, Vector4f&& data) {
+            return SetVector4f(name, location, static_cast<const Vector4f&>(data));
         }
 
-        GLint SetVector3f(const char* name, const Vector3f& data);
+        GLint SetVector3f(const char* name, GLint& location, const Vector3f& data);
 
-        inline GLint SetVector3f(const char* name, Vector3f&& data) {
-            return SetVector3f(name, static_cast<const Vector3f&>(data));
+        inline GLint SetVector3f(const char* name, GLint& location, Vector3f&& data) {
+            return SetVector3f(name, location, static_cast<const Vector3f&>(data));
         }
 
-        GLint SetVector2f(const char* name, const Vector2f& data);
+        GLint SetVector2f(const char* name, GLint& location, const Vector2f& data);
 
-        inline GLint SetVector2f(const char* name, Vector2f&& data) {
-            return SetVector2f(name, static_cast<const Vector2f&>(data));
+        inline GLint SetVector2f(const char* name, GLint& location, Vector2f&& data) {
+            return SetVector2f(name, location, static_cast<const Vector2f&>(data));
         }
 
-        inline GLint SetVector2f(const char* name, float x, float y) {
-            return SetVector2f(name, Vector2f(x, y));
+        inline GLint SetVector2f(const char* name, GLint& location, float x, float y) {
+            return SetVector2f(name, location, Vector2f(x, y));
         }
 
-        GLint SetFloat(const char* name, float data);
+        GLint SetFloat(const char* name, GLint& location, float data);
 
-        GLint SetVector2i(const char* name, const GLint* data);
+        GLint SetVector2i(const char* name, GLint& location, const GLint* data);
 
-        GLint SetVector3i(const char* name, const GLint* data);
+        GLint SetVector3i(const char* name, GLint& location, const GLint* data);
 
-        GLint SetVector4i(const char* name, const GLint* data);
+        GLint SetVector4i(const char* name, GLint& location, const GLint* data);
 
-        GLint SetInt(const char* name, int data);
+        GLint SetInt(const char* name, GLint& location, int data);
 
-        GLint SetFloatData(const char* name, const float* data, size_t length);
+        GLint SetFloatData(const char* name, GLint& location, const float* data, size_t length);
 
-        inline GLint SetFloatData(const char* name, const FloatArray& data) {
-            return SetFloatData(name, data.Data(), size_t(data.Length()));
+        inline GLint SetFloatData(const char* name, GLint& location, const FloatArray& data) {
+            return SetFloatData(name, location, data.Data(), size_t(data.Length()));
         }
 
-        GLint SetIntData(const char* name, const int* data, size_t length);
+        GLint SetIntData(const char* name, GLint& location, const int* data, size_t length);
 
-        inline GLint SetIntData(const char* name, const IntArray& data) {
-            return SetIntData(name, data.Data(), size_t(data.Length()));
+        inline GLint SetIntData(const char* name, GLint& location, const IntArray& data) {
+            return SetIntData(name, location, data.Data(), size_t(data.Length()));
         }
 
         static inline float* GetFloatData(GLenum id, int32_t size, float* data) {

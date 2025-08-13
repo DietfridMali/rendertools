@@ -118,9 +118,11 @@ float BaseQuad::ComputeAspectRatio(void) {
 
 
 Shader* BaseQuad::LoadShader(bool useTexture, const RGBAColor& color) {
+    static ShaderLocationTable locations;
     Shader* shader = baseShaderHandler.SetupShader(useTexture ? "plainTexture" : "plainColor");
     if (shader) {
-        shader->SetVector4f("surfaceColor", color);
+        int iLoc = -1;
+        shader->SetVector4f("surfaceColor", locations[++iLoc], color);
     }
     return shader;
 }

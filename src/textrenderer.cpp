@@ -140,9 +140,11 @@ FBO* TextRenderer::GetFBO(float scale) {
 
 
 Shader* TextRenderer::LoadShader(void) {
+    static ShaderLocationTable locations;
     Shader* shader = baseShaderHandler.SetupShader("plainTexture");
     if (shader) {
-        shader->SetVector4f("surfaceColor", ColorData::White);
+        int iLoc = -1;
+        shader->SetVector4f("surfaceColor", locations[++iLoc], ColorData::White);
     }
     return shader;
 }
