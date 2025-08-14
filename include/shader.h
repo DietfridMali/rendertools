@@ -12,7 +12,7 @@
 #include "texture.h"
 #include "shaderdata.h"
 
-#define GLOBAL_UNIFORM_LOOKUP 0
+#define LOCATION_LOOKUP_MODE 0
 
 // =================================================================================================
 // Some basic shader handling: Compiling, enabling, setting shader variables
@@ -34,13 +34,8 @@ class Shader
         String          m_name;
         String          m_vs;
         String          m_fs;
-#if GLOBAL_UNIFORM_LOOKUP
-        static Dictionary<String, UniformHandle*> uniforms;
-#else
         ManagedArray<UniformHandle*>    m_uniforms;
         ShaderLocationTable             m_locations;
-#endif
-        static Dictionary<String, GLint> locations;
 
         using KeyType = String;
 
@@ -103,40 +98,23 @@ class Shader
             return m_handle;
         }
 
-#if 1
         inline GLint GetLocation(const char* name, GLint& location) const {
-#   if 1 
          // location is returned back to caller of SetUniform method who stores is for future use
          // initially, that caller sets location to a value < -1 to signal that it has to be initialized here
          // so if location < -1, return glGetUnifomLocation result, otherwise location has been initialized; just return it
-            return (location < -1) ? glGetUniformLocation(m_handle, name) : location;
-                return -1;
-#   else
-            String key = String::Concat(m_name, "::", name);
-            if (not locations.Find(key, location)) {
-                location = glGetUniformLocation(m_handle, name);
-                locations[key] = location;
-            }
+#if LOCATION_LOOKUP_MODE == 0
+            location = glGetUniformLocation(m_handle, name);
+            if (location == -1)
+                fprintf(stderr, "location %s::%s not found\n", (const char*)m_name, (const char*)name);
             return location;
-#   endif
-        }
+#else
+            return (location < -1) ? glGetUniformLocation(m_handle, name) : location;
 #endif
+        }
+
 
         template <typename T>
-#if GLOBAL_LOOKUP
-        inline T* GetUniform(const char* name) const {
-            String key = String::Concat(m_name, "::", name);
-            UniformHandle** uniformHandle = uniforms.Find(key);
-            if (uniformHandle)
-                return dynamic_cast<T*>(*uniformHandle);
-            GLint location = glGetUniformLocation(m_handle, name);
-            T* uniform = new T(name, location);
-            uniforms[key] = uniform;
-            return uniform;
-        }
-#else
         inline T* GetUniform(const char* name, GLint& location) {
-#   if 1
             if (location >= 0) // location has been successfully retrieved from this shader
                 return dynamic_cast<T*>(m_uniforms[location]); // return uniform variable cache
             if (location < -1) // no location has yet been retrieved for this uniform
@@ -146,17 +124,7 @@ class Shader
             if (m_uniforms[location] == nullptr) // location has never been accessed before
                 m_uniforms[location] = new T(name, location); // auto fit must be on for m_uniforms
             return dynamic_cast<T*>(m_uniforms[location]);
-#   else
-            for (UniformHandle* uniformHandle : m_uniforms)
-                if (uniformHandle->m_name == name)
-                    return dynamic_cast<T*>(uniformHandle);
-            location = glGetUniformLocation(m_handle, name);
-            T* uniform = new T(name, location);
-            m_uniforms.Append(uniform);
-            return uniform;
-#   endif
         }
-#endif
 
 
         GLint SetMatrix4f(const char* name, GLint& location, const float* data, bool transpose = false);

@@ -25,7 +25,7 @@ void OutlineRenderer::AntiAlias(FBO* fbo, const AAMethod& aaMethod) {
         if (params.shader == nullptr)
             return;
         BaseRenderer::ClearGLError();
-        locations.Begin();
+        locations.Start();
         params.shader->SetFloat("offset", locations.Current(), 0.5f);
         if (aaMethod.method != "gaussblur")
             fbo->AutoRender(params);
@@ -55,7 +55,7 @@ void OutlineRenderer::RenderOutline(FBO* fbo, const Decoration& decoration) {
     if (decoration.HaveOutline()) {
         Shader* shader = baseShaderHandler.SetupShader("outline");
         if (shader) {
-            locations.Begin();
+            locations.Start();
             shader->SetFloat("outlineWidth", locations.Current(), decoration.outlineWidth);
             shader->SetVector4f("outlineColor", locations.Current(), decoration.outlineColor);
             shader->SetFloat("offset", locations.Current(), 0.5f);

@@ -143,7 +143,7 @@ Shader* TextRenderer::LoadShader(void) {
     static ShaderLocationTable locations;
     Shader* shader = baseShaderHandler.SetupShader("plainTexture");
     if (shader) {
-        locations.Begin();
+        locations.Start();
         shader->SetVector4f("surfaceColor", locations.Current(), ColorData::White);
     }
     return shader;

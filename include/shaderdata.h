@@ -207,7 +207,7 @@ struct FixedUniformArray
 // Shader* shader = shaderHandler.Setup(shaderName);
 // if (shader) {
 //     static ShaderLocationTable locations;
-//     locations.Begin();
+//     locations.Start();
 //     shader->SetFloat("someFloatUniform", locations.Current(), 1.0f);
 //     shader->SetVector4f("someVectorUniform", locations.Current(), Vector4f(1,1,1,1));
 //     etc.
@@ -249,7 +249,7 @@ public:
 
     GLint& operator[](int32_t i) { return m_locations[i]; }
 
-    void Begin(void) { m_index = -1; }
+    void Start(void) { m_index = -1; }
 
     GLint& Current(void) { return m_locations[++m_index]; }
 
