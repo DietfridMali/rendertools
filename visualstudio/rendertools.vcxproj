@@ -200,7 +200,6 @@
     <ClCompile Include="..\src\shader.cpp" />
     <ClCompile Include="..\src\base_shaderhandler.cpp" />
     <ClCompile Include="..\src\shader_macros.cpp" />
-    <ClCompile Include="..\src\SSBO.cpp" />
     <ClCompile Include="..\src\textrenderer.cpp" />
     <ClCompile Include="..\src\texture.cpp" />
     <ClCompile Include="..\src\texturehandler.cpp" />

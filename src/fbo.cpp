@@ -112,6 +112,7 @@ void FBO::CreateRenderArea(void) {
 
 
 bool FBO::Create(int width, int height, int scale, const FBOBufferParams& params) {
+    m_handle = 0;
     m_width = width;
     m_height = height;
     m_scale = scale;

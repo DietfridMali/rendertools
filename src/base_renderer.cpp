@@ -30,14 +30,17 @@ void BaseRenderer::Init(int width, int height, float fov) {
 }
 
 
-void BaseRenderer::Create(int width, int height, float fov) {
+bool BaseRenderer::Create(int width, int height, float fov) {
     Init(width, height, fov);
     m_viewport = ::Viewport(0, 0, m_windowWidth, m_windowHeight);
     SetupOpenGL();
-    m_screenBuffer.Create(m_windowWidth, m_windowHeight, 1, { .name = "screen", .colorBufferCount = 1 }); // FBO for entire screen incl. 2D elements (e.g. UI)
+    if (not (m_screenBuffer = new FBO()))
+        return false;
+    m_screenBuffer->Create(m_windowWidth, m_windowHeight, 1, { .name = "screen", .colorBufferCount = 1 }); // FBO for entire screen incl. 2D elements (e.g. UI)
     m_drawBufferStack.Clear();
     m_renderTexture.HasBuffer() = true;
     m_viewportArea.Setup({ Vector3f{ -0.5f, -0.5f, 0.0f }, Vector3f{ -0.5f, 0.5f, 0.0f }, Vector3f{ 0.5f, 0.5f, 0.0f }, Vector3f{ 0.5f, -0.5f, 0.0f } });
+    return true;
 }
 
 
@@ -49,6 +52,7 @@ bool BaseRenderer::InitOpenGL(void) {
     }
     glGetIntegerv(GL_MAJOR_VERSION, &m_glVersion.major);
     glGetIntegerv(GL_MINOR_VERSION, &m_glVersion.minor);
+    return true;
 }
 
 
@@ -73,9 +77,9 @@ void BaseRenderer::SetupOpenGL (void) {
 
 bool BaseRenderer::Start3DScene(void) {
     m_frameCounter.Start();
-    if (not m_sceneBuffer.IsAvailable())
+    if (not (m_sceneBuffer and m_sceneBuffer->IsAvailable()))
         return false;
-    ResetDrawBuffers(&m_sceneBuffer);
+    ResetDrawBuffers(m_sceneBuffer);
     SetupTransformation();
     SetupOpenGL();
     SetViewport(::Viewport(0, 0, m_sceneWidth, m_sceneHeight), false);
@@ -85,7 +89,7 @@ bool BaseRenderer::Start3DScene(void) {
 
 
 bool BaseRenderer::Stop3DScene(void) {
-    if (not m_sceneBuffer.IsAvailable())
+    if (not m_sceneBuffer->IsAvailable())
         return false;
     DisableCamera();
     ResetTransformation();
@@ -95,9 +99,9 @@ bool BaseRenderer::Stop3DScene(void) {
 
 bool BaseRenderer::Start2DScene(void) {
     m_frameCounter.Start();
-    if (not m_screenBuffer.IsAvailable())
+    if (not (m_screenBuffer and m_screenBuffer->IsAvailable()))
         return false;
-    ResetDrawBuffers(&m_screenBuffer, not m_screenIsAvailable);
+    ResetDrawBuffers(m_screenBuffer, not m_screenIsAvailable);
     m_screenIsAvailable = true;
     ResetTransformation();
     SetViewport(::Viewport(0, 0, m_windowWidth, m_windowHeight), false);
@@ -122,7 +126,7 @@ void BaseRenderer::Draw3DScene(void) {
         glDisable(GL_CULL_FACE);
         SetViewport(::Viewport(m_sceneLeft, m_sceneTop, m_sceneWidth, m_sceneHeight), false);
 #if 1
-        m_renderTexture.m_handle = m_sceneBuffer.BufferHandle(0);
+        m_renderTexture.m_handle = m_sceneBuffer->BufferHandle(0);
         m_viewportArea.Render(&m_renderTexture);
 #else
         m_viewportArea.Fill(ColorData::Orange);
@@ -146,7 +150,7 @@ void BaseRenderer::DrawScreen (bool bRotate, bool bFlipVertically) {
             Rotate(90, 0, 0, 1);
         if (bFlipVertically)
             Scale(1, -1, 1);
-        m_renderTexture.m_handle = m_screenBuffer.BufferHandle(0);
+        m_renderTexture.m_handle = m_screenBuffer->BufferHandle(0);
         m_viewportArea.Render(&m_renderTexture); // bFlipVertically);
     }
 }

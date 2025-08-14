@@ -5,8 +5,18 @@
 #include "array.hpp"
 #include "sharedglhandle.hpp"
 
+class BaseSSBO {
+public:
+	static inline bool IsAvailable;
+	
+	BaseSSBO() {
+		IsAvailable = (strstr((const char*)glGetString(GL_EXTENSIONS), "GL_ARB_shader_storage_buffer_object"));
+	}
+};
+
 template <typename DATA_T>
 class SSBO
+	: public BaseSSBO
 {
 public:
 	SharedGLHandle			m_handle;
@@ -29,6 +39,8 @@ public:
 
 
 	bool Create(int size = 0) {
+		if (not IsAvailable)
+			return false;
 		if (m_handle.Claim() == 0)
 			return false;
 		m_data.Resize(size);

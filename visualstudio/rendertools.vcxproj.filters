@@ -146,9 +146,6 @@
     <ClCompile Include="..\src\rendermatrices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\SSBO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\textrenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

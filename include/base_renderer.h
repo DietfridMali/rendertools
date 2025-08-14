@@ -28,8 +28,8 @@ class BaseRenderer
         };
 
     protected:
-        FBO                     m_screenBuffer;
-        FBO                     m_sceneBuffer;
+        FBO*                    m_screenBuffer;
+        FBO*                    m_sceneBuffer;
         Texture                 m_renderTexture;
         bool                    m_screenIsAvailable;
 
@@ -49,7 +49,9 @@ class BaseRenderer
 
     public:
         BaseRenderer()
-            : m_windowWidth(0), m_windowHeight(0), m_sceneWidth(0), m_sceneHeight(0), m_sceneLeft(0), m_sceneTop(0), m_aspectRatio(1.0f), m_screenIsAvailable(false)
+            : m_screenBuffer(nullptr), m_sceneBuffer(nullptr)
+            , m_windowWidth(0), m_windowHeight(0), m_sceneWidth(0), m_sceneHeight(0), m_sceneLeft(0), m_sceneTop(0), m_aspectRatio(1.0f)
+            , m_screenIsAvailable(false)
         { 
             _instance = this;
         }
@@ -58,10 +60,9 @@ class BaseRenderer
 
         bool InitOpenGL(void);
 
-
         virtual void Init(int width, int height, float fov);
 
-        virtual void Create(int width = 1920, int height = 1080, float fov = 45);
+        virtual bool Create(int width = 1920, int height = 1080, float fov = 45);
             
         void SetupOpenGL (void);
 
@@ -81,9 +82,9 @@ class BaseRenderer
 
         virtual bool DisableCamera(void) { return false; }
 
-        inline FBO& SceneBuffer(void) { return m_sceneBuffer; }
+        inline FBO* SceneBuffer(void) { return m_sceneBuffer; }
 
-        inline FBO& ScreenBuffer(void) { return m_screenBuffer; }
+        inline FBO* ScreenBuffer(void) { return m_screenBuffer; }
 
         bool SetActiveBuffer(FBO* buffer, bool clearBuffer = false);
 
