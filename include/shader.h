@@ -105,7 +105,8 @@ class Shader
 
 #if 1
         inline GLint GetLocation(const char* name, GLint& location) const {
-#   if 1 // location is returned back to caller of SetUniform method who stores is for future use
+#   if 1 
+         // location is returned back to caller of SetUniform method who stores is for future use
          // initially, that caller sets location to a value < -1 to signal that it has to be initialized here
          // so if location < -1, return glGetUnifomLocation result, otherwise location has been initialized; just return it
             return (location < -1) ? glGetUniformLocation(m_handle, name) : location;
