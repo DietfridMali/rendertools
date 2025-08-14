@@ -53,7 +53,7 @@ class BaseRenderer
             , m_windowWidth(0), m_windowHeight(0), m_sceneWidth(0), m_sceneHeight(0), m_sceneLeft(0), m_sceneTop(0), m_aspectRatio(1.0f)
             , m_screenIsAvailable(false)
         { 
-            _instance = this;
+            //_instance = this;
         }
 
         static BaseRenderer& Instance(void) { return dynamic_cast<BaseRenderer&>(PolymorphSingleton::Instance()); }
