@@ -207,9 +207,9 @@ struct FixedUniformArray
 // Shader* shader = shaderHandler.Setup(shaderName);
 // if (shader) {
 //     static ShaderLocationTable locations;
-//     int iLoc = -1;
-//     shader->SetFloat("someFloatUniform", locations[++iLoc], 1.0f);
-//     shader->SetVector4f("someVectorUniform", locations[++iLoc], Vector4f(1,1,1,1));
+//     locations.Begin();
+//     shader->SetFloat("someFloatUniform", locations.Current(), 1.0f);
+//     shader->SetVector4f("someVectorUniform", locations.Current(), Vector4f(1,1,1,1));
 //     etc.
 // 
 // The way this works is that the first time a locations entry is referenced it is initialized with 
@@ -234,9 +234,12 @@ class ShaderLocationTable {
 public:
 private:
     ManagedArray<GLint> m_locations;
+    int                 m_index{ -1 };
 
 public:
-    ShaderLocationTable() {
+    ShaderLocationTable()
+        : m_index(-1)
+    {
         m_locations.SetAutoFit(true);
         m_locations.SetShrinkable(false);
         m_locations.SetDefaultValue(std::numeric_limits<GLint>::min());
@@ -244,9 +247,12 @@ public:
 
     ~ShaderLocationTable() = default;
 
-    GLint& operator[](int32_t i) {
-        return m_locations[i];
-    }
+    GLint& operator[](int32_t i) { return m_locations[i]; }
+
+    void Begin(void) { m_index = -1; }
+
+    GLint& Current(void) { return m_locations[++m_index]; }
+
 };
 
 #else

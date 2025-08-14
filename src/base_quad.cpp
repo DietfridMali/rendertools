@@ -124,8 +124,8 @@ Shader* BaseQuad::LoadShader(bool useTexture, const RGBAColor& color) {
     Shader* shader = baseShaderHandler.SetupShader(shaderNames[shaderId]);
     if (shader) {
         ShaderLocationTable& locations = shaderLocations[shaderId];
-        int iLoc = -1;
-        shader->SetVector4f("surfaceColor", locations[++iLoc], color);
+        locations.Begin();
+        shader->SetVector4f("surfaceColor", locations.Current(), color);
     }
     return shader;
 }

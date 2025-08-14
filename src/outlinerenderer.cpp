@@ -25,20 +25,20 @@ void OutlineRenderer::AntiAlias(FBO* fbo, const AAMethod& aaMethod) {
         if (params.shader == nullptr)
             return;
         BaseRenderer::ClearGLError();
-        int iLoc = -1;
-        params.shader->SetFloat("offset", locations[++iLoc], 0.5f);
+        locations.Begin();
+        params.shader->SetFloat("offset", locations.Current(), 0.5f);
         if (aaMethod.method != "gaussblur")
             fbo->AutoRender(params);
         else {
             FloatArray* kernel = baseShaderHandler.GetKernel(aaMethod.strength);
             if (kernel != nullptr) {
-                params.shader->SetFloatData("coeffs", locations[++iLoc], *kernel);
-                params.shader->SetInt("radius", locations[++iLoc], aaMethod.strength);
+                params.shader->SetFloatData("coeffs", locations.Current(), *kernel);
+                params.shader->SetInt("radius", locations.Current(), aaMethod.strength);
                 params.destination = fbo->GetLastDestination();
                 
                 for (int i = 0; i < 2; ++i) {
                     // the following code only works if not called multiple times in a loop!
-                    params.shader->SetFloat("direction", locations[++iLoc], float (i));
+                    params.shader->SetFloat("direction", locations.Current(), float (i));
                     params.source = params.destination;
                     params.destination = fbo->NextBuffer(params.source);
                     fbo->Render(params);
@@ -55,10 +55,10 @@ void OutlineRenderer::RenderOutline(FBO* fbo, const Decoration& decoration) {
     if (decoration.HaveOutline()) {
         Shader* shader = baseShaderHandler.SetupShader("outline");
         if (shader) {
-            int iLoc = -1;
-            shader->SetFloat("outlineWidth", locations[++iLoc], decoration.outlineWidth);
-            shader->SetVector4f("outlineColor", locations[++iLoc], decoration.outlineColor);
-            shader->SetFloat("offset", locations[++iLoc], 0.5f);
+            locations.Begin();
+            shader->SetFloat("outlineWidth", locations.Current(), decoration.outlineWidth);
+            shader->SetVector4f("outlineColor", locations.Current(), decoration.outlineColor);
+            shader->SetFloat("offset", locations.Current(), 0.5f);
             fbo->AutoRender({ .clearBuffer = true, .shader = shader });
         }
         //baseShaderHandler.StopShader();
