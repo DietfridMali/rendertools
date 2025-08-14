@@ -292,10 +292,13 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     else {
 #ifdef _DEBUG
         static bool fillArea = false;
+        static bool oscillate = false;
         static int i = 0;
         if (fillArea) {
-            m_viewportArea.Fill(i ? ColorData::Orange : ColorData::MediumBlue);
-            i ^= 1;
+            Viewport viewport = baseRenderer.Viewport();
+            m_viewportArea.Fill(i ? ColorData::MediumBlue : ColorData::Orange);
+            if (oscillate)
+                i ^= 1;
         }
         else
 #endif
