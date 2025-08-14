@@ -62,6 +62,7 @@ Shader* BaseShaderHandler::SelectShader(Texture* texture) {
 
 Shader* BaseShaderHandler::SetupShader(String shaderId) {
     Shader* shader;
+    baseShaderHandler.StopShader();
     if ((m_activeShaderId == shaderId) and (m_activeShader != nullptr))
         shader = m_activeShader;
     else {

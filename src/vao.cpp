@@ -2,6 +2,11 @@
 #include "base_shaderhandler.h"
 
 // =================================================================================================
+
+VAO* VAO::activeVAO = 0;
+List<VAO*> VAO::vaoStack;
+
+// =================================================================================================
 // "Premium version of" OpenGL vertex array objects. CVAO instances offer methods to convert python
 // lists into the corresponding lists of OpenGL items (vertices, normals, texture coordinates, etc)
 // The current implementation requires a fixed order of array buffer creation to comply with the 
@@ -35,6 +40,7 @@ bool VAO::Init (GLuint shape) {
 
 
 void VAO::Destroy(void) {
+    Disable();
     for (auto& vbo : m_dataBuffers)
         vbo->Destroy();
     m_indexBuffer.Destroy();
@@ -110,7 +116,35 @@ bool VAO::UpdateVertexBuffer(const char* type, void * data, size_t dataSize, siz
 
 
 void VAO::UpdateIndexBuffer(void * data, size_t dataSize, size_t componentType) {
+    bool inactive = not IsActive();
+    bool unbound = not IsBound();
+    if (inactive or unbound)
+        Enable();
     m_indexBuffer.Update("Index", GL_ELEMENT_ARRAY_BUFFER, -1, data, dataSize, componentType);
+    if (inactive or unbound)
+        Disable();
+}
+
+
+void VAO::Enable(void) {
+    Activate();
+    if (not IsBound()) {
+#if USE_SHARED_HANDLES
+        glBindVertexArray(m_handle);
+        m_isBound = true;
+#else
+        glBindVertexArray(m_handle);
+#endif
+    }
+}
+
+
+void VAO::Disable(void) {
+    Deactivate();
+    if (IsBound()) {
+        glBindVertexArray(0);
+        m_isBound = false;
+    }
 }
 
 

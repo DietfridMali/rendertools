@@ -34,26 +34,41 @@
 class VAO 
 {
     public:
-        List<VBO*>      m_dataBuffers;
-        VBO             m_indexBuffer;
+        List<VBO*>          m_dataBuffers;
+        VBO                 m_indexBuffer;
 #if USE_SHARED_HANDLES
-        SharedGLHandle  m_handle;
+        SharedGLHandle      m_handle;
 #else
-        GLuint          m_handle;
+        GLuint              m_handle;
 #endif
-        GLuint          m_shape;
-        bool            m_isDynamic;
+        GLuint              m_shape;
+        bool                m_isDynamic;
+        bool                m_isBound;
+
+        static VAO*         activeVAO;
+        static List<VAO*>   vaoStack;
 
         VAO(bool isDynamic = true)
-            : m_isDynamic(isDynamic)
+            : m_isDynamic(isDynamic), m_isBound(false), m_shape(0)
 #if USE_SHARED_HANDLES
             , m_handle (SharedGLHandle(0, glGenVertexArrays, glDeleteVertexArrays))
 #else
             , m_handle(0)
 #endif
-            , m_shape (0)
         { 
             SetDynamic(isDynamic);
+        }
+
+        static inline void PushVAO(VAO* vao) {
+            vaoStack.Append(vao);
+        }
+
+        static inline VAO* PopVAO(void) {
+            if (not vaoStack.Length())
+                return nullptr;
+            VAO* vao;
+            vaoStack.Pop(vao);
+            return vao;
         }
 
         inline void SetDynamic(bool isDynamic) {
@@ -101,17 +116,32 @@ class VAO
 #endif
         }
 
-        inline void Enable(void) {
-#if USE_SHARED_HANDLES
-            glBindVertexArray(m_handle);
-#else
-            glBindVertexArray(m_handle);
-#endif
+        inline bool IsBound(void) {
+            return IsValid() and m_isBound;
         }
 
-        inline void Disable(void) {
-            glBindVertexArray(0);
+        inline bool IsActive(void) {
+            return this == activeVAO;
         }
+
+        inline void Activate(void) {
+            if (not IsActive()) {
+                PushVAO(activeVAO);
+                activeVAO = this;
+            }
+        }
+
+        inline void Deactivate(void) {
+            if (IsActive()) {
+                activeVAO = PopVAO();
+                if (activeVAO and activeVAO->IsBound())
+                    activeVAO->Enable();
+            }
+        }
+
+        void Enable(void);
+
+        void Disable(void);
 
         inline Texture* EnableTexture(Texture* texture) {
             if (texture != nullptr)
@@ -135,7 +165,6 @@ class VAO
         void UpdateIndexBuffer(void* data, size_t dataSize, size_t componentType);
 
         void Render(Shader* shader, Texture* texture = nullptr);
-
 };
 
 // =================================================================================================
