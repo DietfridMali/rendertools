@@ -3,7 +3,7 @@
 #include "shader.h"
 #include "base_renderer.h"
 
-#define PASSTHROUGH_MODE 0
+#define PASSTHROUGH_MODE 1
 #define LOOKUP_LOCATIONS 0
 
 // =================================================================================================
@@ -115,10 +115,9 @@ void Shader::UpdateMatrices(void) {
 GLint Shader::SetMatrix4f(const char* name, GLint& location, const float* data, bool transpose) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniformMatrix4fv(location, 1, GLboolean(transpose), data);
     return location;
@@ -138,10 +137,9 @@ GLint Shader::SetMatrix4f(const char* name, GLint& location, const float* data, 
 GLint Shader::SetMatrix3f(const char* name, GLint& location, float* data, bool transpose) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniformMatrix3fv(location, 1, GLboolean(transpose), data);
     return location;
@@ -161,10 +159,9 @@ GLint Shader::SetMatrix3f(const char* name, GLint& location, float* data, bool t
 GLint Shader::SetVector4f(const char* name, GLint& location, const Vector4f& data) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniform4fv(location, 1, data.Data());
     return location;
@@ -184,10 +181,9 @@ GLint Shader::SetVector4f(const char* name, GLint& location, const Vector4f& dat
 GLint Shader::SetVector3f(const char* name, GLint& location, const Vector3f& data) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
+    location = -1;
 #endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniform3fv(location, 1, data.Data());
     return location;
@@ -207,10 +203,9 @@ GLint Shader::SetVector3f(const char* name, GLint& location, const Vector3f& dat
 GLint Shader::SetVector2f(const char* name, GLint& location, const Vector2f& data) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniform2fv(location, 1, data.Data());
     return location;
@@ -230,10 +225,9 @@ GLint Shader::SetVector2f(const char* name, GLint& location, const Vector2f& dat
 GLint Shader::SetFloat(const char* name, GLint& location, float data) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniform1f(location, GLfloat(data));
     return location;
@@ -253,10 +247,9 @@ GLint Shader::SetFloat(const char* name, GLint& location, float data) {
 GLint Shader::SetVector2i(const char* name, GLint& location, const GLint* data) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniform2iv(location, 1, data);
     return location;
@@ -276,10 +269,9 @@ GLint Shader::SetVector2i(const char* name, GLint& location, const GLint* data) 
 GLint Shader::SetVector3i(const char* name, GLint& location, const GLint* data) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniform3iv(location, 1, data);
     return location;
@@ -299,10 +291,9 @@ GLint Shader::SetVector3i(const char* name, GLint& location, const GLint* data) 
 GLint Shader::SetVector4i(const char* name, GLint& location, const GLint* data) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniform4iv(location, 1, data);
     return location;
@@ -322,10 +313,9 @@ GLint Shader::SetVector4i(const char* name, GLint& location, const GLint* data) 
 GLint Shader::SetInt(const char* name, GLint& location, int data) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniform1i(location, GLint(data));
     return location;
@@ -345,10 +335,9 @@ GLint Shader::SetInt(const char* name, GLint& location, int data) {
 GLint Shader::SetFloatData(const char* name, GLint& location, const float* data, size_t length) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniform1fv(location, GLsizei(length), reinterpret_cast<const GLfloat*>(data));
     return location;
@@ -368,10 +357,9 @@ GLint Shader::SetFloatData(const char* name, GLint& location, const float* data,
 GLint Shader::SetIntData(const char* name, GLint& location, const int* data, size_t length) {
 #if PASSTHROUGH_MODE
 #   if LOOKUP_LOCATIONS
-    GLint location = GetLocation(name);
-#   else
-    GLint location = glGetUniformLocation(m_handle, name);
-#endif
+    location = -1;
+#   endif
+    location = glGetUniformLocation(m_handle, name);
     if (location >= 0)
         glUniform1iv(location, GLsizei(length), reinterpret_cast<const GLint*>(data));
     return location;
@@ -386,6 +374,5 @@ GLint Shader::SetIntData(const char* name, GLint& location, const int* data, siz
     return uniform->m_location;
 #endif
 }
-
 
 // =================================================================================================
