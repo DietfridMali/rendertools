@@ -21,6 +21,12 @@ class BaseRenderer
     , public DrawBufferHandler
     , public PolymorphSingleton<BaseRenderer>
 {
+    public:
+        struct GLVersion {
+            GLint major{ 0 };
+            GLint minor{ 0 };
+        };
+
     protected:
         FBO                     m_screenBuffer;
         FBO                     m_sceneBuffer;
@@ -38,6 +44,7 @@ class BaseRenderer
         int                     m_sceneTop;
         float                   m_aspectRatio;
 
+        GLVersion               m_glVersion;
         FrameCounter            m_frameCounter;
 
     public:
@@ -48,6 +55,9 @@ class BaseRenderer
         }
 
         static BaseRenderer& Instance(void) { return dynamic_cast<BaseRenderer&>(PolymorphSingleton::Instance()); }
+
+        bool InitOpenGL(void);
+
 
         virtual void Init(int width, int height, float fov);
 
@@ -106,6 +116,10 @@ class BaseRenderer
         template <typename T>
         inline void Fill(T&& color, float alpha, float scale = 1.0f) {
             Fill(RGBAColor(std::forward<T>(color), alpha), scale);
+        }
+
+        inline GLVersion GetGLVersion(void) {
+            return m_glVersion;
         }
 
         static void ClearGLError(void);

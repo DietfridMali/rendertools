@@ -41,6 +41,17 @@ void BaseRenderer::Create(int width, int height, float fov) {
 }
 
 
+bool BaseRenderer::InitOpenGL(void) {
+    GLint i = glewInit();
+    if (i != GLEW_OK) {
+        fprintf(stderr, "Cannot initialize OpenGL\n");
+        return false;
+    }
+    glGetIntegerv(GL_MAJOR_VERSION, &m_glVersion.major);
+    glGetIntegerv(GL_MINOR_VERSION, &m_glVersion.minor);
+}
+
+
 void BaseRenderer::SetupOpenGL (void) {
     glClearColor(0, 0, 0, 0);
     glColorMask (1, 1, 1, 1);
