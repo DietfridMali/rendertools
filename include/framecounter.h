@@ -53,7 +53,7 @@ public:
 
 // -------------------------------------------------------------------------------------------------
 
-constexpr size_t        FrameWindowSize = 60;
+constexpr size_t        FrameWindowSize = 90;
 
 class MovingFrameCounter 
     : public BaseFrameCounter
