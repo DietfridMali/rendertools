@@ -3,7 +3,7 @@
 #include "shader.h"
 #include "base_renderer.h"
 
-#define PASSTHROUGH_MODE 1
+#define PASSTHROUGH_MODE 0
 
 // =================================================================================================
 // Some basic shader handling: Compiling, enabling, setting shader variables
