@@ -21,7 +21,7 @@ const ShaderSource& OutlineShader() {
             void main() {
                 vec4 color = texture(source, fragTexCoord);
                 if (color.a > 0.0) {
-                    fragColor = vec4(mix (color.rgb, outlineColor.rgb, color.a), 1);
+                    fragColor = vec4(mix (outlineColor.rgb, color.rgb, color.a), 1);
                     return;
                 }
                 float alpha = 0.0;

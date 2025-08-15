@@ -22,17 +22,18 @@ bool PrerenderedItem::Create(int bufferCount) {
 
 // =================================================================================================
 
-PrerenderedText::PrerenderedText(Viewport viewport, RGBAColor color, const TextRenderer::TextDecoration& decoration, float scale)
+PrerenderedText::PrerenderedText(int bufferCount, Viewport viewport, float scale)
     : PrerenderedItem(viewport)
-    , m_color(color), m_decoration(decoration), m_scale(scale), m_text("")
+    , m_bufferCount(bufferCount), m_scale(scale), m_text("")
 { }
 
-bool PrerenderedText::Create(String text, TextRenderer::eTextAlignments alignment, int bufferCount, const TextRenderer::TextDecoration& decoration) {
-    if (bufferCount == 0)
-        bufferCount = 2;//  (m_outlineWidth == 0) ? 1 : 2;
-    if (not PrerenderedItem::Create(bufferCount) and (m_text == text))
+bool PrerenderedText::Create(String text, TextRenderer::eTextAlignments alignment, RGBAColor color, const TextRenderer::TextDecoration& decoration) {
+    if (m_bufferCount == 0)
+        m_bufferCount = 2;//  (m_outlineWidth == 0) ? 1 : 2;
+    if (not PrerenderedItem::Create(m_bufferCount) and (m_text == text))
         return false;
     m_text = text;
+    m_color = color;
     textRenderer.SetColor(m_color);
     textRenderer.SetDecoration(decoration);
     textRenderer.SetScale(1.0f);
@@ -54,8 +55,8 @@ void PrerenderedText::RenderOutline(const TextRenderer::TextDecoration& decorati
 
 
 void PrerenderedText::Render(bool setViewport, bool flipVertically, RGBAColor color, float scale) {
-    if (color.A() > 0.0f) textRenderer.SetColor(color);
-    if (scale > 0.0f) textRenderer.SetScale(scale);
+    textRenderer.SetColor(color.IsVisible() ? color : m_color);
+    textRenderer.SetScale((scale > 0.0f) ? scale : m_scale);
     if (setViewport)
         m_viewport.SetViewport();
     textRenderer.RenderToScreen(&m_fbo, flipVertically); // m_outlineWidth == 0);

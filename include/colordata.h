@@ -53,6 +53,10 @@ public:
     explicit operator RGBColor() const {
         return RGBColor(this->X(), this->Y(), this->Z());
     }
+
+    inline bool IsVisible(void) {
+        return A() > 0.0f;
+    }
 };
 
 

@@ -43,18 +43,18 @@ class PrerenderedText
 {
 public:
     String          m_text;
+    int             m_bufferCount;
     RGBAColor       m_color;
     float           m_scale;
-    TextRenderer::TextDecoration  m_decoration;
 
-    PrerenderedText(Viewport viewport = Viewport(), RGBAColor color = ColorData::White, const TextRenderer::TextDecoration& decoration = {}, float scale = 1.0f);
+    PrerenderedText(int bufferCount = 0, Viewport viewport = Viewport(), float scale = 1.0f);
 
     void Destroy() {
         m_text.Destroy();
         PrerenderedItem::Destroy();
     }
 
-    bool Create(String text, TextRenderer::eTextAlignments alignment = TextRenderer::taLeft, int bufferCount = 0, const TextRenderer::TextDecoration& decoration = {});
+    bool Create(String text, TextRenderer::eTextAlignments alignment = TextRenderer::taCenter, RGBAColor color = ColorData::White, const TextRenderer::TextDecoration& decoration = {});
 
     inline void SetColor(RGBAColor color) {
         m_color = color;
@@ -66,10 +66,6 @@ public:
 
     void SetScale(float scale = 1.0) {
         m_scale = scale;
-    }
-
-    inline void SetOutlineWidth(float outlineWidth = 0) {
-        m_decoration.outlineWidth = outlineWidth;
     }
 
     void RenderOutline(const TextRenderer::TextDecoration& decoration = {});
