@@ -57,9 +57,9 @@ public:
 
     void RenderToFBO(String text, eTextAlignments alignment, FBO* fbo, Viewport& viewport, int renderAreaWidth = 0, int renderAreaHeight = 0);
 
-    void RenderToScreen(FBO* fbo, bool flipVertically = false);
+    void RenderToScreen(FBO* fbo, int flipVertically = 0);
 
-    void Render(String text, eTextAlignments alignment = taLeft, bool flipVertically = false, int renderAreaWidth = 0, int renderAreaHeight = 0);
+    void Render(String text, eTextAlignments alignment = taLeft, int flipVertically = 0, int renderAreaWidth = 0, int renderAreaHeight = 0);
 
     inline bool SetColor(RGBAColor color = ColorData::White) {
         if (color.A() < 0.0f)

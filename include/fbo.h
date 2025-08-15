@@ -66,7 +66,7 @@ public:
         int source = 0;
         int destination = -1;
         bool clearBuffer = true;
-        bool flipVertically = false;
+        int flipVertically = 0; // -1: flip, 1: don't flip, 0: renderer decides
         float scale = 1.0f;
         Shader* shader = nullptr;
     };

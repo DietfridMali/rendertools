@@ -51,10 +51,10 @@ void OutlineRenderer::AntiAlias(FBO* fbo, const AAMethod& aaMethod) {
 
 
 void OutlineRenderer::RenderOutline(FBO* fbo, const Decoration& decoration) {
-    static ShaderLocationTable locations;
     if (decoration.HaveOutline()) {
         Shader* shader = baseShaderHandler.SetupShader("outline");
         if (shader) {
+            static ShaderLocationTable locations;
             locations.Start();
             shader->SetFloat("outlineWidth", locations.Current(), decoration.outlineWidth);
             shader->SetVector4f("outlineColor", locations.Current(), decoration.outlineColor);

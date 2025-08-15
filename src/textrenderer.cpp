@@ -253,7 +253,7 @@ void TextRenderer::RenderToFBO(String text, eTextAlignments alignment, FBO* fbo,
 }
 
 
-void TextRenderer::RenderToScreen(FBO* fbo, bool flipVertically) {
+void TextRenderer::RenderToScreen(FBO* fbo, int flipVertically) {
 #if USE_TEXT_FBOS
     if (m_isAvailable)
         fbo->RenderToScreen({ .source = fbo->GetLastDestination(), .clearBuffer = false, .flipVertically = flipVertically, .scale = m_scale }, m_color); // render outline to viewport
@@ -261,7 +261,7 @@ void TextRenderer::RenderToScreen(FBO* fbo, bool flipVertically) {
 }
 
 
-void TextRenderer::Render(String text, eTextAlignments alignment, bool flipVertically, int renderAreaWidth, int renderAreaHeight) {
+void TextRenderer::Render(String text, eTextAlignments alignment, int flipVertically, int renderAreaWidth, int renderAreaHeight) {
     if (m_isAvailable) {
         FBO* fbo = GetFBO(2.0f);
         if (fbo != nullptr) {

@@ -280,7 +280,9 @@ bool FBO::RenderTexture(Texture* source, const FBORenderParams& params, const RG
     }
     baseRenderer.PushMatrix();
     baseRenderer.Translate(0.5, 0.5, 0);
-    if (params.flipVertically or (params.source & 1))
+    if (params.flipVertically)
+        baseRenderer.Scale(params.scale, params.scale * params.flipVertically, 1);
+    else if (params.source & 1)
         baseRenderer.Scale(params.scale, -params.scale, 1);
     else if (params.scale != 1.0f)
         baseRenderer.Scale(params.scale, params.scale, 1);
