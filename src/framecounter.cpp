@@ -26,7 +26,7 @@ void MovingFrameCounter::Update(void) {
     size_t t = SDL_GetTicks();
     if (m_renderStartTime > 0) {
         float dt = float(t - m_renderStartTime) * 0.001f;
-        if (dt <= 1.0f) {
+        if ((dt < 1.0f) and (dt > 0.0f)) {
             m_movingTotalTime -= m_movingFrameTimes[m_movingFrameIndex] - dt;
             m_movingFrameTimes[m_movingFrameIndex] = dt;
             m_movingFrameIndex = (m_movingFrameIndex + 1) % FrameWindowSize;
