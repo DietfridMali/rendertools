@@ -63,6 +63,7 @@ void Mesh::UpdateVAO(bool createVertexIndex) {
         m_vao.m_indexBuffer.SetDynamic(true);
         UpdateIndexBuffer();
     }
+    m_vao.Disable();
 }
 
 
