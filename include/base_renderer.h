@@ -123,6 +123,10 @@ class BaseRenderer
             return m_glVersion;
         }
 
+        inline void ShowFps(bool showFps) {
+            m_frameCounter.ShowFps(showFps);
+        }
+
         static void ClearGLError(void);
 
         static bool CheckGLError (const char* operation = "");

@@ -9,11 +9,15 @@
 void BaseFrameCounter::Draw(bool update) {
     if (update)
         Update();
-    baseRenderer.SetViewport(m_viewport, false);
-    char szFPS[20];
-    sprintf(szFPS, "%1.1f fps", GetFps()); // m_fps[0]);
-    textRenderer.SetColor(m_color);
-    textRenderer.Render(szFPS, TextRenderer::taLeft, false);
+    if (m_drawTimer.HasExpired(0, true))
+        m_fps = GetFps();
+    if (m_showFps) {
+        baseRenderer.SetViewport(m_viewport, false);
+        char szFPS[20];
+        sprintf(szFPS, "%1.1f fps", m_fps); // m_fps[0]);
+        textRenderer.SetColor(m_color);
+        textRenderer.Render(szFPS, TextRenderer::taLeft, false);
+    }
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -22,7 +26,7 @@ void MovingFrameCounter::Update(void) {
     size_t t = SDL_GetTicks();
     if (m_renderStartTime > 0) {
         float dt = float(t - m_renderStartTime) * 0.001f;
-        m_movingTotalTime -= m_movingFrameTimes[m_movingFrameIndex] + dt;
+        m_movingTotalTime -= m_movingFrameTimes[m_movingFrameIndex] - dt;
         m_movingFrameTimes[m_movingFrameIndex] = dt;
         m_movingFrameIndex = (m_movingFrameIndex + 1) % FrameWindowSize;
         if (m_movingFrameCount < FrameWindowSize)

@@ -12,10 +12,13 @@ protected:
     RGBAColor               m_color;
     Viewport                m_viewport;
     size_t                  m_renderStartTime{ 0 };
+    Timer                   m_drawTimer{ 1000 };
+    float                   m_fps{ 0.0f };
+    bool                    m_showFps{ true };
 
 public:
     BaseFrameCounter()
-        : m_color(ColorData::White), m_viewport({ 0, 0, 0, 0 }), m_renderStartTime(0)
+        : m_color(ColorData::White), m_viewport({ 0, 0, 0, 0 }), m_fps(0.0f), m_renderStartTime(0), m_showFps(true)
     {
         Reset();
     }
@@ -33,10 +36,13 @@ public:
         if (m_renderStartTime != 0)
             return false;
         m_renderStartTime = SDL_GetTicks();
+        m_drawTimer.Start();
         return true;
     }
 
-    virtual void Reset(void) = 0;
+    void ShowFps(bool showFps) { m_showFps = showFps; }
+
+    virtual void Reset(void) {}
 
     virtual void Update(void) = 0;
 
@@ -77,14 +83,14 @@ public:
 
 // -------------------------------------------------------------------------------------------------
 
-class LinearFrameCounter 
+class LinearFrameCounter
     : public BaseFrameCounter
 {
 public:
     size_t                  m_frameCount[2]; // total frame count / frames during last second
     float                   m_fps[2];
     size_t                  m_renderStartTime;
-    Timer                   m_fpsTimer;
+    Timer                   m_fpsTimer{ 1000 };
 
     LinearFrameCounter() = default;
 
@@ -97,7 +103,7 @@ public:
         return true;
     }
 
-    inline void Reset(void) {
+    virtual void Reset(void) {
         m_frameCount[0] = m_frameCount[1] = 0;
         m_fps[0] = m_fps[1] = 0;
         m_renderStartTime = 0;
@@ -108,8 +114,6 @@ public:
     virtual float GetFps(int i = -1) const {
         return m_fps[i];
     }
-
-    void Draw(bool update);
 };
 
 // =================================================================================================
