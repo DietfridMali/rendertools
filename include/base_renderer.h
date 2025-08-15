@@ -45,7 +45,7 @@ class BaseRenderer
         float                   m_aspectRatio;
 
         GLVersion               m_glVersion;
-        FrameCounter            m_frameCounter;
+        MovingFrameCounter      m_frameCounter;
 
     public:
         BaseRenderer()

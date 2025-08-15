@@ -3,45 +3,109 @@
 
 #include "timer.h"
 #include "viewport.h"
+#include "colordata.h"
 
 // =================================================================================================
 
-class FrameCounter {
-public:
-    size_t                  m_frameCount[2]; // total frame count / frames during last second
-    float                   m_fps[2];
-    size_t                  m_renderStart;
-    Timer                   m_fpsTimer;
+class BaseFrameCounter {
+protected:
     RGBAColor               m_color;
     Viewport                m_viewport;
+    size_t                  m_renderStartTime{ 0 };
 
-    FrameCounter() {
+public:
+    BaseFrameCounter()
+        : m_color(ColorData::White), m_viewport({ 0, 0, 0, 0 }), m_renderStartTime(0)
+    {
         Reset();
     }
 
-    ~FrameCounter() = default;
+    virtual ~BaseFrameCounter() = default;
 
-    void Setup(Viewport viewport, RGBAColor color = ColorData::Black) {
+    void Setup(Viewport viewport, RGBAColor color = ColorData::White) {
         m_viewport = viewport;
         m_color = color;
     }
 
-    inline void Start(void) {
-        if (m_frameCount == 0) {
-            m_fpsTimer.Start();
-            m_renderStart = m_fpsTimer.StartTime();
-        }
+    virtual void Draw(bool update);
+
+    virtual bool Start(void) {
+        if (m_renderStartTime != 0)
+            return false;
+        m_renderStartTime = SDL_GetTicks();
+        return true;
+    }
+
+    virtual void Reset(void) = 0;
+
+    virtual void Update(void) = 0;
+
+    virtual float GetFps(void) const = 0;
+};
+
+// -------------------------------------------------------------------------------------------------
+
+constexpr size_t        FrameWindowSize = 60;
+
+class MovingFrameCounter 
+    : public BaseFrameCounter
+{
+private:
+    SimpleArray<float, FrameWindowSize> m_movingFrameTimes;
+    float                               m_movingTotalTime{ 0.0f };
+    int                                 m_movingFrameIndex{ 0 };
+    int                                 m_movingFrameCount{ 0 };
+
+public:
+    MovingFrameCounter() = default;
+
+    virtual ~MovingFrameCounter() = default;
+
+    virtual void Reset(void) {
+        m_movingFrameTimes.fill(0.0f);
+        m_movingTotalTime = 0.0f;
+        m_movingFrameIndex = 0;
+        m_movingFrameCount = 0;
+    }
+
+    virtual void Update(void);
+
+    virtual float GetFps(void) const {
+        return (m_movingTotalTime == 0.0f) ? 0.0f : float(m_movingFrameCount / m_movingTotalTime);
+    }
+};
+
+// -------------------------------------------------------------------------------------------------
+
+class LinearFrameCounter 
+    : public BaseFrameCounter
+{
+public:
+    size_t                  m_frameCount[2]; // total frame count / frames during last second
+    float                   m_fps[2];
+    size_t                  m_renderStartTime;
+    Timer                   m_fpsTimer;
+
+    LinearFrameCounter() = default;
+
+    virtual ~LinearFrameCounter() = default;
+
+    virtual bool Start(void) {
+        if (not BaseFrameCounter::Start())
+            return false;
+        m_fpsTimer.Start();
+        return true;
     }
 
     inline void Reset(void) {
         m_frameCount[0] = m_frameCount[1] = 0;
         m_fps[0] = m_fps[1] = 0;
-        m_renderStart = 0;
+        m_renderStartTime = 0;
     }
 
-    void Update(void);
+    virtual void Update(void);
 
-    inline float GetFps(int i) {
+    virtual float GetFps(int i = -1) const {
         return m_fps[i];
     }
 
