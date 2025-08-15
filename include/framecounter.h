@@ -42,7 +42,9 @@ public:
 
     void ShowFps(bool showFps) { m_showFps = showFps; }
 
-    virtual void Reset(void) {}
+    virtual void Reset(void) {
+        m_renderStartTime = 0;
+    }
 
     virtual void Update(void) = 0;
 
@@ -68,6 +70,7 @@ public:
     virtual ~MovingFrameCounter() = default;
 
     virtual void Reset(void) {
+        BaseFrameCounter::Reset();
         m_movingFrameTimes.fill(0.0f);
         m_movingTotalTime = 0.0f;
         m_movingFrameIndex = 0;
@@ -104,6 +107,7 @@ public:
     }
 
     virtual void Reset(void) {
+        BaseFrameCounter::Reset();
         m_frameCount[0] = m_frameCount[1] = 0;
         m_fps[0] = m_fps[1] = 0;
         m_renderStartTime = 0;
