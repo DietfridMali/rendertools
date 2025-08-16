@@ -70,7 +70,7 @@ public:
 
     void RenderOutline(const TextRenderer::TextDecoration& decoration = {});
 
-    virtual void Render(bool setViewport = true, bool flipVertically = false, RGBAColor color = ColorData::Invisible, float scale = 0.0f);
+    virtual void Render(bool setViewport = true, int flipVertically = 0, RGBAColor color = ColorData::Invisible, float scale = 0.0f);
 };
 
 // =================================================================================================

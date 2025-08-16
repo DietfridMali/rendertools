@@ -54,7 +54,7 @@ void PrerenderedText::RenderOutline(const TextRenderer::TextDecoration& decorati
 }
 
 
-void PrerenderedText::Render(bool setViewport, bool flipVertically, RGBAColor color, float scale) {
+void PrerenderedText::Render(bool setViewport, int flipVertically, RGBAColor color, float scale) {
     textRenderer.SetColor(color.IsVisible() ? color : m_color);
     textRenderer.SetScale((scale > 0.0f) ? scale : m_scale);
     if (setViewport)
